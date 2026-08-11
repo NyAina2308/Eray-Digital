@@ -6,10 +6,10 @@ import matezaTole from '../assets/projects/Matezatole-BxF3xFUf.jpg'
 import radiataExplorer from '../assets/projects/radiata-explorer-W3y1EQWJ.jpg'
 
 const BADGES = [
-  { label: 'Développement Web', icon: 'code' },
-  { label: 'Logiciel sur mesure', icon: 'app' },
-  { label: 'Branding & Design', icon: 'brush' },
-  { label: 'Maintenance & Support', icon: 'support' },
+  { label: 'Développement Web', icon: 'code', active: false },
+  { label: 'Logiciel sur mesure', icon: 'app', active: true },
+  { label: 'Branding & Design', icon: 'brush', active: false },
+  { label: 'Maintenance & Support', icon: 'support', active: false },
 ]
 
 const MINI_PROJECTS = [
@@ -54,11 +54,14 @@ function Hero() {
   return (
     <section id="accueil" className="hero">
       <div className="hero__glow" aria-hidden="true" />
+      <div className="hero__accent-line" aria-hidden="true" />
 
       <div className="container hero__inner">
-        <span className="eyebrow eyebrow--light hero-fade" style={{ animationDelay: '0ms' }}>
-          Studio digital · Antananarivo
-        </span>
+        <div className="hero__kicker hero-fade" style={{ animationDelay: '0ms' }}>
+          <span className="hero__kicker-line" />
+          <span className="hero__kicker-text">Studio digital</span>
+          <span className="hero__kicker-line" />
+        </div>
 
         <h1 className="hero__title hero-fade" style={{ animationDelay: '80ms' }}>
           Créons l&apos;excellence
@@ -84,66 +87,80 @@ function Hero() {
         </div>
 
         <div className="hero__mock hero-fade" style={{ animationDelay: '320ms' }}>
-          <div className="device">
-            <div className="device__bar">
-              <span className="device__dot" />
-              <span className="device__dot" />
-              <span className="device__dot" />
-              <span className="device__url">eraydigital.tech</span>
-            </div>
-            <div className="device__screen">
-              <div className="device__nav">
-                <span className="device__brand">ErayDigital</span>
-                <span>Accueil</span>
-                <span>Services</span>
-                <span>Projets</span>
-                <span>Contact</span>
-                <span className="device__nav-btn">Devis gratuit</span>
-              </div>
-
-              <div className="device__hero">
-                <div>
-                  <p className="device__hero-title">
-                    Développez votre
-                    <br />
-                    présence digitale
-                  </p>
-                  <p className="device__hero-sub">Sites web, logiciels et identités sur mesure</p>
-                  <span className="device__hero-btn">Démarrer →</span>
+          <div className="laptop">
+            <div className="laptop__screen">
+              <span className="laptop__camera" aria-hidden="true" />
+              <div className="device__screen">
+                <div className="device__nav">
+                  <span className="device__brand">ErayDigital</span>
+                  <span>Accueil</span>
+                  <span>Services</span>
+                  <span>Projets</span>
+                  <span>Contact</span>
+                  <span className="device__nav-btn">Devis gratuit</span>
                 </div>
-                <div className="device__chart">
-                  <span className="device__chart-badge">+128% de trafic</span>
-                  <div className="device__bars">
-                    <span style={{ height: '30%' }} />
-                    <span style={{ height: '45%' }} />
-                    <span style={{ height: '38%' }} />
-                    <span style={{ height: '60%' }} />
-                    <span style={{ height: '52%' }} />
-                    <span style={{ height: '78%' }} />
-                    <span style={{ height: '95%' }} />
+
+                <div className="device__hero">
+                  <div>
+                    <p className="device__hero-title">
+                      Développez votre
+                      <br />
+                      présence digitale
+                    </p>
+                    <p className="device__hero-sub">Sites web, logiciels et identités sur mesure</p>
+                    <span className="device__hero-btn">Démarrer →</span>
+                  </div>
+                  <div className="device__chart">
+                    <span className="device__chart-badge">+128% de trafic</span>
+                    <div className="device__bars">
+                      <span style={{ height: '30%' }} />
+                      <span style={{ height: '45%' }} />
+                      <span style={{ height: '38%' }} />
+                      <span style={{ height: '60%' }} />
+                      <span style={{ height: '52%' }} />
+                      <span style={{ height: '78%' }} />
+                      <span style={{ height: '95%' }} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="device__row">
+                  <span className="device__row-label">Nos derniers projets</span>
+                  <div className="device__thumbs">
+                    {MINI_PROJECTS.map((p) => (
+                      <img key={p.name} src={p.image} alt={p.name} className="device__thumb" loading="lazy" />
+                    ))}
                   </div>
                 </div>
               </div>
-
-              <div className="device__row">
-                <span className="device__row-label">Nos derniers projets</span>
-                <div className="device__thumbs">
-                  {MINI_PROJECTS.map((p) => (
-                    <img key={p.name} src={p.image} alt={p.name} className="device__thumb" loading="lazy" />
-                  ))}
-                </div>
-              </div>
             </div>
+            <div className="laptop__base">
+              <span className="laptop__notch" />
+            </div>
+            <div className="laptop__shadow" aria-hidden="true" />
           </div>
         </div>
 
         <div className="hero__badges">
           {BADGES.map((b, i) => (
-            <div key={b.label} className="hero__badge hero__badge--float" style={{ animationDelay: `${i * 0.4}s` }}>
+            <div
+              key={b.label}
+              className={`hero__badge hero__badge--float ${b.active ? 'hero__badge--active' : ''}`}
+              style={{ animationDelay: `${i * 0.4}s` }}
+            >
               <Icon name={b.icon} />
               <span>{b.label}</span>
+              <span className="hero__badge-dots" aria-hidden="true">
+                • • •
+              </span>
             </div>
           ))}
+        </div>
+
+        <div className="hero__tagline hero-fade" style={{ animationDelay: '480ms' }}>
+          <span className="hero__kicker-line" />
+          <span>Moderne · Rapide · Sécurisé · Évolutif</span>
+          <span className="hero__kicker-line" />
         </div>
       </div>
     </section>
