@@ -2,30 +2,27 @@ type LogoProps = {
   variant?: 'dark' | 'light'
 }
 
+/** Official Eray mark (cropped from public/Logo Eray.jpeg) + wordmark. */
 function Logo({ variant = 'dark' }: LogoProps) {
-  const mark = variant === 'dark' ? '#0000f0' : '#ffffff'
-  const text = variant === 'dark' ? '#0b0b0b' : '#ffffff'
-
+  const light = variant === 'light'
   return (
-    <div className="logo">
-      <svg
-        className="logo__mark"
-        width="34"
-        height="34"
-        viewBox="0 0 200 200"
-        fill="none"
-        aria-hidden="true"
+    <div className="inline-flex items-center gap-2.5">
+      <span
+        className={`grid h-[42px] w-11 place-items-center overflow-hidden rounded-xl bg-white ${
+          light ? 'p-[3px] shadow-[0_0_0_1px_rgba(255,255,255,.15),0_8px_30px_rgba(106,60,255,.35)]' : ''
+        }`}
       >
-        <rect width="200" height="200" rx="46" fill={mark} />
-        <g transform="translate(30,178) scale(0.072,-0.072)" fill="#fff">
-          <path d="M1213 1575c131-135 52-350-133-363-106-8-187 51-222 160-16 49-17 50-11 13 18-132 112-211 243-203 78 5 136 37 177 99 34 51 44 154 21 209-18 42-62 96-91 111-12 7-5-4 16-26z" />
-          <path d="M940 1425l0-144 105 1 105 0 0 27 0 27-77 0-78-1-3 33-3 32 80 0c80 0 81 0 81 25 0 25-1 25-80 25l-80 0 0 35 0 35 80 0c79 0 80 0 80 25l0 25-105 0-105 0 0-145z" />
-          <path d="M732 1551c-8-4-12-19-10-32 2-19 9-24 33-24 33 0 45 25 25 50-14 17-29 19-48 6z" />
-          <path d="M966 1112c-134-1-214-6-223-13-9-8-13-36-13-85 0-109-15-104 337-104 252 0 294 2 307 16 23 23 23 156-1 175-17 15-48 16-407 11zm-8-44c18-18 15-65-5-77-17-10-17-10 0-11 10 0 17-8 17-20 0-13-7-20-20-20-50 0-84 84-37 93 19 4 18 4-5 6-27 1-28-1-28-49 0-43-3-50-20-50-18 0-20 7-20 70l0 70 53 0c29 0 58-5 65-12zm144-5c13-12 18-30 18-70 0-47-2-53-21-53-15 0-19 5-15 15 4 11-2 15-24 15-20 0-30-5-30-15 0-8-9-15-20-15-17 0-20 7-20 48 0 78 62 120 112 75zm94-5l7-22 17 22c16 20 50 31 50 17 0-11-33-71-57-102-16-22-33-33-49-33-30 0-33 29-4 37 23 6 25 19 5 53-20 35-18 50 4 50 11 0 23-9 27-22z" />
-        </g>
-      </svg>
-      <span className="logo__text" style={{ color: text }}>
-        Eray<strong>Digital</strong>
+        <img src="/eray-logo.png" alt="" width="160" height="148" className="size-full object-contain" />
+      </span>
+      <span className={`font-sora text-lg font-medium tracking-[-0.02em] ${light ? 'text-white' : 'text-ink'}`}>
+        Eray
+        <strong
+          className={`ml-[3px] bg-clip-text font-bold text-transparent ${
+            light ? 'bg-[linear-gradient(120deg,#c7b3ff,#9fb4ff)]' : 'bg-[linear-gradient(120deg,#7b3cff,#5a4bff_45%,#2f5bff)]'
+          }`}
+        >
+          Digital
+        </strong>
       </span>
     </div>
   )

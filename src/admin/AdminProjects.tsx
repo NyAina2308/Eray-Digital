@@ -90,31 +90,31 @@ function AdminProjects() {
   }
 
   return (
-    <div className="admin-page">
-      <header className="admin-page__header">
+    <div className="grid gap-6">
+      <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1>Projets</h1>
-          <p>{projects.length} projet{projects.length !== 1 ? 's' : ''} publié{projects.length !== 1 ? 's' : ''}</p>
+          <h1 className="font-sora text-[28px] font-bold tracking-[-0.02em] text-ink">Projets</h1>
+          <p className="text-sm text-mute">{projects.length} projet{projects.length !== 1 ? 's' : ''} publié{projects.length !== 1 ? 's' : ''}</p>
         </div>
-        <button className="btn btn-primary" onClick={openCreate}>
+        <button className="btn-blue inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border-0 px-5 py-2.5 font-sora text-[13px] font-semibold transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60" onClick={openCreate}>
           + Nouveau projet
         </button>
       </header>
 
-      {error && <p className="contact-form__error">{error}</p>}
-      {loading && <p className="admin-empty">Chargement...</p>}
+      {error && <p className="rounded-xl bg-[#ffe9ee] px-4 py-3 text-[13px] text-[#c2244a]">{error}</p>}
+      {loading && <p className="py-10 text-center text-sm text-mute">Chargement...</p>}
 
-      <div className="admin-projects-grid">
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {projects.map((project) => (
-          <div key={project.id} className="admin-project-card">
-            <img src={resolveImageUrl(project.imageUrl)} alt={project.name} loading="lazy" />
-            <div className="admin-project-card__body">
-              <h3>{project.name}</h3>
-              <span>{project.category}</span>
-              <p>{project.description}</p>
-              <div className="admin-message__actions">
-                <button onClick={() => openEdit(project)}>Modifier</button>
-                <button className="admin-message__delete" onClick={() => handleDelete(project.id)}>
+          <div key={project.id} className="overflow-hidden rounded-2xl border border-violet/10 bg-white shadow-[0_14px_40px_-30px_rgba(70,50,200,.5)]">
+            <img src={resolveImageUrl(project.imageUrl)} alt={project.name} loading="lazy" className="aspect-[16/10] w-full object-cover object-top" />
+            <div className="grid gap-2 p-5">
+              <h3 className="font-sora text-base font-semibold text-ink">{project.name}</h3>
+              <span className="text-[11px] font-semibold text-[#3a4bff]">{project.category}</span>
+              <p className="mb-2 line-clamp-3 text-[13px] leading-[1.6] text-body">{project.description}</p>
+              <div className="flex flex-wrap gap-2">
+                <button className="cursor-pointer rounded-lg border border-violet/15 bg-white px-3 py-1.5 font-sora text-xs font-medium text-ink-2 transition hover:border-violet/40 hover:text-violet" onClick={() => openEdit(project)}>Modifier</button>
+                <button className="cursor-pointer rounded-lg border border-[#f3c0cc] bg-white px-3 py-1.5 font-sora text-xs font-medium text-[#c2244a] transition hover:bg-[#ffe9ee]" onClick={() => handleDelete(project.id)}>
                   Supprimer
                 </button>
               </div>
@@ -124,13 +124,13 @@ function AdminProjects() {
       </div>
 
       {showForm && (
-        <div className="admin-modal" role="dialog" aria-modal="true">
-          <form className="admin-modal__card" onSubmit={handleSubmit}>
-            <h2>{editingId ? 'Modifier le projet' : 'Nouveau projet'}</h2>
+        <div className="fixed inset-0 z-[200] grid place-items-center bg-night/60 p-6 backdrop-blur-sm" role="dialog" aria-modal="true">
+          <form className="grid max-h-[90vh] w-full max-w-[520px] gap-4 overflow-y-auto rounded-[24px] bg-white p-7 font-sora" onSubmit={handleSubmit}>
+            <h2 className="font-sora text-xl font-bold text-ink">{editingId ? 'Modifier le projet' : 'Nouveau projet'}</h2>
 
-            <label>
+            <label className="block text-[12.5px] font-semibold text-ink-2">
               Nom
-              <input
+              <input className="mt-1.5 w-full rounded-xl border border-violet/15 bg-white px-3.5 py-2.5 font-sora text-sm text-ink outline-none focus:border-violet/50"
                 type="text"
                 required
                 value={form.name}
@@ -138,9 +138,9 @@ function AdminProjects() {
               />
             </label>
 
-            <label>
+            <label className="block text-[12.5px] font-semibold text-ink-2">
               Catégorie
-              <input
+              <input className="mt-1.5 w-full rounded-xl border border-violet/15 bg-white px-3.5 py-2.5 font-sora text-sm text-ink outline-none focus:border-violet/50"
                 type="text"
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
@@ -148,31 +148,31 @@ function AdminProjects() {
               />
             </label>
 
-            <label>
+            <label className="block text-[12.5px] font-semibold text-ink-2">
               Description
-              <textarea
+              <textarea className="mt-1.5 w-full rounded-xl border border-violet/15 bg-white px-3.5 py-2.5 font-sora text-sm text-ink outline-none focus:border-violet/50"
                 rows={3}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
             </label>
 
-            <label>
+            <label className="block text-[12.5px] font-semibold text-ink-2">
               Image {editingId ? '(laisser vide pour garder l’actuelle)' : ''}
-              <input
+              <input className="mt-1.5 w-full rounded-xl border border-violet/15 bg-white px-3.5 py-2.5 font-sora text-sm text-ink outline-none focus:border-violet/50"
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/avif"
                 onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
               />
             </label>
 
-            {formError && <p className="contact-form__error">{formError}</p>}
+            {formError && <p className="rounded-xl bg-[#ffe9ee] px-4 py-3 text-[13px] text-[#c2244a]">{formError}</p>}
 
-            <div className="admin-modal__actions">
-              <button type="button" className="btn btn-outline" onClick={closeForm}>
+            <div className="mt-2 flex justify-end gap-3">
+              <button type="button" className="inline-flex cursor-pointer items-center justify-center rounded-full border border-violet/25 bg-white px-5 py-2.5 font-sora text-[13px] font-semibold text-ink-2 transition hover:border-violet/50" onClick={closeForm}>
                 Annuler
               </button>
-              <button type="submit" className="btn btn-primary" disabled={saving}>
+              <button type="submit" className="btn-blue inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border-0 px-5 py-2.5 font-sora text-[13px] font-semibold transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60" disabled={saving}>
                 {saving ? 'Enregistrement...' : 'Enregistrer'}
               </button>
             </div>

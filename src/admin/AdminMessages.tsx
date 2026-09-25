@@ -45,46 +45,46 @@ function AdminMessages() {
   const unreadCount = messages.filter((m) => !m.read).length
 
   return (
-    <div className="admin-page">
-      <header className="admin-page__header">
+    <div className="grid gap-6">
+      <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1>Messages de contact</h1>
-          <p>
+          <h1 className="font-sora text-[28px] font-bold tracking-[-0.02em] text-ink">Messages de contact</h1>
+          <p className="text-sm text-mute">
             {messages.length} message{messages.length !== 1 ? 's' : ''}
             {unreadCount > 0 && ` · ${unreadCount} non lu${unreadCount !== 1 ? 's' : ''}`}
           </p>
         </div>
       </header>
 
-      {error && <p className="contact-form__error">{error}</p>}
-      {loading && <p className="admin-empty">Chargement...</p>}
+      {error && <p className="rounded-xl bg-[#ffe9ee] px-4 py-3 text-[13px] text-[#c2244a]">{error}</p>}
+      {loading && <p className="py-10 text-center text-sm text-mute">Chargement...</p>}
       {!loading && messages.length === 0 && !error && (
-        <p className="admin-empty">Aucun message pour l&apos;instant.</p>
+        <p className="py-10 text-center text-sm text-mute">Aucun message pour l&apos;instant.</p>
       )}
 
-      <div className="admin-messages">
+      <div className="grid gap-4">
         {messages.map((msg) => (
-          <article key={msg.id} className={`admin-message ${msg.read ? '' : 'admin-message--unread'}`}>
-            <div className="admin-message__top">
+          <article key={msg.id} className={`grid gap-3 rounded-2xl border bg-white p-5 shadow-[0_14px_40px_-30px_rgba(70,50,200,.5)] ${msg.read ? 'border-violet/10' : 'border-l-4 border-violet/25 border-l-violet'}`}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h3>{msg.name}</h3>
-                <a href={`mailto:${msg.email}`}>{msg.email}</a>
+                <h3 className="font-sora text-base font-semibold text-ink">{msg.name}</h3>
+                <a href={`mailto:${msg.email}`} className="text-[13px] text-[#2f3bb8] hover:underline">{msg.email}</a>
               </div>
-              <span className="admin-message__date">{formatDate(msg.createdAt)}</span>
+              <span className="text-xs text-mute">{formatDate(msg.createdAt)}</span>
             </div>
 
-            <div className="admin-message__tags">
+            <div className="flex flex-wrap gap-2 [&>span]:rounded-full [&>span]:bg-violet/8 [&>span]:px-3 [&>span]:py-1 [&>span]:text-[11px] [&>span]:font-medium [&>span]:text-[#3a2bd8]">
               {msg.service && <span>{msg.service}</span>}
               {msg.delay && <span>{msg.delay}</span>}
             </div>
 
-            <p className="admin-message__body">{msg.message}</p>
+            <p className="text-sm leading-[1.7] whitespace-pre-line text-body">{msg.message}</p>
 
-            <div className="admin-message__actions">
-              <button onClick={() => toggleRead(msg)}>
+            <div className="flex flex-wrap gap-2">
+              <button className="cursor-pointer rounded-lg border border-violet/15 bg-white px-3 py-1.5 font-sora text-xs font-medium text-ink-2 transition hover:border-violet/40 hover:text-violet" onClick={() => toggleRead(msg)}>
                 {msg.read ? 'Marquer non lu' : 'Marquer lu'}
               </button>
-              <button className="admin-message__delete" onClick={() => handleDelete(msg.id)}>
+              <button className="cursor-pointer rounded-lg border border-[#f3c0cc] bg-white px-3 py-1.5 font-sora text-xs font-medium text-[#c2244a] transition hover:bg-[#ffe9ee]" onClick={() => handleDelete(msg.id)}>
                 Supprimer
               </button>
             </div>

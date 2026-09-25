@@ -5,7 +5,7 @@ function AdminRoute() {
   const { status } = useAdminAuth()
 
   if (status === 'checking') {
-    return <div className="admin-loading">Chargement...</div>
+    return <div className="grid min-h-screen place-items-center font-sora text-sm text-mute">Chargement...</div>
   }
 
   if (status === 'unauthenticated') {
