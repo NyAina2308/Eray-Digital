@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
 import { Shapes, Ribbon, decor } from '../components/Decor'
 import { tw, Arrow, Icon, ic } from '../components/ui'
+import ordiSticker from '../assets/stickers/ordi.png'
 
 const DEVICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons'
 const logo = (name: string, variant = 'original') => `${DEVICON}/${name}/${name}-${variant}.svg`
@@ -91,14 +92,45 @@ const groups: Group[] = [
 
 /** Tuiles de logos flottant autour de l'ordinateur. */
 const floating = [
-  { src: logo('react'), cls: 'left-[16%] top-[12%] size-[70px] -rotate-8 bg-[linear-gradient(145deg,#1d1f5a,#0d0e2e)]' },
-  { src: logo('javascript'), cls: 'left-[36%] top-[2%] size-[60px] rotate-6 bg-[#f7df1e] [animation-delay:-1s]' },
-  { src: logo('git'), cls: 'left-[8%] top-[46%] size-[60px] -rotate-12 bg-[linear-gradient(145deg,#ff6b6b,#e0433a)] [animation-delay:-2s]' },
-  { src: logo('typescript'), cls: 'left-[64%] top-[6%] size-16 rotate-8 bg-[linear-gradient(145deg,#5a4bff,#3a2bd8)] [animation-delay:-3s]' },
-  { src: logo('figma'), cls: 'left-[22%] top-[55%] size-[60px] -rotate-6 bg-[linear-gradient(145deg,#3a8bff,#1d5bff)] [animation-delay:-1.5s]' },
-  { src: logo('postgresql'), cls: 'right-[12%] top-[50%] size-[60px] -rotate-6 bg-[linear-gradient(145deg,#1d1f5a,#0d0e2e)] [animation-delay:-2.5s]' },
-  { src: logo('python'), cls: 'left-[60%] top-[68%] size-[70px] -rotate-10 bg-[linear-gradient(145deg,#2f6bff,#1d3bd8)] [animation-delay:-.5s]' },
-  { src: logo('nodejs'), cls: 'right-[8%] top-[72%] size-[60px] rotate-8 bg-[linear-gradient(145deg,#1d1f5a,#0d0e2e)] [animation-delay:-3.5s]' },
+  {
+    src: logo('react'),
+    cls: 'left-[13%] top-[13%] size-[68px] -rotate-8 bg-[linear-gradient(145deg,#1d1f5a,#0d0e2e)]'
+  },
+
+  {
+    src: logo('javascript'),
+    cls: 'left-[39%] top-[1%] size-[58px] rotate-6 bg-[#f7df1e] [animation-delay:-1s]'
+  },
+
+  {
+    src: logo('git'),
+    cls: 'left-[4%] top-[48%] size-[58px] -rotate-12 bg-[linear-gradient(145deg,#ff6b6b,#e0433a)] [animation-delay:-2s]'
+  },
+
+  {
+    src: logo('typescript'),
+    cls: 'left-[66%] top-[6%] size-16 rotate-8 bg-[linear-gradient(145deg,#5a4bff,#3a2bd8)] [animation-delay:-3s]'
+  },
+
+  {
+    src: logo('figma'),
+    cls: 'left-[19%] top-[57%] size-[58px] -rotate-6 bg-[linear-gradient(145deg,#3a8bff,#1d5bff)] [animation-delay:-1.5s]'
+  },
+
+  {
+    src: logo('postgresql'),
+    cls: 'right-[8%] top-[49%] size-[60px] -rotate-6 bg-[linear-gradient(145deg,#1d1f5a,#0d0e2e)] [animation-delay:-2.5s]'
+  },
+
+  {
+    src: logo('python'),
+    cls: 'left-[59%] top-[70%] size-[68px] -rotate-10 bg-[linear-gradient(145deg,#2f6bff,#1d3bd8)] [animation-delay:-.5s]'
+  },
+
+  {
+    src: logo('nodejs'),
+    cls: 'right-[4%] top-[72%] size-[60px] rotate-8 bg-[linear-gradient(145deg,#1d1f5a,#0d0e2e)] [animation-delay:-3.5s]'
+  },
 ]
 
 const codeLines = [38, 62, 50, 74, 30, 58, 44, 68, 36, 54, 70, 26, 48]
@@ -127,31 +159,407 @@ function TechnologiesPage() {
             </div>
           </Reveal>
 
-          <Reveal className="relative h-[320px] min-w-0 sm:h-[400px]" delay={120}>
-            <span className={`${tw.script} absolute -top-5 -right-2.5 z-[2] hidden -rotate-12 text-xl leading-[1.2] text-ink-2 sm:block`}>Des outils puissants,<br />pour vos idées !</span>
-            <span className="absolute inset-[4%_0_0_0] rounded-[48%_52%_40%_60%/55%_45%_55%_45%] bg-[radial-gradient(circle_at_55%_45%,rgba(123,60,255,.35),rgba(170,140,255,.2)_50%,rgba(47,139,255,.08)_75%)]" />
-            <div className="absolute top-[22%] left-[22%] w-[52%] [transform:perspective(1200px)_rotateX(10deg)_rotate(-4deg)]">
-              <div className="grid aspect-[16/10.5] content-start gap-[7px] rounded-[14px_14px_4px_4px] border-8 border-[#0d0e24] bg-[#11122e] px-[18px] py-4 shadow-[0_30px_60px_-20px_rgba(40,30,160,.6)]">
-                {codeLines.map((w, i) => (
-                  <i
-                    key={i}
-                    className={`block h-1 rounded opacity-75 ${i % 3 === 2 ? 'bg-[linear-gradient(90deg,#ff8fb1,#9b7bff)]' : 'bg-[linear-gradient(90deg,#6fa8ff,#9b7bff_50%,#4ad6c0)]'}`}
-                    style={{ width: `${w}%`, marginLeft: `${(i % 4) * 5}%` }}
-                  />
-                ))}
-              </div>
-              <div className="mx-[-8%] h-3.5 rounded-b-[18px] bg-[linear-gradient(#e6e7f2,#b9bbd0)] shadow-[0_20px_30px_-10px_rgba(40,30,120,.4)]" />
-            </div>
-            {/* Plante */}
-            <span className="absolute top-[40%] right-[4%] hidden h-20 w-[70px] rounded-[10px_10px_20px_20px] bg-[linear-gradient(#fff,#e6e7f2)] shadow-[0_16px_30px_-12px_rgba(40,30,120,.4)] sm:block">
-              <span className="absolute inset-x-[-14px] bottom-[70%] h-20 bg-[radial-gradient(ellipse_10px_40px_at_30%_100%,#3a9a4a_90%,transparent),radial-gradient(ellipse_10px_46px_at_50%_100%,#2f8a3e_90%,transparent),radial-gradient(ellipse_10px_38px_at_70%_100%,#4aaa55_90%,transparent)]" />
-            </span>
-            {floating.map((f) => (
-              <span key={f.src} className={`absolute grid animate-float place-items-center rounded-2xl shadow-[0_18px_30px_-12px_rgba(40,30,160,.6)] max-sm:scale-75 ${f.cls}`}>
-                <img src={f.src} alt="" loading="lazy" className="size-[58%] object-contain" />
-              </span>
-            ))}
-          </Reveal>
+          <Reveal
+  className="relative h-[340px] min-w-0 sm:h-[410px] lg:h-[430px]"
+  delay={120}
+>
+  {/* =========================================================
+      FOND STYLISÉ
+      ========================================================= */}
+
+  {/* Grande forme blanche/lavande principale */}
+  <span
+    aria-hidden="true"
+    className="
+      absolute
+      inset-[2%_-4%_4%_-5%]
+      rounded-[50%_46%_42%_58%/48%_52%_45%_55%]
+      bg-[linear-gradient(145deg,#f8f8ff_5%,#eef0ff_45%,#f4eaff_100%)]
+      opacity-95
+    "
+  />
+
+  {/* Halo violet derrière l'ordinateur */}
+  <span
+    aria-hidden="true"
+    className="
+      absolute
+      left-[28%]
+      top-[18%]
+      h-[58%]
+      w-[48%]
+      rounded-full
+      bg-[#a87cff]/30
+      blur-[35px]
+    "
+  />
+
+  {/* Halo bleu */}
+  <span
+    aria-hidden="true"
+    className="
+      absolute
+      left-[7%]
+      top-[55%]
+      h-[20%]
+      w-[28%]
+      rounded-full
+      bg-[#3288ff]/55
+      blur-[2px]
+      rotate-[8deg]
+    "
+  />
+
+  {/* Forme bleue organique gauche-bas */}
+  <span
+    aria-hidden="true"
+    className="
+      absolute
+      left-[4%]
+      bottom-[13%]
+      h-[48px]
+      w-[145px]
+      rotate-[8deg]
+      rounded-[50%_40%_55%_45%]
+      bg-[linear-gradient(100deg,#3b8fff,#5149ff)]
+      opacity-90
+    "
+  />
+
+  {/* Forme violette droite */}
+  <span
+    aria-hidden="true"
+    className="
+      absolute
+      right-[0%]
+      top-[48%]
+      h-[70px]
+      w-[145px]
+      rotate-[-12deg]
+      rounded-[55%_45%_48%_52%]
+      bg-[linear-gradient(120deg,#b477ff,#a65cf5)]
+      opacity-80
+    "
+  />
+
+  {/* Petite forme bleue verticale */}
+  <span
+    aria-hidden="true"
+    className="
+      absolute
+      left-[57%]
+      top-[10%]
+      h-[42px]
+      w-[11px]
+      rotate-[3deg]
+      rounded-full
+      bg-[linear-gradient(#8c9dff,#4c82ff)]
+      opacity-65
+      blur-[1px]
+    "
+  />
+
+  {/* Deuxième petite forme lumineuse */}
+  <span
+    aria-hidden="true"
+    className="
+      absolute
+      left-[60%]
+      top-[7%]
+      h-[25px]
+      w-[8px]
+      rounded-full
+      bg-[#bcaaff]
+      opacity-70
+      blur-[2px]
+    "
+  />
+
+  {/* Halo bleu-violet inférieur */}
+  <span
+    aria-hidden="true"
+    className="
+      absolute
+      left-[20%]
+      bottom-[4%]
+      h-[55px]
+      w-[65%]
+      rounded-full
+      bg-[radial-gradient(ellipse,#9b7cff55,transparent_70%)]
+      blur-[8px]
+    "
+  />
+
+  {/* =========================================================
+      PETIT MESSAGE MANUSCRIT
+      ========================================================= */}
+
+  <span
+    className={`
+      ${tw.script}
+      absolute
+      right-[1%]
+      top-[1%]
+      z-[10]
+      hidden
+      -rotate-[9deg]
+      text-[15px]
+      leading-[1.15]
+      text-[#20254f]
+      sm:block
+      lg:text-[17px]
+    `}
+  >
+    Des outils puissants,<br />
+    pour vos idées !
+  </span>
+
+  {/* Flèche dessinée à la main */}
+  <svg
+    aria-hidden="true"
+    className="
+      absolute
+      right-[3%]
+      top-[10%]
+      z-[10]
+      hidden
+      h-[65px]
+      w-[55px]
+      rotate-[8deg]
+      text-[#20254f]
+      sm:block
+    "
+    viewBox="0 0 60 70"
+    fill="none"
+  >
+    <path
+      d="M42 3C45 18 39 30 30 39C23 46 15 49 9 51"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+
+    <path
+      d="M9 51L15 48M9 51L14 55"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+
+  {/* =========================================================
+      ORDINATEUR REALISTE
+      ========================================================= */}
+
+  <img
+    src={ordiSticker}
+    alt="Ordinateur affichant du code"
+    className="
+      absolute
+      left-[7%]
+      top-[19%]
+      z-[6]
+      w-[76%]
+      max-w-none
+      object-contain
+      drop-shadow-[0_25px_30px_rgba(55,45,180,.30)]
+      transition-transform
+      duration-500
+      hover:scale-[1.02]
+    "
+  />
+
+  {/* =========================================================
+      LOGOS FLOTTANTS
+      ========================================================= */}
+
+  {/* React */}
+  <span
+    className="
+      absolute
+      left-[10%]
+      top-[17%]
+      z-[8]
+      grid
+      size-[58px]
+      -rotate-[8deg]
+      place-items-center
+      rounded-[12px]
+      bg-[linear-gradient(145deg,#25296d,#101333)]
+      shadow-[0_15px_25px_-10px_rgba(30,30,120,.55)]
+      sm:size-[65px]
+    "
+  >
+    <img
+      src={logo('react')}
+      alt=""
+      className="size-[60%] object-contain"
+    />
+  </span>
+
+  {/* JavaScript */}
+  <span
+    className="
+      absolute
+      left-[34%]
+      top-[2%]
+      z-[8]
+      grid
+      size-[50px]
+      rotate-[7deg]
+      place-items-center
+      rounded-[9px]
+      bg-[#f7df1e]
+      shadow-[0_15px_25px_-10px_rgba(30,30,120,.4)]
+      sm:size-[57px]
+    "
+  >
+    <img
+      src={logo('javascript')}
+      alt=""
+      className="size-[60%] object-contain"
+    />
+  </span>
+
+  {/* Git */}
+  <span
+    className="
+      absolute
+      left-[3%]
+      top-[49%]
+      z-[8]
+      grid
+      size-[52px]
+      -rotate-[12deg]
+      place-items-center
+      rounded-[12px]
+      bg-[linear-gradient(145deg,#ff716b,#dd3f39)]
+      shadow-[0_15px_25px_-10px_rgba(150,40,40,.5)]
+      sm:size-[58px]
+    "
+  >
+    <img
+      src={logo('git')}
+      alt=""
+      className="size-[62%] object-contain"
+    />
+  </span>
+
+  {/* TypeScript */}
+  <span
+    className="
+      absolute
+      left-[57%]
+      top-[6%]
+      z-[8]
+      grid
+      size-[57px]
+      rotate-[8deg]
+      place-items-center
+      rounded-[12px]
+      bg-[linear-gradient(145deg,#6155ff,#382bd5)]
+      shadow-[0_15px_25px_-10px_rgba(40,30,160,.55)]
+    "
+  >
+    <img
+      src={logo('typescript')}
+      alt=""
+      className="size-[60%] object-contain"
+    />
+  </span>
+
+  {/* Figma */}
+  <span
+    className="
+      absolute
+      left-[19%]
+      top-[55%]
+      z-[8]
+      grid
+      size-[54px]
+      -rotate-[6deg]
+      place-items-center
+      rounded-[12px]
+      bg-[linear-gradient(145deg,#438fff,#1d5bff)]
+      shadow-[0_15px_25px_-10px_rgba(30,70,180,.55)]
+    "
+  >
+    <img
+      src={logo('figma')}
+      alt=""
+      className="size-[62%] object-contain"
+    />
+  </span>
+
+  {/* PostgreSQL */}
+  <span
+    className="
+      absolute
+      right-[11%]
+      top-[48%]
+      z-[8]
+      grid
+      size-[58px]
+      -rotate-[6deg]
+      place-items-center
+      rounded-[12px]
+      bg-[linear-gradient(145deg,#25296d,#101333)]
+      shadow-[0_15px_25px_-10px_rgba(30,30,120,.55)]
+    "
+  >
+    <img
+      src={logo('postgresql')}
+      alt=""
+      className="size-[62%] object-contain"
+    />
+  </span>
+
+  {/* Python */}
+  <span
+    className="
+      absolute
+      left-[57%]
+      bottom-[2%]
+      z-[8]
+      grid
+      size-[65px]
+      -rotate-[10deg]
+      place-items-center
+      rounded-[13px]
+      bg-[linear-gradient(145deg,#3776ff,#1e42d8)]
+      shadow-[0_18px_28px_-12px_rgba(30,50,180,.6)]
+    "
+  >
+    <img
+      src={logo('python')}
+      alt=""
+      className="size-[60%] object-contain"
+    />
+  </span>
+
+  {/* Node.js */}
+  <span
+    className="
+      absolute
+      right-[4%]
+      bottom-[2%]
+      z-[8]
+      grid
+      size-[56px]
+      rotate-[8deg]
+      place-items-center
+      rounded-[12px]
+      bg-[linear-gradient(145deg,#25296d,#101333)]
+      shadow-[0_15px_25px_-10px_rgba(30,30,120,.55)]
+    "
+  >
+    <img
+      src={logo('nodejs')}
+      alt=""
+      className="size-[62%] object-contain"
+    />
+  </span>
+</Reveal>
         </div>
       </section>
 
