@@ -90,51 +90,6 @@ const groups: Group[] = [
   },
 ]
 
-/** Tuiles de logos flottant autour de l'ordinateur. */
-const floating = [
-  {
-    src: logo('react'),
-    cls: 'left-[13%] top-[13%] size-[68px] -rotate-8 bg-[linear-gradient(145deg,#1d1f5a,#0d0e2e)]'
-  },
-
-  {
-    src: logo('javascript'),
-    cls: 'left-[39%] top-[1%] size-[58px] rotate-6 bg-[#f7df1e] [animation-delay:-1s]'
-  },
-
-  {
-    src: logo('git'),
-    cls: 'left-[4%] top-[48%] size-[58px] -rotate-12 bg-[linear-gradient(145deg,#ff6b6b,#e0433a)] [animation-delay:-2s]'
-  },
-
-  {
-    src: logo('typescript'),
-    cls: 'left-[66%] top-[6%] size-16 rotate-8 bg-[linear-gradient(145deg,#5a4bff,#3a2bd8)] [animation-delay:-3s]'
-  },
-
-  {
-    src: logo('figma'),
-    cls: 'left-[19%] top-[57%] size-[58px] -rotate-6 bg-[linear-gradient(145deg,#3a8bff,#1d5bff)] [animation-delay:-1.5s]'
-  },
-
-  {
-    src: logo('postgresql'),
-    cls: 'right-[8%] top-[49%] size-[60px] -rotate-6 bg-[linear-gradient(145deg,#1d1f5a,#0d0e2e)] [animation-delay:-2.5s]'
-  },
-
-  {
-    src: logo('python'),
-    cls: 'left-[59%] top-[70%] size-[68px] -rotate-10 bg-[linear-gradient(145deg,#2f6bff,#1d3bd8)] [animation-delay:-.5s]'
-  },
-
-  {
-    src: logo('nodejs'),
-    cls: 'right-[4%] top-[72%] size-[60px] rotate-8 bg-[linear-gradient(145deg,#1d1f5a,#0d0e2e)] [animation-delay:-3.5s]'
-  },
-]
-
-const codeLines = [38, 62, 50, 74, 30, 58, 44, 68, 36, 54, 70, 26, 48]
-
 function TechnologiesPage() {
   return (
     <div className={tw.page}>

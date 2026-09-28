@@ -17,7 +17,6 @@ import eyeGif from '../assets/gif/eye.gif'
 import rocketGif from '../assets/gif/Rocket.gif'
 import targetGif from '../assets/gif/crosshair.gif'
 
-import OrbitGallery from '../components/OrbitGallery'
 
 
 /* =========================================================

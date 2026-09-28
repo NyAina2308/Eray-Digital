@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import type { CSSProperties } from 'react'
 
 export type OrbitItem = {
   image: string
