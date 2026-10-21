@@ -1,52 +1,64 @@
-import associationAnalasoa from '../assets/projects/Association-Analasoa-BPdyBL6x.jpg'
-import terrela from '../assets/projects/Terrela-D-c9KETz.jpg'
-import matezaTole from '../assets/projects/Matezatole-BxF3xFUf.jpg'
-import bataer from '../assets/projects/bataer-loop-CzkZRZ9A.jpg'
-import djMimie from '../assets/projects/djette-loop-CsULJtGe.jpg'
-import radiataExplorer from '../assets/projects/radiata-explorer-W3y1EQWJ.jpg'
+import cgaAvema from '../assets/projects/cga-avema.jpg'
+import asfifo from '../assets/projects/asfifo.jpg'
+import camoi from '../assets/projects/camoi.jpg'
+import rekany from '../assets/projects/rekany.jpg'
+import holidayBeach from '../assets/projects/holiday-beach.jpg'
+import matezaTole from '../assets/projects/mateza-tole.jpg'
 
 export type Project = {
   name: string
   category: string
   description: string
   image: string
+  /** Lien du site en ligne, saisi dans le back-office */
+  url?: string
 }
 
+/**
+ * Copie locale des réalisations, affichée si l'API est injoignable.
+ * La liste de référence se gère dans le back-office (Projets).
+ */
 export const projects: Project[] = [
   {
-    name: 'Association Analasoa',
-    category: 'Site associatif',
-    description: "Plateforme vitrine pour une ONG environnementale malgache, pensée pour la sensibilisation et la collecte de dons.",
-    image: associationAnalasoa,
+    name: 'CGA AVEMA',
+    category: 'Site institutionnel',
+    description: "Site du Centre de Gestion Agréé AVEMA à Antsirabe : présentation de l'accompagnement comptable, fiscal, juridique et social, adhésion en ligne et blog.",
+    image: cgaAvema,
+    url: 'https://cga-avema.mg/',
   },
   {
-    name: 'Terrela MDG',
-    category: 'E-commerce',
-    description: "Boutique en ligne d'artisanat malgache : mise en avant produit, catalogue et tunnel d'achat sur mesure.",
-    image: terrela,
+    name: 'ASFIFO',
+    category: 'Formation professionnelle',
+    description: "Site de l'organisme de formation ASFIFO, agréé par l'État depuis 2016 : alternance, recrutement, formation et intégration en entreprise, incubation et parcours dirigeants.",
+    image: asfifo,
+    url: 'https://asfifo.mg/',
+  },
+  {
+    name: 'CAMOI 3.0',
+    category: 'Expertise comptable',
+    description: "Site du cabinet CAMOI 3.0 : expertise comptable, audit, conseil en stratégie d'entreprise et centre de formation professionnelle à Madagascar.",
+    image: camoi,
+    url: 'https://camoi.mg/',
+  },
+  {
+    name: 'REKANY AGRI',
+    category: 'Agriculture & E-commerce',
+    description: "Site de REKANY AGRI, qui produit et commercialise avec les paysans malgaches des produits de qualité issus d'une agriculture respectueuse : catalogue et panier en ligne.",
+    image: rekany,
+    url: 'https://rekany.mg/',
+  },
+  {
+    name: 'Holiday Beach Hotel',
+    category: 'Hôtellerie & Tourisme',
+    description: "Site de l'hôtel 3 étoiles Holiday Beach à Nosy Be : présentation des chambres, du restaurant et des activités, galerie photo, site bilingue et réservation en ligne.",
+    image: holidayBeach,
+    url: 'https://holidaybeachhotel-nosybe.com/',
   },
   {
     name: 'Mateza Tôle',
-    category: 'Site vitrine',
-    description: 'Catalogue de matériaux de construction avec demande de devis en ligne pour un acteur du BTP à Tana.',
+    category: 'Matériaux de construction',
+    description: 'Site de Mateza Tôle, magasin de matériaux de construction à Antananarivo : catalogue de tôles et accessoires, actualités, demande de devis en ligne et espace client.',
     image: matezaTole,
-  },
-  {
-    name: 'B.A.T',
-    category: 'BTP & Construction',
-    description: "Site vitrine présentant les réalisations et services d'une entreprise de construction, avant/après compris.",
-    image: bataer,
-  },
-  {
-    name: 'Dj Mimie',
-    category: 'Portfolio artiste',
-    description: "Site portfolio pour une DJ : univers visuel fort, réservations et présentation des prestations.",
-    image: djMimie,
-  },
-  {
-    name: 'Radiata Explorer',
-    category: 'Tourisme & écotourisme',
-    description: "Site de circuits touristiques axés nature, avec mise en avant des destinations et devis en ligne.",
-    image: radiataExplorer,
+    url: 'https://matezatole.com/',
   },
 ]

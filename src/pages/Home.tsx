@@ -1,14 +1,14 @@
-import type { MouseEvent, ReactNode } from 'react'
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion'
+import { useEffect, useState, type MouseEvent, type ReactNode } from 'react'
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Laptop, Phone } from '../components/Devices'
 import LiveIcon, { type LiveKind } from '../components/LiveIcon'
 import Reveal from '../components/Reveal'
 import { Shapes, type Shape } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
-import { projects } from '../data/projects'
-import portrait from '../assets/photos/woman-Dt2ftJah.png'
-import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
+import { useProjects, useTestimonials } from '../hooks/useSiteData'
+import portrait from '../assets/photos/woman.webp'
+import teamPhoto from '../assets/photos/team.webp'
 
 /* ------------------------------------------------------------------ */
 /* Données                                                            */
@@ -273,6 +273,17 @@ const darkBg = 'bg-[radial-gradient(600px_380px_at_8%_20%,rgba(60,90,255,.35),tr
 
 function Home() {
   const reduce = useReducedMotion()
+  const projects = useProjects()
+  const testimonials = useTestimonials()
+  const [reviewIndex, setReviewIndex] = useState(0)
+  const review = testimonials[reviewIndex % testimonials.length]
+
+  // Fait défiler les avis toutes les 7 s quand il y en a plusieurs
+  useEffect(() => {
+    if (testimonials.length < 2 || reduce) return
+    const id = setInterval(() => setReviewIndex((i) => i + 1), 7000)
+    return () => clearInterval(id)
+  }, [testimonials.length, reduce])
 
   return (
     <div className={tw.page}>
@@ -470,7 +481,11 @@ function Home() {
                 <h3 className="mb-0.5 font-sora text-[13.5px] font-semibold text-ink">{pr.name}</h3>
                 <span className="mb-2 block text-[10.5px] font-medium text-[#3a4bff]">{pr.category}</span>
                 <p className="line-clamp-2 pr-8 text-[10.5px] leading-[1.5] text-mute">{pr.description}</p>
-                <Link to="/projets" className={`${goBtn} absolute right-3.5 bottom-4 size-7`} aria-label={`Voir ${pr.name}`}><Arrow className="size-3.5" /></Link>
+                {pr.url ? (
+                  <a href={pr.url} target="_blank" rel="noreferrer" className={`${goBtn} absolute right-3.5 bottom-4 size-7`} aria-label={`Voir le site ${pr.name}`}><Arrow className="size-3.5" /></a>
+                ) : (
+                  <Link to="/projets" className={`${goBtn} absolute right-3.5 bottom-4 size-7`} aria-label={`Voir ${pr.name}`}><Arrow className="size-3.5" /></Link>
+                )}
               </Reveal>
             )
           })}
@@ -496,15 +511,34 @@ function Home() {
           </Reveal>
           <Reveal className="glass relative min-w-0 rounded-[26px] px-7 py-7" delay={100}>
             <span className="block h-6 font-script text-[48px] leading-none text-[#3a2bd8]">“</span>
-            <p className="mt-2 mb-5 text-[12.5px] leading-[1.75] text-ink">“L’équipe d’Eray Digital a su transformer notre idée en une solution digitale performante. Professionnalisme, réactivité et créativité au top !”</p>
-            <div className="flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-full bg-[linear-gradient(120deg,#7b3cff,#5a4bff_45%,#2f5bff)] font-semibold text-white">M</span>
-              <div><b className="block text-xs">Miora R.</b><small className="text-[10px] text-mute">Cliente</small></div>
-            </div>
+            {/* Avis clients publiés depuis le back-office, en rotation */}
+            <AnimatePresence mode="wait">
+              <motion.div key={review.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }}>
+                <span className="mt-2 block text-sm tracking-[2px] text-[#ffb800]" aria-label={`${review.rating} sur 5`}>{'★'.repeat(review.rating)}<span className="text-[#d9d6ee]">{'★'.repeat(5 - review.rating)}</span></span>
+                <p className="mt-2 mb-5 text-[12.5px] leading-[1.75] text-ink">“{review.text}”</p>
+                <div className="flex items-center gap-3">
+                  <span className="grid size-10 place-items-center rounded-full bg-[linear-gradient(120deg,#7b3cff,#5a4bff_45%,#2f5bff)] font-semibold text-white">{review.name.charAt(0).toUpperCase()}</span>
+                  <div><b className="block text-xs">{review.name}</b>{review.role && <small className="text-[10px] text-mute">{review.role}</small>}</div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+            {testimonials.length > 1 && (
+              <div className="mt-5 flex gap-1.5">
+                {testimonials.map((t, i) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setReviewIndex(i)}
+                    aria-label={`Avis ${i + 1}`}
+                    className={`h-1.5 cursor-pointer rounded-full border-0 transition-all ${i === reviewIndex % testimonials.length ? 'w-5 bg-[#3a4bff]' : 'w-1.5 bg-violet/25'}`}
+                  />
+                ))}
+              </div>
+            )}
           </Reveal>
           <Reveal className="relative h-[270px] min-w-0" delay={200}>
             <span className="absolute inset-[14%_4%_0_4%] rounded-[50%_50%_40%_40%] bg-[linear-gradient(160deg,#8fc2ff,#7b3cff)] opacity-70" />
-            <img src={portrait} alt="" className="relative size-full rounded-[50%_50%_28px_28px] object-contain object-bottom [mask-image:linear-gradient(#000_78%,transparent)]" />
+            <img src={portrait} loading="lazy" decoding="async" alt="" className="relative size-full rounded-[50%_50%_28px_28px] object-contain object-bottom [mask-image:linear-gradient(#000_78%,transparent)]" />
             <span className={`${tw.script} absolute top-2 -right-3 -rotate-12 text-lg leading-[1.1] text-[#2f2bb8]`}>Des projets<br />d’exception !</span>
           </Reveal>
         </div>

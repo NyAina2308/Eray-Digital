@@ -1,11 +1,11 @@
 import { useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-const CONTACT_EMAIL = 'contact@eraydigital.tech'
+import { API_URL } from '../lib/api'
 import Reveal from '../components/Reveal'
 import { Shapes, decor, type Shape } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
-import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
-import roomPhoto from '../assets/photos/room-D2XCtDIa.png'
+import teamPhoto from '../assets/photos/team.webp'
+import roomPhoto from '../assets/photos/room.webp'
 
 const PROJECT_TYPES = [
   'Développement Web',
@@ -118,21 +118,26 @@ function Contact() {
     const form = new FormData(event.currentTarget)
     const phone = String(form.get('phone') ?? '').trim()
     const message = String(form.get('message') ?? '')
-    const name = String(form.get('name') ?? '')
-    const service = String(form.get('service') ?? '')
-    const body = [
-      `Nom : ${name}`,
-      `Email : ${form.get('email') ?? ''}`,
-      ...(phone ? [`Téléphone : ${phone}`] : []),
-      ...(service ? [`Service : ${service}`] : []),
-      '',
-      message,
-    ].join('\n')
+    const payload = {
+      name: form.get('name'),
+      email: form.get('email'),
+      service: form.get('service'),
+      delay: '',
+      // Le serveur ne stocke pas de champ téléphone : on l'ajoute en tête du message.
+      message: phone ? `Téléphone : ${phone}\n\n${message}` : message,
+    }
 
     try {
-      // Pas de backend : on ouvre le client mail du visiteur, pré-rempli.
-      const subject = `Demande de contact – ${name}`
-      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+      // Le message est enregistré et visible dans le back-office (Messages).
+      const res = await fetch(`${API_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || 'Une erreur est survenue, réessayez.')
+      }
       setSubmitted(true)
     } catch (err) {
       setError(
@@ -304,7 +309,7 @@ function Contact() {
             </Reveal>
             <Reveal className="relative hidden min-h-[420px] sm:block" delay={180}>
               <div className="absolute inset-0 overflow-hidden rounded-[45%_45%_40%_40%/30%_30%_25%_25%] shadow-[0_30px_60px_-24px_rgba(60,40,200,.55),0_0_0_6px_rgba(123,60,255,.12)]">
-                <img src={roomPhoto} alt="Nos bureaux" className="size-full object-cover" />
+                <img src={roomPhoto} loading="lazy" decoding="async" alt="Nos bureaux" className="size-full object-cover" />
                 <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(47,139,255,.15),rgba(106,60,255,.25))]" />
               </div>
               <Note className="-bottom-20 -left-10">Notre équipe<br />vous attend !</Note>

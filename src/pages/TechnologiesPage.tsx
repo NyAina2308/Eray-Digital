@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
 import { Shapes, Ribbon, decor } from '../components/Decor'
 import { tw, Arrow, Icon, ic } from '../components/ui'
-import ordiSticker from '../assets/stickers/ordi.png'
+import ordiSticker from '../assets/stickers/ordi.webp'
 
 const DEVICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons'
 const logo = (name: string, variant = 'original') => `${DEVICON}/${name}/${name}-${variant}.svg`

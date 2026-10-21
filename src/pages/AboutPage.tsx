@@ -4,8 +4,8 @@ import { Shapes, Ribbon, decor } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
 import GlassComposition from '../components/GlassComposition'
 
-import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
-import roomPhoto from '../assets/photos/room-D2XCtDIa.png'
+import teamPhoto from '../assets/photos/team.webp'
+import roomPhoto from '../assets/photos/room.webp'
 
 import HoverGifIcon from '../components/HoverGifIcon'
 
@@ -598,7 +598,7 @@ function AboutPage() {
             delay={100}
           >
             <img
-              src={roomPhoto}
+              src={roomPhoto} loading="lazy" decoding="async"
               alt="Nos talents en plein travail"
               className="size-full object-cover"
             />

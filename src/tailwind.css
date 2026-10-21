@@ -1,7 +1,7 @@
 @layer theme, base, components, utilities;
 /* Tailwind v4 — seule feuille de style du site.
    Pas de preflight : un reset minimal est défini dans @layer base ci-dessous. */
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
+/* Polices Google chargées depuis index.html (<link>), pas ici : un @import les ferait attendre ce fichier. */
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 

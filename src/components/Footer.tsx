@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Logo from './Logo'
+import { API_URL } from '../lib/api'
 
 const SOCIALS = [
   { label: 'LinkedIn', href: 'https://linkedin.com', d: 'M5 9h3.5v11H5zM6.8 3.5a2 2 0 110 4 2 2 0 010-4zM10.5 9H14v1.6c.5-.9 1.7-1.9 3.6-1.9 3.6 0 4.4 2.3 4.4 5.4V20h-3.5v-5.2c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V20h-3.5z' },
@@ -40,17 +41,24 @@ function ContactRow({ d, children }: { d: ReactNode; children: ReactNode }) {
   )
 }
 
-/** Inscription « Restez informé » : ouvre le client mail du visiteur, pré-rempli. */
+/** Inscription « Restez informé » : envoyée comme message de contact (visible dans l'admin). */
 function Newsletter() {
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle')
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const email = String(new FormData(e.currentTarget).get('email') ?? '')
-    const subject = encodeURIComponent('Inscription « Restez informé »')
-    const body = encodeURIComponent(`${email} souhaite recevoir les actualités d’Eray Digital.`)
-    window.location.href = `mailto:contact@eraydigital.tech?subject=${subject}&body=${body}`
-    setState('done')
+    setState('sending')
+    try {
+      const res = await fetch(`${API_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'Inscription « Restez informé »', email, service: '', delay: '', message: 'Souhaite recevoir les actualités d’Eray Digital.' }),
+      })
+      setState(res.ok ? 'done' : 'error')
+    } catch {
+      setState('error')
+    }
   }
 
   if (state === 'done') return <p className="text-[13px] text-[#b9a4ff]">Merci, vous êtes inscrit·e !</p>

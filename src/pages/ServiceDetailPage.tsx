@@ -5,7 +5,7 @@ import { Shapes, decor, type Shape } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
 import { serviceDetails, type ServiceDetail } from '../data/serviceDetails'
 import { projects } from '../data/projects'
-import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
+import teamPhoto from '../assets/photos/team.webp'
 
 const p = {
   shield: <><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z" /><path d="M9 12l2 2 4-4" /></>,
