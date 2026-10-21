@@ -1,0 +1,79 @@
+@layer theme, base, components, utilities;
+/* Tailwind v4 — seule feuille de style du site.
+   Pas de preflight : un reset minimal est défini dans @layer base ci-dessous. */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; color-scheme: light; }
+  body {
+    margin: 0;
+    font-family: var(--font-sora);
+    color: var(--color-ink);
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4 { margin: 0; line-height: 1.15; font-weight: 700; }
+  p, blockquote, figure { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  ul, ol { margin: 0; padding: 0; list-style: none; }
+  button, input, select, textarea { font: inherit; }
+  img, svg { display: block; max-width: 100%; }
+}
+
+@theme {
+  --font-sora: 'Sora', 'Inter', system-ui, sans-serif;
+  --font-script: 'Instrument Serif', Georgia, serif;
+
+  --color-ink: #0e0f3a;
+  --color-ink-2: #16136a;
+  --color-night: #0a0b2e;
+  --color-body: #4a4c6a;
+  --color-mute: #8a8ca8;
+  --color-royal: #2f5bff;
+  --color-azure: #2f8bff;
+  --color-violet: #6a3cff;
+  --color-lilac: #b07bff;
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-twinkle: twinkle 3.5s ease-in-out infinite;
+
+  @keyframes twinkle {
+    0%, 100% { opacity: .25; scale: .8; }
+    50% { opacity: .9; scale: 1.1; }
+  }
+
+  @keyframes float {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -10px; }
+  }
+}
+
+/* Verre irisé des maquettes : fond laiteux + fin liseré bleu → violet → blanc. */
+@utility glass {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(236, 233, 255, 0.78)) padding-box,
+    linear-gradient(135deg, rgba(120, 170, 255, 0.9), rgba(190, 150, 255, 0.8) 45%, rgba(255, 255, 255, 0.9) 70%, rgba(150, 120, 255, 0.7)) border-box;
+  box-shadow: 0 30px 60px -30px rgba(70, 50, 220, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+}
+
+/* Texte en dégradé violet → bleu */
+@utility text-grad {
+  background: linear-gradient(95deg, #7b3cff, #5a4bff 50%, #2f8bff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Bouton principal bleu des maquettes */
+@utility btn-blue {
+  color: #fff;
+  background: linear-gradient(100deg, #1d8bff, #3a4bff 60%, #6a3cff);
+  box-shadow: 0 14px 30px -12px rgba(47, 91, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
