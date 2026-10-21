@@ -1,5 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type MouseEvent } from 'react'
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { Laptop, Phone } from '../components/Devices'
+import LiveIcon from '../components/LiveIcon'
 import Reveal from '../components/Reveal'
 import { Shapes, Ribbon, decor } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
@@ -44,10 +47,33 @@ function ProjectsPage() {
   const widths = spans(shown.length)
 
   const stats = [
-    { icon: ic.box, value: String(projects.length), label: 'projets réalisés' },
-    { icon: ic.tag, value: String(categories.length - 1), label: "secteurs d'activité" },
-    { icon: ic.star, value: '100%', label: 'sur mesure' },
+    { kind: 'bob' as const, icon: ic.box, value: String(projects.length), label: 'projets réalisés' },
+    { kind: 'swing' as const, icon: ic.tag, value: String(categories.length - 1), label: "secteurs d'activité" },
+    { kind: 'spin' as const, icon: ic.star, value: '100%', label: 'sur mesure' },
   ]
+
+  // Parallaxe du hero : les appareils suivent légèrement la souris
+  const reduce = useReducedMotion()
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const sx = useSpring(mx, { stiffness: 80, damping: 18 })
+  const sy = useSpring(my, { stiffness: 80, damping: 18 })
+  const rotY = useTransform(sx, [-0.5, 0.5], [-16, -6])
+  const rotX = useTransform(sy, [-0.5, 0.5], [8, 2])
+  const nearX = useTransform(sx, [-0.5, 0.5], [-18, 18])
+  const nearY = useTransform(sy, [-0.5, 0.5], [-12, 12])
+  const farX = useTransform(sx, [-0.5, 0.5], [10, -10])
+  function onHeroMove(e: MouseEvent<HTMLDivElement>) {
+    if (reduce) return
+    const r = e.currentTarget.getBoundingClientRect()
+    mx.set((e.clientX - r.left) / r.width - 0.5)
+    my.set((e.clientY - r.top) / r.height - 0.5)
+  }
+  const pop = (delay: number) => ({
+    initial: { opacity: 0, y: 40, scale: 0.9 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
+  })
 
   return (
     <div className={tw.page}>
@@ -70,7 +96,7 @@ function ProjectsPage() {
             <div className="glass flex w-fit max-w-full flex-wrap items-center gap-y-3.5 rounded-[22px] px-[22px] py-4 md:flex-nowrap">
               {stats.map((s, i) => (
                 <div key={s.label} className={`flex items-center gap-3 pr-4 md:border-r md:border-violet/15 ${i ? 'md:pl-4' : ''}`}>
-                  <Icon>{s.icon}</Icon>
+                  <LiveIcon kind={s.kind} delay={i * 0.4}><Icon className="size-5">{s.icon}</Icon></LiveIcon>
                   <div><strong className="block text-lg font-bold text-ink">{s.value}</strong><small className="block text-[10.5px] whitespace-nowrap text-mute">{s.label}</small></div>
                 </div>
               ))}
@@ -78,26 +104,76 @@ function ProjectsPage() {
             </div>
           </Reveal>
 
-          <Reveal className="relative h-[280px] min-w-0 sm:h-[380px]" delay={120}>
-            <span className={`${tw.script} absolute -top-6 -right-1.5 z-[2] hidden -rotate-10 text-[22px] leading-[1.1] text-ink-2 sm:block`}>Chaque projet<br />est unique !</span>
-            <span className="absolute inset-[5%_0_0_5%] rounded-[45%_55%_50%_50%] bg-[radial-gradient(circle_at_50%_50%,rgba(123,60,255,.28),rgba(47,139,255,.12)_50%,transparent_72%)]" />
-            <div className="absolute top-[12%] left-[18%] w-[60%] animate-float [transform:perspective(1200px)_rotateY(-12deg)_rotateX(6deg)_rotate(-5deg)]">
-              <div className="relative aspect-[16/10.5] overflow-hidden rounded-[14px_14px_4px_4px] border-8 border-[#0d0e24] shadow-[0_30px_60px_-20px_rgba(40,30,160,.6)]">
-                <img src={projects[5]?.image ?? projects[0].image} alt="" className="size-full object-cover" />
-                <span className="absolute inset-0 bg-[linear-gradient(110deg,rgba(10,11,46,.9),rgba(30,20,120,.5)_55%,transparent)]" />
-                <span className="absolute top-[32%] left-[8%] z-[1] text-[clamp(13px,1.4vw,19px)] leading-[1.25] font-semibold text-white">Votre projet.<br />Notre expertise.</span>
-              </div>
-              <div className="mx-[-8%] h-[13px] rounded-b-[18px] bg-[linear-gradient(#e6e7f2,#b9bbd0)]" />
+          <Reveal className="relative h-[300px] min-w-0 sm:h-[400px]" delay={120}>
+            <div className="absolute inset-0" onMouseMove={onHeroMove} onMouseLeave={() => { mx.set(0); my.set(0) }}>
+              <span className={`${tw.script} absolute -top-6 -right-1.5 z-[3] hidden -rotate-10 text-[22px] leading-[1.1] text-ink-2 sm:block`}>Chaque projet<br />est unique !</span>
+              <motion.span
+                className="absolute inset-[5%_0_0_5%] rounded-[45%_55%_50%_50%] bg-[radial-gradient(circle_at_50%_50%,rgba(123,60,255,.3),rgba(47,139,255,.14)_50%,transparent_72%)]"
+                animate={reduce ? undefined : { scale: [1, 1.06, 1], borderRadius: ['45% 55% 50% 50%', '55% 45% 48% 52%', '45% 55% 50% 50%'] }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+              />
+
+              {/* MacBook central, incliné en 3D selon la souris */}
+              <motion.div className="group absolute top-[10%] left-[14%] w-[68%]" style={{ x: farX }} {...pop(0.15)}>
+                <motion.div style={{ rotateY: rotY, rotateX: rotX, transformPerspective: 1200 }}>
+                  <div className="animate-float">
+                    <Laptop src={projects[5]?.image ?? projects[0].image}>
+                      <span className="absolute inset-0 bg-[linear-gradient(110deg,rgba(10,11,46,.88),rgba(30,20,120,.45)_55%,transparent)]" />
+                      <motion.span
+                        className="absolute top-[32%] left-[8%] z-[1] text-[clamp(13px,1.4vw,19px)] leading-[1.25] font-semibold text-white"
+                        initial={{ opacity: 0, x: -14 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1, duration: 0.7 }}
+                      >
+                        Votre projet.<br />Notre expertise.
+                        <motion.span className="mt-1.5 block h-[3px] rounded-full bg-[linear-gradient(90deg,#2f8bff,#7b3cff)]" initial={{ width: 0 }} animate={{ width: '70%' }} transition={{ delay: 1.5, duration: 0.8 }} />
+                      </motion.span>
+                    </Laptop>
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* iPhones au premier plan (parallaxe inverse) */}
+              {[
+                { img: projects[1].image, cls: 'left-[3%] top-[34%] -rotate-8', d: 0.45, float: '' },
+                { img: projects[4]?.image ?? projects[0].image, cls: 'right-[2%] top-[28%] rotate-8', d: 0.6, float: '[animation-delay:-3s]' },
+              ].map((ph, i) => (
+                <motion.div key={i} className={`group absolute z-[2] w-[17%] ${ph.cls}`} style={{ x: nearX, y: nearY }} {...pop(ph.d)}>
+                  <div className={`animate-float ${ph.float}`}><Phone src={ph.img} /></div>
+                </motion.div>
+              ))}
+
+              {/* Petites icônes animées */}
+              <motion.span
+                className={`${tw.icoBlue} absolute top-[6%] right-[10%] z-[3] size-[50px] rounded-[14px]`}
+                animate={reduce ? undefined : { rotate: [0, 360], y: [0, -6, 0] }}
+                transition={{ rotate: { duration: 12, repeat: Infinity, ease: 'linear' }, y: { duration: 3, repeat: Infinity, ease: 'easeInOut' } }}
+                whileHover={{ scale: 1.2 }}
+              >
+                <Icon stroke="#fff">{ic.star}</Icon>
+              </motion.span>
+              {[
+                { icon: ic.code, cls: 'left-[10%] top-[4%]', d: 0 },
+                { icon: ic.rocket, cls: 'left-[42%] bottom-[2%]', d: 0.8 },
+                { icon: ic.brush, cls: 'right-[22%] bottom-[8%]', d: 1.6 },
+              ].map((b) => (
+                <motion.span
+                  key={b.cls}
+                  className={`glass absolute z-[3] grid size-10 place-items-center rounded-xl ${b.cls}`}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={reduce ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1, y: [0, -8, 0], rotate: [0, 8, -8, 0] }}
+                  transition={{
+                    opacity: { delay: 0.8 + b.d / 2 },
+                    scale: { delay: 0.8 + b.d / 2, type: 'spring' },
+                    y: { duration: 3.4, repeat: Infinity, delay: b.d, ease: 'easeInOut' },
+                    rotate: { duration: 5, repeat: Infinity, delay: b.d, ease: 'easeInOut' },
+                  }}
+                  whileHover={{ scale: 1.25 }}
+                >
+                  <Icon className="size-5">{b.icon}</Icon>
+                </motion.span>
+              ))}
             </div>
-            {[
-              { img: projects[1].image, cls: 'left-[6%] top-[36%] -rotate-8' },
-              { img: projects[4]?.image ?? projects[0].image, cls: 'right-[4%] top-[30%] rotate-8 [animation-delay:-3s]' },
-            ].map((ph, i) => (
-              <div key={i} className={`absolute aspect-[9/18] w-[16%] animate-float rounded-[20px] bg-[#0d0e24] p-[5px] shadow-[0_24px_40px_-14px_rgba(40,30,160,.6)] ${ph.cls}`}>
-                <img src={ph.img} alt="" className="size-full rounded-[15px] object-cover" />
-              </div>
-            ))}
-            <span className={`${tw.icoBlue} absolute top-[8%] right-[10%] size-[50px] rounded-[14px]`}><Icon stroke="#fff">{ic.star}</Icon></span>
           </Reveal>
         </div>
       </section>
@@ -119,7 +195,11 @@ function ProjectsPage() {
                     : 'border-violet/15 bg-white/85 px-[18px] text-ink shadow-[0_10px_24px_-18px_rgba(70,50,200,.5)] hover:border-violet/40 hover:text-violet'
                 }`}
               >
-                {c !== 'Tous' && <Icon className="size-3.5">{ic.tag}</Icon>}
+                {c !== 'Tous' && (
+                  <motion.span className="grid" animate={on && !reduce ? { rotate: [0, 18, -12, 0] } : { rotate: 0 }} transition={{ duration: 0.6 }}>
+                    <Icon className="size-3.5" stroke={on ? '#fff' : 'url(#ui-grad)'}>{ic.tag}</Icon>
+                  </motion.span>
+                )}
                 {c}
               </button>
             )
@@ -147,8 +227,11 @@ function ProjectsPage() {
                   </a>
                 </div>
                 <div className={`relative bg-[radial-gradient(circle_at_70%_60%,rgba(123,60,255,.3),transparent_65%)] px-5 pt-5 ${big ? 'lg:grid lg:h-full lg:place-items-center lg:py-[26px] lg:pr-[22px] lg:pl-0' : ''}`}>
-                  <div className="overflow-hidden rounded-xl border-[6px] border-[#0d0e24] shadow-[0_24px_40px_-18px_rgba(40,30,160,.6)] transition duration-700 [transform:perspective(900px)_rotateY(-10deg)_rotate(-2deg)] group-hover:[transform:perspective(900px)_rotateY(-4deg)]">
-                    <img src={p.image} alt={`Aperçu du projet ${p.name}`} className="block aspect-[16/10] w-full object-cover object-top" />
+                  <div className="relative w-full pb-2 transition duration-700 [transform:perspective(900px)_rotateY(-10deg)_rotate(-2deg)] group-hover:[transform:perspective(900px)_rotateY(-3deg)_translateY(-4px)]">
+                    <Laptop src={p.image} alt={`Aperçu du projet ${p.name}`} className="w-[86%]" />
+                    <div className="absolute right-0 bottom-0 w-[20%] transition duration-700 group-hover:-translate-y-2 group-hover:rotate-3">
+                      <Phone src={p.image} />
+                    </div>
                   </div>
                 </div>
               </div>

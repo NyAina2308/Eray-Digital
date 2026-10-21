@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { API_URL } from '../lib/api'
+const CONTACT_EMAIL = 'contact@eraydigital.tech'
 import Reveal from '../components/Reveal'
 import { Shapes, decor, type Shape } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
@@ -39,7 +39,7 @@ const FAQS = [
 ]
 
 const SOCIALS = [
-  { label: 'Facebook', href: 'https://facebook.com', d: 'M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z' },
+  { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=100069619770031', d: 'M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z' },
   { label: 'LinkedIn', href: 'https://linkedin.com', d: 'M5 9h3.5v11H5zM6.8 3.5a2 2 0 110 4 2 2 0 010-4zM10.5 9H14v1.6c.5-.9 1.7-1.9 3.6-1.9 3.6 0 4.4 2.3 4.4 5.4V20h-3.5v-5.2c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V20h-3.5z' },
   { label: 'Instagram', href: 'https://instagram.com', d: 'M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zm5 5a4 4 0 100 8 4 4 0 000-8zm0 2a2 2 0 110 4 2 2 0 010-4zm5.2-3.4a1.1 1.1 0 100 2.2 1.1 1.1 0 000-2.2z' },
 ]
@@ -118,27 +118,21 @@ function Contact() {
     const form = new FormData(event.currentTarget)
     const phone = String(form.get('phone') ?? '').trim()
     const message = String(form.get('message') ?? '')
-    const payload = {
-      name: form.get('name'),
-      email: form.get('email'),
-      service: form.get('service'),
-      delay: '',
-      // Le serveur ne stocke pas encore de champ téléphone : on l'ajoute en tête du message.
-      message: phone ? `Téléphone : ${phone}\n\n${message}` : message,
-    }
+    const name = String(form.get('name') ?? '')
+    const service = String(form.get('service') ?? '')
+    const body = [
+      `Nom : ${name}`,
+      `Email : ${form.get('email') ?? ''}`,
+      ...(phone ? [`Téléphone : ${phone}`] : []),
+      ...(service ? [`Service : ${service}`] : []),
+      '',
+      message,
+    ].join('\n')
 
     try {
-      const res = await fetch(`${API_URL}/api/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => null)
-        throw new Error(data?.error || 'Une erreur est survenue, réessayez.')
-      }
-
+      // Pas de backend : on ouvre le client mail du visiteur, pré-rempli.
+      const subject = `Demande de contact – ${name}`
+      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
       setSubmitted(true)
     } catch (err) {
       setError(
@@ -380,15 +374,53 @@ function Contact() {
             {/* Casque + bulle */}
             <Reveal className="relative hidden h-[220px] lg:block" delay={200}>
               <span className={`${tw.script} absolute -top-6 right-0 z-[2] rounded-[20px_20px_20px_4px] bg-white px-4 py-2 text-[17px] leading-[1.15] text-ink-2 shadow-[0_14px_30px_-12px_rgba(0,0,0,.4)]`}>Une question ?<br />On est là !</span>
-              <svg className="absolute bottom-0 left-0 w-[150px] animate-float drop-shadow-[0_20px_30px_rgba(90,60,255,.6)]" viewBox="0 0 120 110" fill="none" aria-hidden="true">
+              {/* Casque-micro réaliste : arceau rembourré, glissières métal, coussinets cuir, perche micro */}
+              <svg className="absolute bottom-0 left-0 w-[170px] animate-float drop-shadow-[0_24px_30px_rgba(40,20,140,.7)]" viewBox="0 0 160 150" fill="none" aria-hidden="true">
                 <defs>
-                  <linearGradient id="hp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#8fb4ff" /><stop offset="1" stopColor="#6a3cff" /></linearGradient>
+                  <linearGradient id="hs-band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#5b5f73" /><stop offset=".45" stopColor="#2a2c38" /><stop offset="1" stopColor="#15161e" /></linearGradient>
+                  <linearGradient id="hs-pad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3b3e4e" /><stop offset="1" stopColor="#1a1b24" /></linearGradient>
+                  <linearGradient id="hs-metal" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#8d91a3" /><stop offset=".5" stopColor="#eef0f6" /><stop offset="1" stopColor="#7c8093" /></linearGradient>
+                  <radialGradient id="hs-cup" cx=".35" cy=".3" r=".8"><stop offset="0" stopColor="#4a4e62" /><stop offset=".55" stopColor="#23252f" /><stop offset="1" stopColor="#0e0f15" /></radialGradient>
+                  <radialGradient id="hs-cushion" cx=".5" cy=".4" r=".7"><stop offset="0" stopColor="#2b2d38" /><stop offset=".8" stopColor="#15161d" /><stop offset="1" stopColor="#0a0a0f" /></radialGradient>
+                  <linearGradient id="hs-accent" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#6fa8ff" /><stop offset="1" stopColor="#8b5cff" /></linearGradient>
                 </defs>
-                <path d="M16 66 C 16 26, 104 26, 104 66" stroke="url(#hp)" strokeWidth="9" strokeLinecap="round" />
-                <rect x="6" y="58" width="26" height="42" rx="12" fill="url(#hp)" />
-                <rect x="88" y="58" width="26" height="42" rx="12" fill="url(#hp)" />
-                <rect x="12" y="66" width="12" height="26" rx="6" fill="#fff" opacity=".85" />
-                <rect x="96" y="66" width="12" height="26" rx="6" fill="#fff" opacity=".85" />
+
+                {/* Arceau principal */}
+                <path d="M26 82 C 22 30, 138 30, 134 82" stroke="url(#hs-band)" strokeWidth="9" strokeLinecap="round" />
+                <path d="M28 70 C 30 34, 130 34, 132 70" stroke="#fff" strokeOpacity=".18" strokeWidth="1.5" strokeLinecap="round" />
+                {/* Coussin de tête (rembourrage cousu) */}
+                <path d="M48 42 C 66 28, 94 28, 112 42" stroke="url(#hs-pad)" strokeWidth="11" strokeLinecap="round" />
+                <path d="M50 42 C 67 30, 93 30, 110 42" stroke="#000" strokeOpacity=".35" strokeWidth=".8" strokeDasharray="2 2" />
+
+                {/* Glissières métalliques */}
+                <rect x="21" y="72" width="7" height="18" rx="2" fill="url(#hs-metal)" />
+                <rect x="132" y="72" width="7" height="18" rx="2" fill="url(#hs-metal)" />
+                {[76, 80, 84].map((y) => <path key={y} d={`M22 ${y}h5M133 ${y}h5`} stroke="#6a6e80" strokeWidth=".6" />)}
+
+                {/* Oreillette gauche (vue 3/4) */}
+                <g>
+                  <ellipse cx="30" cy="110" rx="20" ry="26" fill="url(#hs-cushion)" />
+                  <ellipse cx="25" cy="110" rx="18" ry="24" fill="url(#hs-cup)" />
+                  <ellipse cx="25" cy="110" rx="11" ry="15" stroke="url(#hs-accent)" strokeWidth="2" />
+                  <ellipse cx="21" cy="101" rx="4" ry="6" fill="#fff" opacity=".12" />
+                  <circle cx="25" cy="110" r="2.2" fill="url(#hs-accent)" />
+                </g>
+                {/* Oreillette droite */}
+                <g>
+                  <ellipse cx="130" cy="110" rx="20" ry="26" fill="url(#hs-cushion)" />
+                  <ellipse cx="135" cy="110" rx="18" ry="24" fill="url(#hs-cup)" />
+                  <ellipse cx="135" cy="110" rx="11" ry="15" stroke="url(#hs-accent)" strokeWidth="2" />
+                  <ellipse cx="131" cy="101" rx="4" ry="6" fill="#fff" opacity=".12" />
+                  <circle cx="135" cy="110" r="2.2" fill="url(#hs-accent)" />
+                </g>
+
+                {/* Perche micro */}
+                <path d="M22 124 C 26 142, 52 146, 70 138" stroke="#1c1d26" strokeWidth="4" strokeLinecap="round" />
+                <path d="M23 125 C 27 140, 51 144, 69 137" stroke="#fff" strokeOpacity=".15" strokeWidth="1" strokeLinecap="round" />
+                <rect x="66" y="131" width="14" height="10" rx="5" fill="#15161d" transform="rotate(-18 73 136)" />
+                <rect x="68" y="133" width="9" height="5" rx="2.5" fill="url(#hs-accent)" opacity=".8" transform="rotate(-18 73 136)" />
+                {/* Voyant allumé */}
+                <circle cx="44" cy="120" r="1.6" fill="#5dffb0" className="animate-twinkle" />
               </svg>
             </Reveal>
           </div>

@@ -9,7 +9,6 @@ const LINKS = [
   { href: '/services', label: 'Services' },
   { href: '/projets', label: 'Réalisations' },
   { href: '/technologies', label: 'Technologies' },
-  { href: '/contact', label: 'Contact' },
 ]
 
 function Navbar() {
@@ -32,15 +31,18 @@ function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Sur le hero sombre de l'accueil : barre transparente et texte blanc
+  const dark = pathname === '/' && !scrolled && !open
+
   return (
     <header className={`pointer-events-none fixed inset-x-0 z-[100] px-4 font-sora transition-[top] duration-400 ${scrolled ? 'top-2.5' : 'top-4'}`}>
       <div
-        className={`pointer-events-auto mx-auto flex max-w-[1280px] items-center gap-6 rounded-[22px] border border-violet/10 py-2.5 pr-2.5 pl-4 backdrop-blur-[18px] backdrop-saturate-[1.4] transition duration-400 max-[1060px]:flex-wrap max-[1060px]:gap-3 ${
-          scrolled ? 'bg-white/88 shadow-[0_18px_50px_-20px_rgba(40,30,120,.35)]' : 'bg-white/72 shadow-[0_10px_40px_-20px_rgba(40,30,120,.25)]'
+        className={`pointer-events-auto mx-auto flex max-w-[1280px] items-center gap-6 rounded-[22px] border py-2.5 pr-2.5 pl-4 transition duration-400 max-[1060px]:flex-wrap max-[1060px]:gap-3 ${
+          dark ? 'border-transparent bg-transparent shadow-none' : scrolled ? 'border-violet/10 backdrop-blur-[18px] backdrop-saturate-[1.4] bg-white/88 shadow-[0_18px_50px_-20px_rgba(40,30,120,.35)]' : 'border-violet/10 backdrop-blur-[18px] backdrop-saturate-[1.4] bg-white/72 shadow-[0_10px_40px_-20px_rgba(40,30,120,.25)]'
         }`}
       >
         <Link to="/" className="shrink-0" onClick={() => setOpen(false)}>
-          <Logo />
+          <Logo variant={dark ? 'light' : 'dark'} />
         </Link>
 
         <nav
@@ -60,8 +62,8 @@ function Navbar() {
                   after:absolute after:bottom-0.5 after:left-1/2 after:h-0.5 after:-translate-x-1/2 after:rounded-sm after:bg-[linear-gradient(120deg,#7b3cff,#5a4bff_45%,#2f5bff)] after:transition-[width] after:duration-300 after:content-['']
                   max-[1060px]:after:bottom-1/2 max-[1060px]:after:left-1.5 max-[1060px]:after:translate-x-0 max-[1060px]:after:translate-y-1/2
                   ${active
-                    ? 'font-semibold text-violet after:w-[calc(100%-24px)] max-[1060px]:bg-violet/8 max-[1060px]:after:h-[18px] max-[1060px]:after:w-[3px]'
-                    : 'font-medium text-body after:w-0'}`}
+                    ? `font-semibold ${dark ? 'text-white hover:bg-white/10 hover:text-white' : 'text-violet'} after:w-[calc(100%-24px)] max-[1060px]:bg-violet/8 max-[1060px]:after:h-[18px] max-[1060px]:after:w-[3px]`
+                    : `font-medium ${dark ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-body'} after:w-0`}`}
               >
                 {link.label}
               </Link>
@@ -77,13 +79,13 @@ function Navbar() {
         </Link>
 
         <button
-          className="relative ml-auto hidden size-11 cursor-pointer rounded-[14px] border-0 bg-[#f6f5ff] max-[1060px]:block"
+          className={`relative ml-auto hidden size-11 cursor-pointer rounded-[14px] border-0 max-[1060px]:block ${dark ? 'bg-white/10' : 'bg-[#f6f5ff]'}`}
           aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
-          <span className={`absolute inset-x-[13px] top-[17px] h-0.5 rounded-sm bg-ink transition-transform duration-300 ${open ? 'translate-y-1 rotate-45' : ''}`} />
-          <span className={`absolute inset-x-[13px] top-[25px] h-0.5 rounded-sm bg-ink transition-transform duration-300 ${open ? '-translate-y-1 -rotate-45' : ''}`} />
+          <span className={`absolute inset-x-[13px] top-[17px] h-0.5 rounded-sm ${dark ? 'bg-white' : 'bg-ink'} transition-transform duration-300 ${open ? 'translate-y-1 rotate-45' : ''}`} />
+          <span className={`absolute inset-x-[13px] top-[25px] h-0.5 rounded-sm ${dark ? 'bg-white' : 'bg-ink'} transition-transform duration-300 ${open ? '-translate-y-1 -rotate-45' : ''}`} />
         </button>
       </div>
     </header>

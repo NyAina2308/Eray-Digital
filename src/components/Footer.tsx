@@ -1,11 +1,10 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Logo from './Logo'
-import { API_URL } from '../lib/api'
 
 const SOCIALS = [
   { label: 'LinkedIn', href: 'https://linkedin.com', d: 'M5 9h3.5v11H5zM6.8 3.5a2 2 0 110 4 2 2 0 010-4zM10.5 9H14v1.6c.5-.9 1.7-1.9 3.6-1.9 3.6 0 4.4 2.3 4.4 5.4V20h-3.5v-5.2c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V20h-3.5z' },
-  { label: 'Facebook', href: 'https://facebook.com', d: 'M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z' },
+  { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=100069619770031', d: 'M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z' },
   { label: 'Instagram', href: 'https://instagram.com', d: 'M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zm5 5a4 4 0 100 8 4 4 0 000-8zm0 2a2 2 0 110 4 2 2 0 010-4zm5.2-3.4a1.1 1.1 0 100 2.2 1.1 1.1 0 000-2.2z' },
   { label: 'GitHub', href: 'https://github.com', d: 'M12 2.5a9.5 9.5 0 00-3 18.5c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.2-3.3-1.2-.4-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.1-.2-4.4-1.1-4.4-4.7 0-1 .4-1.9 1-2.6-.1-.2-.4-1.2.1-2.5 0 0 .8-.3 2.6 1a9 9 0 014.8 0c1.8-1.3 2.6-1 2.6-1 .5 1.3.2 2.3.1 2.5.6.7 1 1.6 1 2.6 0 3.7-2.3 4.5-4.4 4.7.3.3.6.9.6 1.8v2.7c0 .3.2.6.7.5A9.5 9.5 0 0012 2.5z' },
 ]
@@ -41,24 +40,17 @@ function ContactRow({ d, children }: { d: ReactNode; children: ReactNode }) {
   )
 }
 
-/** Inscription « Restez informé » : envoyée comme message de contact (visible dans l'admin). */
+/** Inscription « Restez informé » : ouvre le client mail du visiteur, pré-rempli. */
 function Newsletter() {
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle')
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
+  function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const email = String(new FormData(e.currentTarget).get('email') ?? '')
-    setState('sending')
-    try {
-      const res = await fetch(`${API_URL}/api/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'Inscription « Restez informé »', email, service: '', delay: '', message: 'Souhaite recevoir les actualités d’Eray Digital.' }),
-      })
-      setState(res.ok ? 'done' : 'error')
-    } catch {
-      setState('error')
-    }
+    const subject = encodeURIComponent('Inscription « Restez informé »')
+    const body = encodeURIComponent(`${email} souhaite recevoir les actualités d’Eray Digital.`)
+    window.location.href = `mailto:contact@eraydigital.tech?subject=${subject}&body=${body}`
+    setState('done')
   }
 
   if (state === 'done') return <p className="text-[13px] text-[#b9a4ff]">Merci, vous êtes inscrit·e !</p>

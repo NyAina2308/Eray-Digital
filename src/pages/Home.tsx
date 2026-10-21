@@ -1,10 +1,14 @@
-import type { ReactNode } from 'react'
+import type { MouseEvent, ReactNode } from 'react'
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { Laptop, Phone } from '../components/Devices'
+import LiveIcon, { type LiveKind } from '../components/LiveIcon'
 import Reveal from '../components/Reveal'
 import { Shapes, type Shape } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
 import { projects } from '../data/projects'
 import portrait from '../assets/photos/woman-Dt2ftJah.png'
+import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
 
 /* ------------------------------------------------------------------ */
 /* Données                                                            */
@@ -13,25 +17,46 @@ import portrait from '../assets/photos/woman-Dt2ftJah.png'
 const DEVICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons'
 const logo = (name: string, variant = 'original') => `${DEVICON}/${name}/${name}-${variant}.svg`
 
-const stats = [
-  { icon: ic.users, value: '+20', label: 'développeurs' },
-  { icon: ic.cap, value: '100+', label: 'étudiants accompagnés' },
-  { icon: ic.box, value: 'Solutions', label: 'sur mesure' },
-  { icon: ic.globe, value: 'Madagascar', label: 'International', arrow: true },
+/** Icônes propres à l'accueil. */
+const hi = {
+  chip: <><rect x="6" y="6" width="12" height="12" rx="2" /><rect x="9.5" y="9.5" width="5" height="5" rx="1" /><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" /></>,
+  gear: <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></>,
+  monitor: <><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></>,
+  palette: <><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.7-.9 1.4-1.9-.3-.9.3-2.1 1.5-2.1H17a4 4 0 0 0 4-4c0-5.5-4-10-9-10z" /><circle cx="7.5" cy="11" r="1" /><circle cx="10" cy="7" r="1" /><circle cx="15" cy="7.5" r="1" /></>,
+  heart: <path d="M12 20s-7-4.4-9-9A5 5 0 0 1 12 6a5 5 0 0 1 9 5c-2 4.6-9 9-9 9z" />,
+  trend: <path d="M3 17l6-6 4 4 8-8M15 7h6v6" />,
+  shield: <path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3zM9 12l2 2 4-4" />,
+}
+
+const heroChips: { icon: ReactNode; label: ReactNode; cls: string; d: number }[] = [
+  { icon: ic.globe, label: <>Sites web<br />&amp; E-commerce</>, cls: 'left-[2%] top-[4%]', d: 0 },
+  { icon: ic.code, label: <>Logiciels<br />sur mesure</>, cls: 'left-[46%] top-0', d: 0.4 },
+  { icon: hi.chip, label: <>IoT &amp;<br />Systèmes embarqués</>, cls: 'right-0 top-[14%]', d: 0.8 },
+  { icon: ic.brush, label: <>Design<br />graphique</>, cls: '-left-[2%] top-[40%]', d: 1.2 },
+  { icon: hi.gear, label: 'Automatisation', cls: 'right-[-2%] top-[42%]', d: 1.6 },
+  { icon: ic.users, label: <>Community<br />Management</>, cls: 'right-[4%] bottom-[8%]', d: 2 },
 ]
 
-const expertises = [
-  { slug: 'developpement-web', icon: ic.globe, title: <>Développement<br />Web</>, text: 'Des sites modernes, rapides et performants.', shape: 'rounded-[90px_110px_70px_120px/80px_90px_70px_100px]' },
-  { slug: 'developpement-logiciel', icon: ic.code, title: <>Développement<br />logiciel</>, text: 'Des solutions sur mesure pour vos besoins spécifiques.', go: true, shape: 'rounded-[110px_80px_120px_70px/90px_80px_100px_70px]' },
-  { slug: 'design-graphique', icon: ic.brush, title: 'Design graphique', text: 'Une identité visuelle qui marque les esprits.', shape: 'rounded-[80px_120px_90px_110px/70px_100px_80px_90px]' },
-  { slug: 'solutions-digitales', icon: ic.cloud, title: 'Solutions digitales', text: 'Automatisation, intégration, transformation digitale.', go: true, shape: 'rounded-[120px_70px_110px_90px/100px_70px_90px_80px]' },
+const aboutPoints: { icon: ReactNode; label: ReactNode; kind: LiveKind }[] = [
+  { icon: ic.users, label: <>Une équipe<br />passionnée</>, kind: 'pulse' },
+  { icon: hi.shield, label: <>Des solutions<br />sur mesure</>, kind: 'bob' },
+  { icon: ic.atom, label: <>Une expertise<br />pluridisciplinaire</>, kind: 'spin' },
+  { icon: ic.target, label: <>Votre succès<br />est notre priorité</>, kind: 'swing' },
 ]
 
-const steps = [
-  { icon: ic.search, title: 'Comprendre', text: <>Écouter, analyser,<br />cerner vos besoins.</> },
-  { icon: ic.bars, title: 'Analyser', text: <>Étudier, identifier<br />les opportunités.</> },
-  { icon: ic.bulb, title: 'Créer', text: <>Concevoir, imaginer,<br />proposer.</> },
-  { icon: ic.loop, title: 'Améliorer', text: <>Optimiser, faire évoluer,<br />pour durer.</> },
+const services: { icon: ReactNode; title: ReactNode; text: string; to: string; kind: LiveKind }[] = [
+  { icon: hi.monitor, title: <>Développement<br />Web</>, text: 'Sites vitrines, e-commerce et plateformes web modernes.', to: '/services/developpement-web', kind: 'bob' },
+  { icon: ic.code, title: <>Logiciels<br />sur mesure</>, text: 'Des outils adaptés à vos processus et besoins.', to: '/services/developpement-logiciel', kind: 'pulse' },
+  { icon: hi.palette, title: 'Design graphique', text: 'Identité visuelle, supports de communication, visuels publicitaires.', to: '/services/design-graphique', kind: 'swing' },
+  { icon: hi.chip, title: <>IoT &amp; Systèmes<br />embarqués</>, text: 'Solutions connectées, objets intelligents, projets électroniques.', to: '/services', kind: 'pulse' },
+  { icon: hi.gear, title: 'Automatisation', text: 'Gagnez en efficacité et réduisez les tâches répétitives.', to: '/services/solutions-digitales', kind: 'spin' },
+  { icon: ic.users, title: <>Community<br />Management</>, text: 'Une présence en ligne stratégique et engageante.', to: '/services', kind: 'bob' },
+]
+
+const values: { icon: ReactNode; title: string; text: string; kind: LiveKind }[] = [
+  { icon: hi.heart, title: 'Passion', text: 'Nous nous impliquons réellement dans votre projet. Notre engagement ne s’arrête pas à la livraison : nous vous guidons, vous conseillons et vous accompagnons à chaque étape.', kind: 'pulse' },
+  { icon: ic.bulb, title: 'Innovation', text: 'Nous ne nous contentons pas de faire, nous cherchons toujours à progresser, à améliorer nos méthodes et à proposer des solutions plus simples, plus intelligentes et plus efficaces.', kind: 'swing' },
+  { icon: hi.trend, title: 'Performance', text: 'Nous créons de la valeur, pas seulement des projets. Notre objectif est que la technologie ait un impact concret sur votre activité : gain de temps, meilleure organisation, croissance.', kind: 'bob' },
 ]
 
 const tools = [
@@ -50,24 +75,9 @@ const promises = [
   { icon: ic.loop, label: 'Support continu' },
 ]
 
-const heroShapes: Shape[] = [
-  { kind: 'gem', pos: { left: '47%', top: '30%' }, size: 18, rotate: -20, tone: 'violet' },
-  { kind: 'orb', pos: { left: '50%', top: '12%' }, size: 12, tone: 'blue' },
-  { kind: 'shard', pos: { right: '1%', top: '44%' }, size: 44, rotate: 150, tone: 'blue' },
-  { kind: 'gem', pos: { right: '6%', top: '10%' }, size: 16, rotate: 16, tone: 'pink' },
-  { kind: 'spark', pos: { left: '58%', top: '6%' }, size: 12, tone: 'violet' },
-]
-const servicesShapes: Shape[] = [
-  { kind: 'shard', pos: { left: '35%', top: '14%' }, size: 26, rotate: -30, tone: 'violet' },
-  { kind: 'gem', pos: { left: '62%', top: '4%' }, size: 20, rotate: 10, tone: 'pink' },
-  { kind: 'shard', pos: { right: '2%', top: '40%' }, size: 40, rotate: 140, tone: 'violet' },
-  { kind: 'orb', pos: { right: '5%', top: '6%' }, size: 14, tone: 'blue' },
-  { kind: 'gem', pos: { left: '37%', bottom: '26%' }, size: 16, rotate: 30, tone: 'violet' },
-]
-const philoShapes: Shape[] = [
-  { kind: 'orb', pos: { right: '2%', top: '46%' }, size: 16, tone: 'blue' },
-  { kind: 'orb', pos: { right: '8%', bottom: '4%' }, size: 18, tone: 'violet' },
-  { kind: 'spark', pos: { left: '48%', top: '0' }, size: 12, tone: 'violet' },
+const aboutShapes: Shape[] = [
+  { kind: 'orb', pos: { left: '46%', top: '6%' }, size: 12, tone: 'blue' },
+  { kind: 'gem', pos: { right: '3%', top: '40%' }, size: 18, rotate: 20, tone: 'violet' },
 ]
 const trustShapes: Shape[] = [
   { kind: 'orb', pos: { left: '44%', top: '0' }, size: 14, tone: 'blue' },
@@ -78,103 +88,178 @@ const trustShapes: Shape[] = [
 /* Visuels                                                            */
 /* ------------------------------------------------------------------ */
 
-/** Rubans 3D brillants qui s'enroulent autour de l'ordinateur. */
-function Ribbons({ front = false }: { front?: boolean }) {
+/** Pastille de section claire (« À propos », « Nos services »). */
+const pill = 'mb-3 inline-block rounded-full border border-[#2f8bff]/30 bg-[#e8f1ff] px-3 py-1 text-[11px] font-semibold text-[#2f5bff]'
+
+/** Interface sombre affichée sur l'écran du MacBook du hero. */
+function DashScreen() {
   return (
-    <svg className={`pointer-events-none absolute inset-0 size-full ${front ? 'z-[3]' : 'z-0'}`} viewBox="0 0 640 480" fill="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="rb-a" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#3aa0ff" />
-          <stop offset=".45" stopColor="#4a4bff" />
-          <stop offset="1" stopColor="#9b5cff" />
-        </linearGradient>
-        <linearGradient id="rb-b" x1="1" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#d7c8ff" />
-          <stop offset=".5" stopColor="#8b5cff" />
-          <stop offset="1" stopColor="#3a4bff" />
-        </linearGradient>
-      </defs>
-      {front ? (
-        <>
-          {/* Ruban avant : passe devant le bas de l'ordinateur */}
-          <path d="M60 330 C 150 420, 300 440, 420 400 S 600 300, 610 250" stroke="url(#rb-a)" strokeWidth="34" strokeLinecap="round" opacity=".92" />
-          <path d="M60 330 C 150 420, 300 440, 420 400 S 600 300, 610 250" stroke="#fff" strokeWidth="5" strokeLinecap="round" opacity=".55" transform="translate(0 -12)" />
-          <path d="M470 440 C 520 420, 560 380, 575 340" stroke="url(#rb-b)" strokeWidth="18" strokeLinecap="round" opacity=".8" />
-        </>
+    <div className="absolute inset-0 flex bg-[linear-gradient(135deg,#0b0d33,#161565_60%,#221a7a)] text-white">
+      <div className="flex w-[13%] flex-col items-center gap-[7%] border-r border-white/10 pt-[4%]">
+        <img src="/eray-logo.png" alt="" className="w-[55%] rounded-[3px] bg-white p-px" />
+        {[0, 1, 2, 3, 4].map((i) => <i key={i} className={`h-[3px] w-[45%] rounded ${i === 1 ? 'bg-[#4a7bff]' : 'bg-white/20'}`} />)}
+      </div>
+      <div className="flex-1 p-[4%]">
+        <div className="mb-[4%] flex justify-end gap-[3%]">{[0, 1, 2, 3].map((i) => <i key={i} className="h-[3px] w-[8%] rounded bg-white/25" />)}</div>
+        <div className="grid grid-cols-[1.1fr_1fr] gap-[5%]">
+          <div>
+            <span className="block text-[clamp(4px,.45vw,7px)] tracking-[0.2em] text-[#8fb4ff] uppercase">Eray Digital</span>
+            <span className="mt-[3%] block text-[clamp(8px,1.15vw,16px)] leading-[1.15] font-semibold">Des solutions<br />qui font la différence</span>
+            <span className="mt-[6%] block h-[2px] w-[85%] rounded bg-white/20" />
+            <span className="mt-[3%] block h-[2px] w-[65%] rounded bg-white/15" />
+            <span className="mt-[8%] inline-block rounded-full bg-[linear-gradient(100deg,#2f8bff,#7b3cff)] px-[8%] py-[2%] text-[clamp(4px,.45vw,7px)] font-semibold">Découvrir</span>
+          </div>
+          <div className="grid grid-cols-2 gap-[6%]">
+            <div className="col-span-2 rounded-[4px] bg-white/8 p-[6%]">
+              <div className="flex h-[clamp(14px,2.2vw,30px)] items-end gap-[6%]">
+                {[40, 65, 50, 85, 60, 95, 70].map((h, i) => <i key={i} className="flex-1 rounded-t-[1px] bg-[linear-gradient(#5aa8ff,#6a3cff)]" style={{ height: `${h}%` }} />)}
+              </div>
+            </div>
+            <div className="grid aspect-square place-items-center rounded-[4px] bg-white/8">
+              <span className="size-[60%] rounded-full border-[3px] border-[#4a7bff] border-r-[#a07bff] border-b-white/15" />
+            </div>
+            <div className="grid content-center gap-[12%] rounded-[4px] bg-white/8 p-[10%]">
+              {[80, 55, 70].map((w, i) => <i key={i} className="h-[2px] rounded bg-white/30" style={{ width: `${w}%` }} />)}
+            </div>
+          </div>
+        </div>
+        <div className="mt-[5%] grid grid-cols-3 gap-[3%]">
+          {['#2f8bff', '#7b3cff', '#4adeb0'].map((c) => (
+            <div key={c} className="flex items-center gap-[8%] rounded-[4px] bg-white/8 p-[4%]">
+              <i className="size-[clamp(4px,.6vw,8px)] shrink-0 rounded-full" style={{ background: c }} />
+              <i className="h-[2px] flex-1 rounded bg-white/25" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Petite application mobile sombre affichée sur les iPhones. */
+function AppScreen({ variant = 0 }: { variant?: number }) {
+  return (
+    <div className="absolute inset-0 flex flex-col gap-[4%] bg-[linear-gradient(170deg,#121451,#1c1873_55%,#2a1d8a)] px-[9%] pt-[22%] text-white">
+      <span className="text-[clamp(4px,.5vw,7px)] font-semibold">{variant ? 'Tableau de bord' : 'Eray Digital'}</span>
+      <div className="rounded-[6px] bg-[linear-gradient(135deg,#2f8bff,#7b3cff)] p-[8%]">
+        <i className="block h-[2px] w-[60%] rounded bg-white/70" />
+        <i className="mt-[8%] block h-[2px] w-[40%] rounded bg-white/50" />
+      </div>
+      {variant ? (
+        <div className="flex h-[16%] items-end gap-[6%] rounded-[6px] bg-white/8 p-[7%]">
+          {[50, 80, 40, 90, 65].map((h, i) => <i key={i} className="flex-1 rounded-t-[1px] bg-[#5aa8ff]" style={{ height: `${h}%` }} />)}
+        </div>
       ) : (
-        <>
-          {/* Rubans arrière */}
-          <path d="M120 70 C 260 -10, 470 20, 560 120 S 600 300, 520 360" stroke="url(#rb-b)" strokeWidth="40" strokeLinecap="round" opacity=".55" />
-          <path d="M120 70 C 260 -10, 470 20, 560 120 S 600 300, 520 360" stroke="#fff" strokeWidth="4" strokeLinecap="round" opacity=".5" transform="translate(-6 -14)" />
-          <path d="M40 250 C 20 170, 80 110, 150 100" stroke="url(#rb-a)" strokeWidth="26" strokeLinecap="round" opacity=".75" />
-        </>
+        <div className="grid grid-cols-2 gap-[6%]">{[0, 1, 2, 3].map((i) => <i key={i} className="aspect-square rounded-[5px] bg-white/10" />)}</div>
       )}
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="flex items-center gap-[8%] rounded-[5px] bg-white/8 p-[6%]">
+          <i className="size-[clamp(4px,.6vw,8px)] shrink-0 rounded-full bg-[#7b9bff]" />
+          <i className="h-[2px] flex-1 rounded bg-white/25" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** Plante en pot (SVG). */
+function Plant({ className = '' }: { className?: string }) {
+  const leaves = [
+    { d: 'M60 120 C 30 100, 14 70, 20 40 C 44 58, 58 86, 60 120', c: '#2f7d4f' },
+    { d: 'M60 120 C 90 100, 108 72, 102 38 C 78 58, 62 86, 60 120', c: '#3a9460' },
+    { d: 'M60 120 C 46 90, 44 50, 60 12 C 76 50, 74 90, 60 120', c: '#2a6e46' },
+    { d: 'M60 122 C 30 116, 6 100, 0 78 C 28 80, 50 98, 60 122', c: '#3f9c66' },
+    { d: 'M60 122 C 90 116, 114 100, 120 78 C 92 80, 70 98, 60 122', c: '#2f7d4f' },
+  ]
+  return (
+    <svg className={className} viewBox="0 0 120 190" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="pl-pot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#1d2a5c" /><stop offset=".5" stopColor="#34478f" /><stop offset="1" stopColor="#18224d" /></linearGradient>
+      </defs>
+      {leaves.map((l, i) => (
+        <g key={i}>
+          <path d={l.d} fill={l.c} />
+        </g>
+      ))}
+      <path d="M32 124 H88 L82 182 C 81 186, 78 188, 74 188 H46 C 42 188, 39 186, 38 182 Z" fill="url(#pl-pot)" />
+      <rect x="28" y="118" width="64" height="10" rx="4" fill="#26357a" />
     </svg>
   )
 }
 
+/** Ordinateur + deux téléphones entourés des pastilles de services, avec parallaxe. */
 function HeroVisual() {
+  const reduce = useReducedMotion()
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const sx = useSpring(mx, { stiffness: 80, damping: 18 })
+  const sy = useSpring(my, { stiffness: 80, damping: 18 })
+  const rotY = useTransform(sx, [-0.5, 0.5], [-24, -12])
+  const rotX = useTransform(sy, [-0.5, 0.5], [14, 6])
+  const nearX = useTransform(sx, [-0.5, 0.5], [-18, 18])
+  const nearY = useTransform(sy, [-0.5, 0.5], [-12, 12])
+  const farX = useTransform(sx, [-0.5, 0.5], [10, -10])
+  function onMove(e: MouseEvent<HTMLDivElement>) {
+    if (reduce) return
+    const r = e.currentTarget.getBoundingClientRect()
+    mx.set((e.clientX - r.left) / r.width - 0.5)
+    my.set((e.clientY - r.top) / r.height - 0.5)
+  }
+  const pop = (delay: number) => ({
+    initial: { opacity: 0, y: 40, scale: 0.9 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
+  })
+
   return (
-    <div className="relative h-[340px] sm:h-[500px]">
-      <span className={`${tw.script} absolute -top-6 right-0 z-[4] hidden -rotate-10 text-[22px] leading-[1.1] text-[#2f2bb8] sm:block`}>Plus qu’un service :<br />une vision.</span>
-      <svg className="absolute top-12 right-16 z-[4] hidden w-9 sm:block" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-        <path d="M30 2 C 36 18, 24 30, 6 34" stroke="#2f2bb8" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M13 28 L5 34 L14 37" stroke="#2f2bb8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+    <div className="relative h-[340px] sm:h-[460px]" onMouseMove={onMove} onMouseLeave={() => { mx.set(0); my.set(0) }}>
+      {/* Lueur sous les appareils */}
+      <span className="absolute inset-[18%_12%_6%_14%] rounded-full bg-[radial-gradient(circle,rgba(90,110,255,.55),rgba(123,60,255,.25)_45%,transparent_70%)] blur-2xl" />
+      <span className="absolute bottom-[8%] left-[20%] h-[10%] w-[60%] rounded-[50%] bg-[radial-gradient(ellipse,rgba(120,150,255,.6),transparent_70%)] blur-md" />
 
-      {/* Halo + plateau de verre */}
-      <span className="absolute inset-[4%_2%_0_4%] rounded-full bg-[radial-gradient(circle,rgba(123,60,255,.28),rgba(47,139,255,.12)_45%,transparent_70%)] blur-xl" />
-      <span className="glass absolute inset-[12%_12%_6%_14%] rounded-full opacity-80" />
-      <Ribbons />
-
-      {/* Ordinateur */}
-      <div className="absolute top-[18%] left-[26%] z-[2] w-[48%] animate-float [transform:perspective(1300px)_rotateY(-18deg)_rotateX(10deg)_rotate(-6deg)]">
-        <div className="relative grid aspect-[16/10.5] place-content-center justify-items-center gap-3 overflow-hidden rounded-[14px_14px_4px_4px] border-8 border-[#0d0e24] bg-[radial-gradient(circle_at_50%_35%,#2a2690,#0a0b2e_75%)] shadow-[0_30px_60px_-20px_rgba(40,30,160,.6)]">
-          <span className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,.12),transparent_40%)]" />
-          <img src="/eray-logo.png" alt="Eray Digital" className="w-[22%] rounded-[10px] bg-white p-[3px]" />
-          <span className="-rotate-3 font-sora text-[clamp(10px,1.1vw,15px)] font-semibold text-white">Build. Innovate. Grow.</span>
-        </div>
-        <div className="mx-[-8%] h-3.5 rounded-b-[18px] bg-[linear-gradient(#e6e7f2,#b9bbd0)]" />
-      </div>
-
-      {/* Téléphone */}
-      <div className="absolute top-[48%] left-[58%] z-[2] aspect-[9/18] w-[13%] rotate-12 animate-float-slow rounded-[20px] border-[4px] border-[#0d0e24] bg-[linear-gradient(170deg,#1d1f5a,#2f5bff_60%,#8b5cff)] p-2 shadow-[0_24px_40px_-14px_rgba(40,30,160,.6)]">
-        <div className="grid h-full content-end gap-1 pb-2">
-          {[70, 50, 85].map((w, i) => <i key={i} className="h-1 rounded bg-white/60" style={{ width: `${w}%` }} />)}
-        </div>
-      </div>
-
-      {/* Carte d'interface gauche */}
-      <div className="glass absolute top-[30%] left-[4%] z-[2] w-[24%] -rotate-[10deg] animate-float rounded-2xl p-3 [animation-delay:-2s]">
-        <div className="mb-2 flex gap-1">{[0, 1, 2].map((i) => <i key={i} className="h-1 flex-1 rounded bg-violet/20" />)}</div>
-        <div className="grid grid-cols-2 gap-2">
-          <span className="aspect-square overflow-hidden rounded-lg"><img src={projects[0].image} alt="" className="size-full object-cover" /></span>
-          <span className="aspect-square overflow-hidden rounded-lg"><img src={projects[1].image} alt="" className="size-full object-cover" /></span>
-        </div>
-        <div className="mt-2 grid gap-1"><i className="h-1 w-4/5 rounded bg-violet/20" /><i className="h-1 w-3/5 rounded bg-violet/15" /></div>
-      </div>
-
-      {/* Carte d'interface haut droite */}
-      <div className="glass absolute top-[6%] right-[14%] z-[2] w-[17%] rotate-8 animate-float rounded-2xl p-2.5 [animation-delay:-4s]">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="mb-1.5 flex items-center gap-1.5 last:mb-0">
-            <span className="size-4 shrink-0 rounded-md bg-[linear-gradient(145deg,#3aa0ff,#6a3cff)]" />
-            <div className="grid flex-1 gap-0.5"><i className="h-1 rounded bg-violet/25" /><i className="h-1 w-2/3 rounded bg-violet/15" /></div>
+      {/* MacBook ouvert, clavier visible */}
+      <motion.div className="absolute top-[14%] left-[14%] z-[2] w-[58%]" style={{ x: farX }} {...pop(0.15)}>
+        <motion.div style={{ rotateY: rotY, rotateX: rotX, rotate: -8, transformPerspective: 1300 }}>
+          <div className="animate-float">
+            <Laptop keyboard>
+              <DashScreen />
+            </Laptop>
           </div>
-        ))}
-      </div>
+        </motion.div>
+      </motion.div>
 
-      {/* Tuile icône bleue */}
-      <span className={`${tw.icoBlue} absolute top-[18%] left-[20%] z-[3] size-[58px] -rotate-12 rounded-2xl`}><Icon stroke="#fff">{ic.loop}</Icon></span>
+      {/* iPhones devant l'ordinateur, à droite */}
+      {[
+        { cls: 'left-[70%] top-[26%] w-[12%] rotate-[8deg]', d: 0.45, float: '', v: 0 },
+        { cls: 'left-[60%] top-[44%] w-[13%] rotate-[4deg]', d: 0.6, float: '[animation-delay:-3s]', v: 1 },
+      ].map((ph, i) => (
+        <motion.div key={i} className={`absolute z-[3] ${ph.cls}`} style={{ x: nearX, y: nearY }} {...pop(ph.d)}>
+          <div className={`animate-float-slow ${ph.float}`}><Phone><AppScreen variant={ph.v} /></Phone></div>
+        </motion.div>
+      ))}
 
-      {/* Menu */}
-      <ul className="glass absolute top-[30%] right-0 z-[4] hidden -rotate-6 gap-3 rounded-2xl p-3.5 text-[11px] font-medium text-ink-2 sm:grid">
-        {([['Web', ic.globe], ['Software', ic.code], ['App Web', ic.box], ['Design', ic.brush]] as [string, ReactNode][]).map(([l, p]) => (
-          <li key={l} className="flex items-center gap-2.5"><span className="grid size-6 place-items-center rounded-full bg-white shadow-sm"><Icon className="size-3.5">{p}</Icon></span>{l}</li>
-        ))}
-      </ul>
-
-      <Ribbons front />
+      {/* Pastilles de services flottantes */}
+      {heroChips.map((c, i) => (
+        <motion.div
+          key={i}
+          className={`absolute z-[4] hidden items-center gap-2.5 rounded-xl border border-[#8fa8ff]/35 bg-[#141660]/55 px-3 py-2 text-[10.5px] leading-[1.25] font-medium text-white shadow-[0_0_24px_-6px_rgba(90,120,255,.7)] backdrop-blur-md sm:flex ${c.cls}`}
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={reduce ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1, y: [0, -7, 0] }}
+          transition={{
+            opacity: { delay: 0.9 + c.d / 3 },
+            scale: { delay: 0.9 + c.d / 3, type: 'spring', stiffness: 200, damping: 14 },
+            y: { duration: 4, repeat: Infinity, delay: c.d, ease: 'easeInOut' },
+          }}
+          whileHover={{ scale: 1.08 }}
+        >
+          <span className="grid size-7 place-items-center rounded-lg border border-white/20 bg-white/5">
+            <LiveIcon kind={(['pulse', 'bob', 'swing', 'spin'] as LiveKind[])[i % 4]} boxed={false} delay={c.d}>
+              <Icon className="size-4" stroke="#cfd8ff">{c.icon}</Icon>
+            </LiveIcon>
+          </span>
+          <span>{c.label}</span>
+        </motion.div>
+      ))}
     </div>
   )
 }
@@ -184,146 +269,189 @@ function HeroVisual() {
 /* ------------------------------------------------------------------ */
 
 const goBtn = 'grid size-8 place-items-center rounded-full bg-[linear-gradient(135deg,#2f8bff,#5a3cff)] text-white shadow-[0_8px_18px_-6px_rgba(60,60,255,.6)]'
+const darkBg = 'bg-[radial-gradient(600px_380px_at_8%_20%,rgba(60,90,255,.35),transparent_70%),radial-gradient(700px_420px_at_92%_70%,rgba(123,60,255,.45),transparent_70%),linear-gradient(120deg,#070a2e,#14136b_55%,#1d1580)]'
 
 function Home() {
+  const reduce = useReducedMotion()
+
   return (
     <div className={tw.page}>
       <GradDefs />
 
-      {/* Fond : vagues lavande et fines lignes courbes comme sur la maquette */}
-      <svg className="pointer-events-none absolute inset-x-0 top-0 h-[3200px] w-full" viewBox="0 0 1440 3200" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="hm-w" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#d9d0ff" stopOpacity=".7" />
-            <stop offset=".5" stopColor="#e7e3ff" stopOpacity=".35" />
-            <stop offset="1" stopColor="#cfe0ff" stopOpacity=".6" />
-          </linearGradient>
-        </defs>
-        <path d="M0 40 C 300 0, 520 160, 820 90 S 1300 -20, 1440 60 L1440 0 L0 0 Z" fill="url(#hm-w)" />
-        <path d="M0 620 C 260 520, 520 760, 820 660 S 1260 540, 1440 640 L1440 760 C 1200 680, 980 820, 720 780 S 220 660, 0 740 Z" fill="url(#hm-w)" />
-        <path d="M0 1320 C 300 1220, 600 1420, 900 1330 S 1300 1230, 1440 1300 L1440 1420 C 1240 1360, 1000 1500, 760 1460 S 260 1380, 0 1460 Z" fill="url(#hm-w)" />
-        <path d="M0 1880 C 320 1800, 640 1980, 960 1900 S 1320 1820, 1440 1880 L1440 1990 C 1200 1930, 980 2060, 700 2020 S 240 1940, 0 2010 Z" fill="url(#hm-w)" />
-        <path d="M-20 700 C 120 760, 160 820, 130 900" stroke="#6a3cff" strokeOpacity=".35" strokeWidth="1.2" fill="none" />
-        <path d="M1440 900 C 1340 980, 1300 1080, 1360 1180" stroke="#6a3cff" strokeOpacity=".3" strokeWidth="1.2" fill="none" />
-        <path d="M1200 0 C 1300 120, 1420 160, 1440 260" stroke="#6a3cff" strokeOpacity=".25" strokeWidth="1.2" fill="none" />
-      </svg>
-
       {/* ============================== HERO ============================== */}
-      <section className="relative isolate pt-[110px] pb-4">
-        <Shapes items={heroShapes} />
-        <div className={`${tw.wrap} grid items-center gap-5 lg:grid-cols-[0.85fr_1.15fr]`}>
+      <section className={`relative isolate overflow-hidden pt-[110px] pb-24 text-white ${darkBg}`}>
+        {/* Voiles violets ondulés */}
+        <svg className="pointer-events-none absolute inset-0 -z-[1] size-full" viewBox="0 0 1440 700" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="hh-veil" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#6a5cff" stopOpacity=".35" />
+              <stop offset="1" stopColor="#2f8bff" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <path d="M-40 120 C 120 260, 60 480, 260 700 L -40 700 Z" fill="url(#hh-veil)" />
+          <path d="M1480 -20 C 1260 120, 1420 360, 1220 520 S 1300 700, 1480 720 Z" fill="url(#hh-veil)" />
+          <path d="M0 560 C 300 640, 520 520, 760 600" stroke="#8fa8ff" strokeOpacity=".25" strokeWidth="1.2" fill="none" />
+        </svg>
+        {/* Bas en vague blanche */}
+        <svg className="absolute inset-x-0 -bottom-px h-16 w-full" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 64 V40 C 360 0, 760 60, 1080 30 S 1380 10, 1440 20 V64 Z" fill="#fbfbff" />
+        </svg>
+
+        <div className={`${tw.wrap} grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]`}>
           <Reveal className="min-w-0">
-            <span className={`${tw.chipSm} mb-5`}>Eray Digital <i className="mx-2 not-italic opacity-60">—</i> Digital solutions</span>
-            <h1 className="mb-6 font-sora text-[clamp(40px,4.6vw,64px)] leading-[1.02] font-bold tracking-[-0.045em] text-ink">
-              Des idées<br /><span className="text-grad">qui prennent vie</span><br />en ligne.
+            <p className="mb-2 font-sora text-[clamp(16px,1.5vw,20px)] font-medium text-[#5aa8ff]">Bienvenue chez</p>
+            <h1 className="mb-4 font-sora text-[clamp(42px,5vw,68px)] leading-[1] font-bold tracking-[-0.04em]">
+              Eray <span className="bg-[linear-gradient(100deg,#2f9bff,#4a7bff)] bg-clip-text text-transparent">Digital</span>
             </h1>
-            <p className="mb-8 text-[15px] leading-[1.6] text-body">Sites web, logiciels sur mesure, applications web,<br className="hidden sm:block" /> solutions digitales et design graphique.</p>
-            <div className="mb-10 flex flex-wrap gap-3">
-              <Link to="/contact" className={`${tw.btn} px-7 py-3.5 whitespace-nowrap`}>Démarrer un projet <Arrow /></Link>
-              <Link to="/projets" className={`${tw.btnGhost} px-6 py-3.5 whitespace-nowrap`}><Icon className="size-4" stroke="#3a4bff">{ic.eye}</Icon> Découvrir nos réalisations</Link>
+            <motion.span className="mb-6 block h-1 rounded-full bg-[linear-gradient(90deg,#2f8bff,#7b3cff)]" initial={{ width: 0 }} animate={{ width: 44 }} transition={{ delay: 0.6, duration: 0.6 }} />
+            <p className="mb-3 text-[clamp(16px,1.4vw,19px)] leading-[1.4] font-semibold">Nous transformons vos idées en solutions<br className="hidden sm:block" /> numériques concrètes.</p>
+            <p className="mb-8 max-w-[520px] text-[13.5px] leading-[1.7] text-white/75">
+              Spécialisés dans le développement de sites web, logiciels sur mesure, design graphique, systèmes embarqués &amp; IoT, automatisation et community management.
+            </p>
+            <div className="mb-7 flex flex-wrap gap-3">
+              <Link to="/contact" className={`${tw.btn} px-7 py-3.5 whitespace-nowrap`}>Parlons de votre projet <Arrow /></Link>
+              <Link to="/services" className="group inline-flex items-center gap-2.5 rounded-full border border-white/40 px-7 py-3.5 font-sora text-[13px] font-semibold whitespace-nowrap text-white transition hover:-translate-y-0.5 hover:bg-white/10">Découvrir nos services</Link>
             </div>
-            <a href="#services-home" className="inline-flex items-center gap-3 text-xs text-body"><Icon className="size-5 animate-float" stroke="#3a4bff">{ic.mouse}</Icon> Scroll pour découvrir</a>
+            <p className="text-xs text-white/70">Votre besoin. Notre expertise. Une solution pensée pour vous.</p>
           </Reveal>
           <Reveal className="min-w-0" delay={120}><HeroVisual /></Reveal>
         </div>
-
-        {/* Bandeau de chiffres flottant, traversé d'une fine ligne */}
-        <div className={`${tw.wrap} mt-6`}>
-          <Reveal className="relative">
-            <svg className="pointer-events-none absolute -left-16 top-1/2 hidden h-24 w-[calc(100%+8rem)] -translate-y-1/2 lg:block" viewBox="0 0 1400 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
-              <path d="M0 80 C 60 20, 100 60, 140 40 M 1280 50 C 1320 30, 1360 40, 1400 20" stroke="#5a4bff" strokeOpacity=".5" strokeWidth="1.3" />
-              <path d="M132 34 L141 40 L133 48" stroke="#5a4bff" strokeOpacity=".6" strokeWidth="1.3" strokeLinecap="round" />
-            </svg>
-            <span className="absolute top-1/2 -right-6 hidden size-9 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_30%_30%,#fff_0_8%,#8fc2ff_30%,#2f5bff_80%)] shadow-[0_10px_22px_-6px_rgba(60,40,220,.5)] lg:block" />
-            <div className="grid grid-cols-1 gap-y-5 rounded-[26px] bg-white/55 px-2.5 py-5 backdrop-blur-sm sm:grid-cols-2 lg:grid-cols-4 lg:bg-transparent lg:backdrop-blur-none">
-              {stats.map((s, i) => (
-                <div key={s.label} className={`flex items-center justify-start gap-4 px-4 sm:justify-center ${i ? 'lg:border-l' : ''} ${i % 2 ? 'sm:border-l' : ''} border-violet/20`}>
-                  <Icon className="size-[34px]">{s.icon}</Icon>
-                  <div>
-                    <strong className="flex items-center gap-1.5 text-[19px] font-semibold text-[#2f3bb8]">{s.value} {s.arrow && <Arrow className="size-3.5" />}</strong>
-                    <small className="text-[11px] text-body">{s.label}</small>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
       </section>
 
-      {/* ============================ EXPERTISES ========================== */}
-      <section id="services-home" className="relative isolate pt-16 pb-4">
-        <Shapes items={servicesShapes} />
-        <div className={`${tw.wrap} grid items-center gap-[50px] lg:grid-cols-[0.72fr_1.28fr]`}>
-          <Reveal className="min-w-0">
-            <span className={`${tw.chipSm} mb-3`}>Nos services</span>
-            <h2 className="mb-[22px] font-sora text-[clamp(28px,2.6vw,36px)] leading-[1.12] font-semibold tracking-[-0.03em] text-ink">
-              Des expertises<br />au service de vos<br /><span className="text-grad text-[1.4em] font-bold">ambitions.</span>
+      {/* ============================ À PROPOS ============================ */}
+      <section className="relative isolate pt-14 pb-10">
+        <Shapes items={aboutShapes} />
+        <Plant className="absolute top-[22%] left-[-10px] hidden w-[70px] -rotate-6 xl:block" />
+        <Plant className="absolute top-[8%] right-[-6px] hidden w-[110px] xl:block" />
+        <span className="absolute top-[48%] right-[7%] hidden h-24 w-10 rotate-[20deg] rounded-[50%_50%_50%_50%/70%_70%_30%_30%] bg-[linear-gradient(180deg,#b07bff,#6a3cff)] opacity-70 xl:block" aria-hidden="true" />
+        <div className={`${tw.wrap} grid items-center gap-10 lg:grid-cols-[0.95fr_1.15fr_0.7fr]`}>
+          {/* Photo d'équipe dans une forme organique */}
+          <Reveal className="relative min-w-0 px-4 pt-4 pb-10">
+            <motion.span
+              className="absolute inset-[0_6%_8%_0] -z-[1] bg-[linear-gradient(150deg,#8fc2ff,#5a6bff_55%,#8b5cff)] opacity-80"
+              style={{ borderRadius: '42% 58% 46% 54% / 50% 40% 60% 50%' }}
+              animate={reduce ? undefined : { borderRadius: ['42% 58% 46% 54% / 50% 40% 60% 50%', '55% 45% 52% 48% / 42% 56% 44% 58%', '42% 58% 46% 54% / 50% 40% 60% 50%'] }}
+              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <div className="overflow-hidden rounded-[30px] border-4 border-white shadow-[0_30px_60px_-24px_rgba(40,30,160,.55)]">
+              <img src={teamPhoto} alt="L'équipe Eray Digital au travail" loading="lazy" className="aspect-[4/3] w-full object-cover" />
+            </div>
+            <Link to="/a-propos" className="group absolute bottom-2 left-10 flex items-center gap-6 rounded-2xl bg-white px-5 py-3.5 shadow-[0_20px_40px_-16px_rgba(40,30,160,.5)] transition hover:-translate-y-1">
+              <span className="font-sora text-[14px] leading-[1.25] font-semibold text-[#1a1a6e]">Des idées<br />aux solutions</span>
+              <span className={goBtn}><Arrow className="size-3.5 transition group-hover:translate-x-0.5" /></span>
+            </Link>
+          </Reveal>
+
+          <Reveal className="min-w-0" delay={100}>
+            <span className={pill}>À propos</span>
+            <h2 className="mb-5 font-sora text-[clamp(24px,2.3vw,32px)] leading-[1.15] font-bold tracking-[-0.02em] text-[#141660]">
+              Plus qu’un prestataire,<br />un partenaire pour vos projets numériques.
             </h2>
-            <p className={tw.lead}>Nous combinons technologie, créativité et analyse pour créer des solutions réellement adaptées à votre activité.</p>
-            <Link to="/services" className={`${tw.link} border-b border-[#2f3bb8]/30 text-[13px]`}>En savoir plus <Arrow className="size-3.5 transition group-hover:translate-x-1" /></Link>
+            <p className="mb-3 text-[13px] leading-[1.7] text-body">
+              Eray Digital accompagne les entreprises, organisations et entrepreneurs dans leur transformation numérique grâce à des solutions adaptées à leurs réalités et à leurs objectifs.
+            </p>
+            <p className="mb-5 text-[13px] leading-[1.7] text-body">
+              De la conception d’un site web au développement d’un logiciel, en passant par le design, l’automatisation ou les systèmes connectés, nous réunissons plusieurs compétences technologiques pour répondre à vos besoins.
+            </p>
+            <div className="glass flex gap-3 rounded-2xl px-5 py-4">
+              <span className="font-script text-[40px] leading-[.8] text-[#3a4bff]">“</span>
+              <div>
+                <b className="mb-1 block text-[13px] text-[#141660]">Comprendre avant de créer.</b>
+                <p className="text-[12px] leading-[1.6] text-mute">Notre objectif n’est pas seulement de livrer un projet, mais de créer quelque chose qui vous soit réellement utile.</p>
+              </div>
+            </div>
           </Reveal>
-          <div className="relative grid min-w-0 gap-x-6 gap-y-6 sm:grid-cols-2">
-            {/* Nappe lavande derrière les bulles */}
-            <span className="absolute inset-[-6%_-4%] -z-[1] rounded-[50%] bg-[radial-gradient(ellipse,rgba(170,150,255,.35),transparent_70%)] blur-xl" aria-hidden="true" />
-            {expertises.map((e, i) => (
-              <Reveal key={e.slug} delay={i * 90} className={i % 2 ? 'sm:translate-y-3' : ''}>
-                <Link to={`/services/${e.slug}`} className={`glass group relative flex min-h-[150px] items-start gap-5 px-8 py-8 transition duration-500 hover:-translate-y-1.5 ${e.shape}`}>
-                  <span className="pointer-events-none absolute inset-[6px] rounded-[inherit] bg-[linear-gradient(160deg,rgba(255,255,255,.7),transparent_40%)]" aria-hidden="true" />
-                  <span className={`${tw.icoBlue} relative size-[60px] shadow-[0_14px_30px_-8px_rgba(60,60,255,.7),inset_0_2px_0_rgba(255,255,255,.45)]`}><Icon className="size-7" stroke="#fff">{e.icon}</Icon></span>
-                  <div className="relative">
-                    <h3 className="mt-2 mb-2.5 font-sora text-[15.5px] leading-[1.3] font-semibold text-ink">{e.title}</h3>
-                    <p className="pr-6 text-xs leading-[1.6] text-mute">{e.text}</p>
-                  </div>
-                  {e.go && <span className={`${goBtn} absolute right-7 bottom-6`}><Arrow className="size-3.5 transition group-hover:translate-x-0.5" /></span>}
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-        <div
-          className="relative z-0 -mt-4 overflow-hidden pl-[26%] font-sora text-[clamp(40px,5.4vw,78px)] font-extrabold tracking-[-0.02em] whitespace-nowrap text-transparent [-webkit-text-stroke:1.5px_rgba(123,100,255,.18)] bg-[linear-gradient(90deg,rgba(123,100,255,.16),rgba(123,100,255,.05))] bg-clip-text"
-          aria-hidden="true"
-        >
-          THINK. CREATE. IMPROVE.
+
+          <Reveal className="glass min-w-0 rounded-[24px] px-6 py-6" delay={200}>
+            <ul className="grid gap-5">
+              {aboutPoints.map((a, i) => (
+                <li key={i} className="flex items-center gap-4 text-[12.5px] leading-[1.35] font-medium text-[#141660]">
+                  <LiveIcon kind={a.kind} delay={i * 0.5} size="size-10"><Icon className="size-5">{a.icon}</Icon></LiveIcon>
+                  <span>{a.label}</span>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
         </div>
       </section>
 
-      {/* ============================ PHILOSOPHIE ========================= */}
-      <section id="approche" className="relative isolate pb-16">
-        <Shapes items={philoShapes} />
-        <div className={`${tw.wrap} grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr]`}>
-          <Reveal className="relative min-w-0">
-            {/* Anneau de verre autour du bloc sombre */}
-            <span className="absolute -inset-3 hidden rounded-[38%_62%_58%_42%/48%_42%_58%_52%] bg-[linear-gradient(140deg,rgba(143,194,255,.7),rgba(176,123,255,.5),rgba(255,255,255,.4))] blur-[1px] lg:block" aria-hidden="true" />
-            <div className="relative rounded-[36px] bg-[radial-gradient(circle_at_30%_20%,#2f2a9e,#0a0b2e_70%)] px-7 py-9 text-white shadow-[0_40px_80px_-30px_rgba(40,30,200,.7)] lg:-ml-[calc(max(24px,(100vw-1240px)/2+24px))] lg:rounded-[0_62%_58%_0/0_52%_48%_0] lg:py-14 lg:pr-16 lg:pl-[calc(max(24px,(100vw-1240px)/2+48px))]">
-              <span className={`${tw.chipDark} mb-[18px]`}>Notre philosophie</span>
-              <p className="mb-1.5 text-[19px] leading-[1.25] font-semibold">Nous ne faisons pas<br />simplement ce qui est demandé.</p>
-              <p className="text-[26px] leading-[1.2] font-bold tracking-[-0.02em]">
-                Nous <span className="bg-[linear-gradient(95deg,#6fa8ff,#9b7bff)] bg-clip-text text-transparent">cherchons ce qui peut<br />être amélioré.</span>
-              </p>
-            </div>
+      {/* ============================ SERVICES ============================ */}
+      <section className="relative isolate pt-10 pb-16">
+        <span className="absolute inset-x-0 top-0 -z-[1] h-full bg-[linear-gradient(180deg,transparent,rgba(236,234,255,.6)_40%,transparent)]" aria-hidden="true" />
+        <div className={`${tw.wrap} mb-8 grid items-end gap-6 lg:grid-cols-[1fr_auto]`}>
+          <Reveal className="min-w-0">
+            <span className={pill}>Nos services</span>
+            <h2 className="font-sora text-[clamp(24px,2.3vw,32px)] leading-[1.15] font-bold tracking-[-0.02em] text-[#141660]">
+              Des solutions numériques<br />pour faire avancer votre activité
+            </h2>
           </Reveal>
-          <div className="relative grid min-w-0 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <svg className="absolute inset-x-0 top-4 hidden h-24 w-full lg:block" viewBox="0 0 600 90" preserveAspectRatio="none" aria-hidden="true">
-              <path d="M-20 60 C 60 10, 120 90, 200 50 S 340 10, 410 55 S 540 80, 620 20" fill="none" stroke="url(#ui-grad)" strokeWidth="1.6" />
-              {[[70, 42], [190, 54], [300, 32], [420, 58], [540, 50]].map(([x, y], i) => (
-                <circle key={i} cx={x} cy={y} r="3.5" fill="#5a4bff" />
-              ))}
-            </svg>
-            <span className="absolute top-2 -right-2 hidden size-5 rounded-full bg-[radial-gradient(circle_at_30%_30%,#fff_0_10%,#8fc2ff_35%,#2f5bff)] lg:block" aria-hidden="true" />
-            {steps.map((s, i) => (
-              <Reveal key={s.title} className={`relative z-[1] text-center ${i % 2 === 0 ? 'lg:mt-10' : ''}`} delay={i * 100}>
-                <span className="glass mx-auto mb-3.5 grid size-[70px] place-items-center rounded-full"><Icon className="size-7">{s.icon}</Icon></span>
-                <h3 className="mb-2 font-sora text-[14.5px] font-semibold text-ink">{s.title}</h3>
-                <p className="text-[11.5px] leading-[1.55] text-mute">{s.text}</p>
+          {/* Bureau : ordinateur ouvert, tasse et plante */}
+          <Reveal className="relative hidden h-[230px] w-[440px] lg:block" delay={120}>
+            <span className="absolute inset-x-[-10%] bottom-0 h-[55%] -skew-x-[18deg] rounded-[24px] bg-[linear-gradient(160deg,#ffffff,#e4e2ff_60%,#c9c3ff)] shadow-[0_30px_50px_-30px_rgba(40,30,160,.5)]" />
+            <span className="absolute right-[-12%] bottom-0 h-[30%] w-[70%] rounded-[50%] bg-[radial-gradient(ellipse,rgba(123,60,255,.35),transparent_70%)]" />
+            <div className="absolute top-[2%] left-[18%] w-[58%] [transform:perspective(1000px)_rotateY(-22deg)_rotate(-4deg)]">
+              <Laptop keyboard><DashScreen /></Laptop>
+            </div>
+            {/* Tasse */}
+            <span className="absolute bottom-[16%] left-[4%] h-[18%] w-[9%] rounded-b-[10px] bg-[linear-gradient(90deg,#e9e9f2,#ffffff_45%,#cfd0dc)] shadow-[0_10px_14px_-8px_rgba(0,0,0,.35)]">
+              <span className="absolute top-[22%] -right-[38%] h-[45%] w-[42%] rounded-r-full border-[3px] border-l-0 border-[#d9d9e5]" />
+              <span className="absolute inset-x-0 top-0 h-[16%] rounded-[50%] bg-[#6b4a32]" />
+            </span>
+            <Plant className="absolute right-[-4%] bottom-[10%] w-[18%]" />
+          </Reveal>
+        </div>
+
+        <div className={`${tw.wrap} grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6`}>
+          {services.map((s, i) => (
+            <Reveal key={s.to + i} delay={i * 70} className="min-w-0">
+              <Link to={s.to} className="group flex h-full flex-col rounded-2xl border border-violet/10 bg-white px-5 py-6 shadow-[0_18px_40px_-26px_rgba(40,30,160,.45)] transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_26px_50px_-24px_rgba(60,40,220,.55)]">
+                <span className="mb-4 transition duration-500 group-hover:scale-110">
+                  <LiveIcon kind={s.kind} boxed={false} delay={i * 0.4}><Icon className="size-8">{s.icon}</Icon></LiveIcon>
+                </span>
+                <h3 className="mb-2 font-sora text-[14px] leading-[1.25] font-semibold text-[#141660]">{s.title}</h3>
+                <p className="text-[11.5px] leading-[1.6] text-mute">{s.text}</p>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+        <div className="mt-9 text-center">
+          <Link to="/services" className={`${tw.btn} px-8 py-3.5`}>Découvrir tous nos services <Arrow /></Link>
+        </div>
+      </section>
+
+      {/* ============================= VALEURS ============================ */}
+      <section className={`relative isolate overflow-hidden py-16 text-white ${darkBg}`}>
+        <svg className="absolute inset-x-0 -top-px h-12 w-full" viewBox="0 0 1440 48" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 0 H1440 V12 C 1100 48, 800 4, 480 30 S 120 30, 0 10 Z" fill="#fbfbff" />
+        </svg>
+        <div className={`${tw.wrap} grid gap-10 lg:grid-cols-[0.8fr_2.2fr]`}>
+          <Reveal className="min-w-0 self-center">
+            <span className="mb-3 inline-block rounded-full bg-[linear-gradient(100deg,#2f8bff,#3a4bff)] px-3 py-1 text-[11px] font-semibold">Nos valeurs</span>
+            <h2 className="font-sora text-[clamp(22px,2vw,28px)] leading-[1.2] font-bold">Ce qui guide notre<br />manière de travailler</h2>
+          </Reveal>
+          <div className="grid gap-8 md:grid-cols-3 md:gap-0">
+            {values.map((v, i) => (
+              <Reveal key={v.title} delay={i * 110} className={`min-w-0 md:px-7 ${i ? 'md:border-l md:border-white/15' : ''}`}>
+                <motion.span
+                  className="mb-4 grid size-12 place-items-center rounded-full bg-[linear-gradient(145deg,#3aa0ff,#6a3cff)] shadow-[0_0_30px_-4px_rgba(90,120,255,.8)]"
+                  whileHover={{ scale: 1.15, rotate: -10 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 14 }}
+                >
+                  <LiveIcon kind={v.kind} boxed={false} delay={i * 0.6}><Icon className="size-6" stroke="#fff">{v.icon}</Icon></LiveIcon>
+                </motion.span>
+                <h3 className="mb-3 font-sora text-[17px] font-semibold">{v.title}</h3>
+                <p className="text-[12.5px] leading-[1.7] text-white/75">{v.text}</p>
               </Reveal>
             ))}
           </div>
+        </div>
+        <div className="mt-10 text-center">
+          <Link to="/a-propos" className={`${tw.btn} px-8 py-3.5`}>Découvrir qui nous sommes <Arrow /></Link>
         </div>
       </section>
 
       {/* ============================== PROJETS =========================== */}
-      <section className="relative isolate py-10">
+      <section className="relative isolate py-14">
         <div className={`${tw.wrap} grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1.35fr_1fr_1fr]`}>
           <Reveal className="min-w-0 self-center sm:col-span-2 lg:col-span-1">
             <span className={`${tw.chipSm} mb-3`}>Projets récents</span>
@@ -334,9 +462,9 @@ function Home() {
             const main = i === 1
             return (
               <Reveal key={pr.name} className={`glass group relative min-w-0 rounded-[24px] px-3.5 pt-3 ${main ? 'pb-6 lg:-translate-y-5' : 'pb-5'}`} delay={i * 90}>
-                <div className={`relative -mx-1 mb-3.5 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_60%_40%,rgba(123,60,255,.35),rgba(47,91,255,.1)_70%)] p-3 ${main ? 'h-[170px]' : 'h-[130px]'}`}>
-                  <div className="h-full overflow-hidden rounded-lg border-[4px] border-[#0d0e24] shadow-[0_16px_28px_-12px_rgba(40,30,160,.6)] transition duration-700 [transform:perspective(700px)_rotateY(-10deg)_rotate(-2deg)] group-hover:[transform:perspective(700px)_rotateY(-3deg)]">
-                    <img src={pr.image} alt={pr.name} className="size-full object-cover object-top" />
+                <div className={`relative -mx-1 mb-3.5 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_60%_40%,rgba(123,60,255,.35),rgba(47,91,255,.1)_70%)] px-3 ${main ? 'py-7' : 'py-3.5'}`}>
+                  <div className="grid h-full place-items-center transition duration-700 [transform:perspective(700px)_rotateY(-10deg)_rotate(-2deg)] group-hover:[transform:perspective(700px)_rotateY(-3deg)_translateY(-3px)]">
+                    <Laptop src={pr.image} alt={pr.name} className="w-full" />
                   </div>
                 </div>
                 <h3 className="mb-0.5 font-sora text-[13.5px] font-semibold text-ink">{pr.name}</h3>

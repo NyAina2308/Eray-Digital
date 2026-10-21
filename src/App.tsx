@@ -10,12 +10,6 @@ import TechnologiesPage from './pages/TechnologiesPage'
 import Contact from './pages/Contact'
 import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
-import { AdminAuthProvider } from './admin/AdminAuthContext'
-import AdminRoute from './admin/AdminRoute'
-import AdminLayout from './admin/AdminLayout'
-import AdminLogin from './admin/AdminLogin'
-import AdminMessages from './admin/AdminMessages'
-import AdminProjects from './admin/AdminProjects'
 
 function ScrollManager() {
   const { pathname, hash } = useLocation()
@@ -38,30 +32,19 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollManager />
-      <AdminAuthProvider>
-        <Routes>
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/services/:slug" element={<ServiceDetailPage />} />
-            <Route path="/projets" element={<ProjectsPage />} />
-            <Route path="/a-propos" element={<AboutPage />} />
-            <Route path="/technologies" element={<TechnologiesPage />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-          </Route>
-
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route element={<AdminRoute />}>
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminMessages />} />
-              <Route path="messages" element={<AdminMessages />} />
-              <Route path="projects" element={<AdminProjects />} />
-            </Route>
-          </Route>
-        </Routes>
-      </AdminAuthProvider>
+      <Routes>
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/:slug" element={<ServiceDetailPage />} />
+          <Route path="/projets" element={<ProjectsPage />} />
+          <Route path="/a-propos" element={<AboutPage />} />
+          <Route path="/technologies" element={<TechnologiesPage />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   )
 }
