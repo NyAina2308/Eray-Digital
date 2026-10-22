@@ -9,6 +9,7 @@ import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
 import { projects } from '../data/projects'
 import portrait from '../assets/photos/woman-Dt2ftJah.png'
 import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
+import deskPhoto from '../assets/photos/services-desk.webp'
 
 /* ------------------------------------------------------------------ */
 /* Données                                                            */
@@ -91,77 +92,6 @@ const trustShapes: Shape[] = [
 /** Pastille de section claire (« À propos », « Nos services »). */
 const pill = 'mb-3 inline-block rounded-full border border-[#2f8bff]/30 bg-[#e8f1ff] px-3 py-1 text-[11px] font-semibold text-[#2f5bff]'
 
-/** Interface sombre affichée sur l'écran du MacBook du hero. */
-function DashScreen() {
-  return (
-    <div className="absolute inset-0 flex bg-[linear-gradient(135deg,#0b0d33,#161565_60%,#221a7a)] text-white">
-      <div className="flex w-[13%] flex-col items-center gap-[7%] border-r border-white/10 pt-[4%]">
-        <img src="/eray-logo.png" alt="" className="w-[55%] rounded-[3px] bg-white p-px" />
-        {[0, 1, 2, 3, 4].map((i) => <i key={i} className={`h-[3px] w-[45%] rounded ${i === 1 ? 'bg-[#4a7bff]' : 'bg-white/20'}`} />)}
-      </div>
-      <div className="flex-1 p-[4%]">
-        <div className="mb-[4%] flex justify-end gap-[3%]">{[0, 1, 2, 3].map((i) => <i key={i} className="h-[3px] w-[8%] rounded bg-white/25" />)}</div>
-        <div className="grid grid-cols-[1.1fr_1fr] gap-[5%]">
-          <div>
-            <span className="block text-[clamp(4px,.45vw,7px)] tracking-[0.2em] text-[#8fb4ff] uppercase">Eray Digital</span>
-            <span className="mt-[3%] block text-[clamp(8px,1.15vw,16px)] leading-[1.15] font-semibold">Des solutions<br />qui font la différence</span>
-            <span className="mt-[6%] block h-[2px] w-[85%] rounded bg-white/20" />
-            <span className="mt-[3%] block h-[2px] w-[65%] rounded bg-white/15" />
-            <span className="mt-[8%] inline-block rounded-full bg-[linear-gradient(100deg,#2f8bff,#7b3cff)] px-[8%] py-[2%] text-[clamp(4px,.45vw,7px)] font-semibold">Découvrir</span>
-          </div>
-          <div className="grid grid-cols-2 gap-[6%]">
-            <div className="col-span-2 rounded-[4px] bg-white/8 p-[6%]">
-              <div className="flex h-[clamp(14px,2.2vw,30px)] items-end gap-[6%]">
-                {[40, 65, 50, 85, 60, 95, 70].map((h, i) => <i key={i} className="flex-1 rounded-t-[1px] bg-[linear-gradient(#5aa8ff,#6a3cff)]" style={{ height: `${h}%` }} />)}
-              </div>
-            </div>
-            <div className="grid aspect-square place-items-center rounded-[4px] bg-white/8">
-              <span className="size-[60%] rounded-full border-[3px] border-[#4a7bff] border-r-[#a07bff] border-b-white/15" />
-            </div>
-            <div className="grid content-center gap-[12%] rounded-[4px] bg-white/8 p-[10%]">
-              {[80, 55, 70].map((w, i) => <i key={i} className="h-[2px] rounded bg-white/30" style={{ width: `${w}%` }} />)}
-            </div>
-          </div>
-        </div>
-        <div className="mt-[5%] grid grid-cols-3 gap-[3%]">
-          {['#2f8bff', '#7b3cff', '#4adeb0'].map((c) => (
-            <div key={c} className="flex items-center gap-[8%] rounded-[4px] bg-white/8 p-[4%]">
-              <i className="size-[clamp(4px,.6vw,8px)] shrink-0 rounded-full" style={{ background: c }} />
-              <i className="h-[2px] flex-1 rounded bg-white/25" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/** Petite application mobile sombre affichée sur les iPhones. */
-function AppScreen({ variant = 0 }: { variant?: number }) {
-  return (
-    <div className="absolute inset-0 flex flex-col gap-[4%] bg-[linear-gradient(170deg,#121451,#1c1873_55%,#2a1d8a)] px-[9%] pt-[22%] text-white">
-      <span className="text-[clamp(4px,.5vw,7px)] font-semibold">{variant ? 'Tableau de bord' : 'Eray Digital'}</span>
-      <div className="rounded-[6px] bg-[linear-gradient(135deg,#2f8bff,#7b3cff)] p-[8%]">
-        <i className="block h-[2px] w-[60%] rounded bg-white/70" />
-        <i className="mt-[8%] block h-[2px] w-[40%] rounded bg-white/50" />
-      </div>
-      {variant ? (
-        <div className="flex h-[16%] items-end gap-[6%] rounded-[6px] bg-white/8 p-[7%]">
-          {[50, 80, 40, 90, 65].map((h, i) => <i key={i} className="flex-1 rounded-t-[1px] bg-[#5aa8ff]" style={{ height: `${h}%` }} />)}
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-[6%]">{[0, 1, 2, 3].map((i) => <i key={i} className="aspect-square rounded-[5px] bg-white/10" />)}</div>
-      )}
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="flex items-center gap-[8%] rounded-[5px] bg-white/8 p-[6%]">
-          <i className="size-[clamp(4px,.6vw,8px)] shrink-0 rounded-full bg-[#7b9bff]" />
-          <i className="h-[2px] flex-1 rounded bg-white/25" />
-        </div>
-      ))}
-    </div>
-  )
-}
-
 /** Plante en pot (SVG). */
 function Plant({ className = '' }: { className?: string }) {
   const leaves = [
@@ -194,8 +124,8 @@ function HeroVisual() {
   const my = useMotionValue(0)
   const sx = useSpring(mx, { stiffness: 80, damping: 18 })
   const sy = useSpring(my, { stiffness: 80, damping: 18 })
-  const rotY = useTransform(sx, [-0.5, 0.5], [-24, -12])
-  const rotX = useTransform(sy, [-0.5, 0.5], [14, 6])
+  const rotY = useTransform(sx, [-0.5, 0.5], [-16, -6])
+  const rotX = useTransform(sy, [-0.5, 0.5], [8, 2])
   const nearX = useTransform(sx, [-0.5, 0.5], [-18, 18])
   const nearY = useTransform(sy, [-0.5, 0.5], [-12, 12])
   const farX = useTransform(sx, [-0.5, 0.5], [10, -10])
@@ -217,24 +147,33 @@ function HeroVisual() {
       <span className="absolute inset-[18%_12%_6%_14%] rounded-full bg-[radial-gradient(circle,rgba(90,110,255,.55),rgba(123,60,255,.25)_45%,transparent_70%)] blur-2xl" />
       <span className="absolute bottom-[8%] left-[20%] h-[10%] w-[60%] rounded-[50%] bg-[radial-gradient(ellipse,rgba(120,150,255,.6),transparent_70%)] blur-md" />
 
-      {/* MacBook ouvert, clavier visible */}
-      <motion.div className="absolute top-[14%] left-[14%] z-[2] w-[58%]" style={{ x: farX }} {...pop(0.15)}>
-        <motion.div style={{ rotateY: rotY, rotateX: rotX, rotate: -8, transformPerspective: 1300 }}>
+      {/* MacBook central, incliné en 3D selon la souris */}
+      <motion.div className="group absolute top-[12%] left-[12%] z-[2] w-[62%]" style={{ x: farX }} {...pop(0.15)}>
+        <motion.div style={{ rotateY: rotY, rotateX: rotX, transformPerspective: 1200 }}>
           <div className="animate-float">
-            <Laptop keyboard>
-              <DashScreen />
+            <Laptop keyboard src={projects[5]?.image ?? projects[0].image}>
+              <span className="absolute inset-0 bg-[linear-gradient(110deg,rgba(10,11,46,.88),rgba(30,20,120,.45)_55%,transparent)]" />
+              <motion.span
+                className="absolute top-[32%] left-[8%] z-[1] text-[clamp(13px,1.4vw,19px)] leading-[1.25] font-semibold text-white"
+                initial={{ opacity: 0, x: -14 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1, duration: 0.7 }}
+              >
+                Des solutions<br />qui font la différence
+                <motion.span className="mt-1.5 block h-[3px] rounded-full bg-[linear-gradient(90deg,#2f8bff,#7b3cff)]" initial={{ width: 0 }} animate={{ width: '70%' }} transition={{ delay: 1.5, duration: 0.8 }} />
+              </motion.span>
             </Laptop>
           </div>
         </motion.div>
       </motion.div>
 
-      {/* iPhones devant l'ordinateur, à droite */}
+      {/* iPhones au premier plan, à droite (parallaxe inverse) */}
       {[
-        { cls: 'left-[70%] top-[26%] w-[12%] rotate-[8deg]', d: 0.45, float: '', v: 0 },
-        { cls: 'left-[60%] top-[44%] w-[13%] rotate-[4deg]', d: 0.6, float: '[animation-delay:-3s]', v: 1 },
+        { img: projects[1].image, cls: 'left-[70%] top-[24%] w-[14%] rotate-8', d: 0.45, float: '' },
+        { img: projects[4]?.image ?? projects[0].image, cls: 'left-[59%] top-[42%] w-[15%] rotate-4', d: 0.6, float: '[animation-delay:-3s]' },
       ].map((ph, i) => (
-        <motion.div key={i} className={`absolute z-[3] ${ph.cls}`} style={{ x: nearX, y: nearY }} {...pop(ph.d)}>
-          <div className={`animate-float-slow ${ph.float}`}><Phone><AppScreen variant={ph.v} /></Phone></div>
+        <motion.div key={i} className={`group absolute z-[3] ${ph.cls}`} style={{ x: nearX, y: nearY }} {...pop(ph.d)}>
+          <div className={`animate-float ${ph.float}`}><Phone src={ph.img} /></div>
         </motion.div>
       ))}
 
@@ -261,6 +200,40 @@ function HeroVisual() {
         </motion.div>
       ))}
     </div>
+  )
+}
+
+/** Projets de l'accueil : même taille, décalages variés pour rythmer la ligne. */
+const projectCards: { lift: string; featured?: boolean; tone: string }[] = [
+  { lift: 'lg:-translate-y-2', tone: 'bg-[radial-gradient(circle_at_60%_40%,rgba(47,139,255,.35),rgba(123,60,255,.08)_70%)]' },
+  { lift: 'lg:-translate-y-8', featured: true, tone: 'bg-[radial-gradient(circle_at_55%_40%,rgba(123,60,255,.4),rgba(47,91,255,.1)_70%)]' },
+  { lift: '', tone: 'bg-[radial-gradient(circle_at_50%_45%,rgba(90,200,255,.35),rgba(60,90,255,.08)_70%)]' },
+  { lift: 'lg:-translate-y-4', tone: 'bg-[radial-gradient(circle_at_45%_40%,rgba(176,123,255,.38),rgba(47,91,255,.08)_70%)]' },
+]
+
+/** Carte projet blanche, dans le style des cartes services. */
+function ProjectCard({ project: pr, index }: { project: (typeof projects)[number]; index: number }) {
+  const c = projectCards[index]
+  return (
+    <Link
+      to="/projets"
+      aria-label={`Voir le projet ${pr.name}`}
+      className={`group relative flex h-full flex-col rounded-2xl border bg-white px-3.5 pt-3.5 pb-5 shadow-[0_18px_40px_-26px_rgba(40,30,160,.45)] transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_30px_56px_-24px_rgba(60,40,220,.55)] ${c.featured ? 'border-[#7b3cff]/30' : 'border-violet/10'}`}
+    >
+      <div className={`relative mb-4 overflow-hidden rounded-xl px-3.5 py-5 ${c.tone}`}>
+        <span className="absolute inset-[15%] rounded-full bg-[radial-gradient(circle,rgba(90,110,255,.55),transparent_70%)] opacity-0 blur-xl transition duration-700 group-hover:opacity-100" aria-hidden="true" />
+        {c.featured && <span className="absolute top-2.5 right-2.5 z-[2] rounded-full bg-[linear-gradient(100deg,#2f8bff,#7b3cff)] px-2.5 py-0.5 text-[9.5px] font-semibold text-white shadow-[0_8px_18px_-6px_rgba(60,60,255,.7)]">Projet phare</span>}
+        <div className="relative transition duration-700 [transform:perspective(700px)_rotateY(-10deg)_rotate(-2deg)] group-hover:[transform:perspective(700px)_rotateY(-3deg)_translateY(-4px)_scale(1.04)]">
+          <Laptop src={pr.image} alt={pr.name} className="w-full" />
+        </div>
+      </div>
+      <span className="mb-1.5 self-start rounded-full bg-[#e8f1ff] px-2 py-0.5 text-[9.5px] font-semibold text-[#2f5bff]">{pr.category}</span>
+      <h3 className={`mb-1 font-sora font-semibold text-[#141660] transition-colors group-hover:text-[#3a4bff] text-[14px]`}>{pr.name}</h3>
+      <p className="line-clamp-2 min-h-[3.2em] pr-9 text-[11px] leading-[1.6] text-mute">{pr.description}</p>
+      <span className={`${goBtn} absolute right-3.5 bottom-4 transition duration-500 group-hover:scale-110`}>
+        <Arrow className="size-3.5 -rotate-45 transition duration-500 group-hover:rotate-0" />
+      </span>
+    </Link>
   )
 }
 
@@ -326,19 +299,49 @@ function Home() {
         <span className="absolute top-[48%] right-[7%] hidden h-24 w-10 rotate-[20deg] rounded-[50%_50%_50%_50%/70%_70%_30%_30%] bg-[linear-gradient(180deg,#b07bff,#6a3cff)] opacity-70 xl:block" aria-hidden="true" />
         <div className={`${tw.wrap} grid items-center gap-10 lg:grid-cols-[0.95fr_1.15fr_0.7fr]`}>
           {/* Photo d'équipe dans une forme organique */}
-          <Reveal className="relative min-w-0 px-4 pt-4 pb-10">
-            <motion.span
-              className="absolute inset-[0_6%_8%_0] -z-[1] bg-[linear-gradient(150deg,#8fc2ff,#5a6bff_55%,#8b5cff)] opacity-80"
-              style={{ borderRadius: '42% 58% 46% 54% / 50% 40% 60% 50%' }}
-              animate={reduce ? undefined : { borderRadius: ['42% 58% 46% 54% / 50% 40% 60% 50%', '55% 45% 52% 48% / 42% 56% 44% 58%', '42% 58% 46% 54% / 50% 40% 60% 50%'] }}
-              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <div className="overflow-hidden rounded-[30px] border-4 border-white shadow-[0_30px_60px_-24px_rgba(40,30,160,.55)]">
-              <img src={teamPhoto} alt="L'équipe Eray Digital au travail" loading="lazy" className="aspect-[4/3] w-full object-cover" />
-            </div>
-            <Link to="/a-propos" className="group absolute bottom-2 left-10 flex items-center gap-6 rounded-2xl bg-white px-5 py-3.5 shadow-[0_20px_40px_-16px_rgba(40,30,160,.5)] transition hover:-translate-y-1">
-              <span className="font-sora text-[14px] leading-[1.25] font-semibold text-[#1a1a6e]">Des idées<br />aux solutions</span>
-              <span className={goBtn}><Arrow className="size-3.5 transition group-hover:translate-x-0.5" /></span>
+          <Reveal className="relative aspect-[1020/690] min-w-0">
+            <svg className="absolute inset-0 size-full overflow-visible" viewBox="0 0 1020 690" aria-hidden="true">
+              <defs>
+                <linearGradient id="ab-blue" x1="0" y1="0" x2=".35" y2="1">
+                  <stop offset="0" stopColor="#c4e2ff" />
+                  <stop offset=".45" stopColor="#6aa6ff" />
+                  <stop offset="1" stopColor="#3f63ff" />
+                </linearGradient>
+                <linearGradient id="ab-violet" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#a58cff" />
+                  <stop offset=".5" stopColor="#6c4bff" />
+                  <stop offset="1" stopColor="#8a6dff" stopOpacity=".6" />
+                </linearGradient>
+                <linearGradient id="ab-drop" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#a9d0ff" />
+                  <stop offset="1" stopColor="#4a7bff" stopOpacity=".75" />
+                </linearGradient>
+                <clipPath id="ab-photo">
+                  <path d="M260 104 L836 66 Q886 63 870 112 L740 470 Q728 500 690 500 L690 585 L262 590 Q222 590 222 550 L222 144 Q222 107 260 104 Z" />
+                </clipPath>
+              </defs>
+              {/* Point décoratif */}
+              <circle cx="30" cy="172" r="7" fill="#c9cfff" />
+              {/* Forme bleue organique, liserée de blanc */}
+              <path d="M250 75 C330 30 470 38 530 78 L560 640 C470 670 330 690 230 650 C120 610 50 520 60 400 C70 300 150 140 250 75 Z" fill="url(#ab-blue)" />
+              <path d="M252 92 C330 50 460 56 515 92 L540 625 C460 652 330 670 238 634 C135 596 72 512 80 400 C88 305 160 155 252 92 Z" fill="none" stroke="#fff" strokeOpacity=".75" strokeWidth="3" />
+              {/* Ruban violet le long du bord droit */}
+              <path d="M860 60 C905 52 940 85 922 132 L792 432 C782 452 760 458 748 442 L872 120 C880 96 874 74 860 60 Z" fill="url(#ab-violet)" />
+              {/* Photo découpée en biais, bord blanc */}
+              <image href={teamPhoto} x="222" y="60" width="660" height="540" preserveAspectRatio="xMidYMid slice" clipPath="url(#ab-photo)" />
+              <path d="M260 104 L836 66 Q886 63 870 112 L740 470 Q728 500 690 500 L690 585 L262 590 Q222 590 222 550 L222 144 Q222 107 260 104 Z" fill="none" stroke="#fff" strokeWidth="5" />
+              {/* Goutte bleue */}
+              <path d="M862 345 C898 338 918 378 900 412 L810 495 C830 440 822 382 862 345 Z" fill="url(#ab-drop)" />
+            </svg>
+            <span className="sr-only">L'équipe Eray Digital au travail</span>
+            <Link
+              to="/a-propos"
+              className="group absolute top-[63.8%] left-[33.3%] flex h-[25.4%] w-[42.6%] items-center justify-between rounded-[22px] border border-white border-r-[#8a6dff]/70 bg-white/85 px-[5%] shadow-[0_24px_40px_-18px_rgba(40,30,160,.45)] backdrop-blur-md transition hover:-translate-y-1"
+            >
+              <span className="font-sora text-[clamp(12px,1.2vw,16px)] leading-[1.3] font-semibold text-[#3b32c8]">Des idées<br />aux solutions</span>
+              <span className="grid size-[clamp(28px,2.6vw,38px)] shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#7a5cff,#4a2fe0)] text-white shadow-[0_8px_18px_-6px_rgba(80,50,255,.7)]">
+                <Arrow className="size-3.5 transition group-hover:translate-x-0.5" />
+              </span>
             </Link>
           </Reveal>
 
@@ -376,8 +379,46 @@ function Home() {
       </section>
 
       {/* ============================ SERVICES ============================ */}
-      <section className="relative isolate pt-10 pb-16">
+      <section className="relative isolate overflow-x-clip pt-10 pb-16">
         <span className="absolute inset-x-0 top-0 -z-[1] h-full bg-[linear-gradient(180deg,transparent,rgba(236,234,255,.6)_40%,transparent)]" aria-hidden="true" />
+        {/* Lignes ondulées discrètes du fond */}
+        <svg className="pointer-events-none absolute inset-x-0 top-0 -z-[1] h-40 w-full" viewBox="0 0 1440 160" preserveAspectRatio="none" fill="none" aria-hidden="true">
+          <path d="M0 70 C 320 20, 640 110, 960 60 S 1320 10, 1440 30" stroke="#d9d6ff" strokeOpacity=".7" strokeWidth="1.2" />
+          <path d="M0 100 C 360 50, 700 140, 1020 90 S 1340 40, 1440 60" stroke="#e4e2ff" strokeOpacity=".8" strokeWidth="1" />
+        </svg>
+        {/* Forme bleue en bas à gauche */}
+        <span className="absolute bottom-[14%] -left-12 -z-[1] h-40 w-28 rotate-[25deg] rounded-[50%] bg-[linear-gradient(180deg,#a9d0ff,#4a7bff)] opacity-80" aria-hidden="true" />
+        {/* Bureau : photo découpée en biais, qui déborde à droite et passe sous les cartes */}
+        <Reveal className="absolute top-[-80px] right-0 hidden w-[min(46vw,720px)] lg:block" delay={120}>
+          <svg className="block w-full overflow-visible" viewBox="0 0 1000 680" aria-hidden="true">
+            <defs>
+              {/* Bord haut en légère oblique, grand arc à gauche, bas coupé en biais par le ruban */}
+              <clipPath id="sv-desk">
+                <path d="M170 110 C420 70 700 40 1000 0 L1000 480 L720 650 L110 650 C55 490 80 250 170 110 Z" />
+              </clipPath>
+              <radialGradient id="sv-disc" cx=".5" cy=".5" r=".5">
+                <stop offset="0" stopColor="#e4e0ff" />
+                <stop offset="1" stopColor="#f1efff" stopOpacity="0" />
+              </radialGradient>
+              <linearGradient id="sv-edge" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stopColor="#bcd2ff" stopOpacity="0" />
+                <stop offset=".35" stopColor="#7fa4ff" />
+                <stop offset="1" stopColor="#6a3cff" />
+              </linearGradient>
+              <linearGradient id="sv-band" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0" stopColor="#9cc0ff" />
+                <stop offset=".5" stopColor="#6f7dff" />
+                <stop offset="1" stopColor="#6a3cff" />
+              </linearGradient>
+            </defs>
+            {/* Disque lavande derrière l'arc */}
+            <circle cx="290" cy="390" r="300" fill="url(#sv-disc)" />
+            {/* Ruban qui part du bas et monte en oblique vers la droite */}
+            <path d="M660 680 L1000 465 L1000 610 L800 680 Z" fill="url(#sv-band)" />
+            <image href={deskPhoto} x="40" y="0" width="900" height="500" preserveAspectRatio="xMidYMid slice" clipPath="url(#sv-desk)" />
+            <path d="M170 110 C420 70 700 40 1000 0" fill="none" stroke="url(#sv-edge)" strokeWidth="5" strokeLinecap="round" />
+          </svg>
+        </Reveal>
         <div className={`${tw.wrap} mb-8 grid items-end gap-6 lg:grid-cols-[1fr_auto]`}>
           <Reveal className="min-w-0">
             <span className={pill}>Nos services</span>
@@ -385,23 +426,9 @@ function Home() {
               Des solutions numériques<br />pour faire avancer votre activité
             </h2>
           </Reveal>
-          {/* Bureau : ordinateur ouvert, tasse et plante */}
-          <Reveal className="relative hidden h-[230px] w-[440px] lg:block" delay={120}>
-            <span className="absolute inset-x-[-10%] bottom-0 h-[55%] -skew-x-[18deg] rounded-[24px] bg-[linear-gradient(160deg,#ffffff,#e4e2ff_60%,#c9c3ff)] shadow-[0_30px_50px_-30px_rgba(40,30,160,.5)]" />
-            <span className="absolute right-[-12%] bottom-0 h-[30%] w-[70%] rounded-[50%] bg-[radial-gradient(ellipse,rgba(123,60,255,.35),transparent_70%)]" />
-            <div className="absolute top-[2%] left-[18%] w-[58%] [transform:perspective(1000px)_rotateY(-22deg)_rotate(-4deg)]">
-              <Laptop keyboard><DashScreen /></Laptop>
-            </div>
-            {/* Tasse */}
-            <span className="absolute bottom-[16%] left-[4%] h-[18%] w-[9%] rounded-b-[10px] bg-[linear-gradient(90deg,#e9e9f2,#ffffff_45%,#cfd0dc)] shadow-[0_10px_14px_-8px_rgba(0,0,0,.35)]">
-              <span className="absolute top-[22%] -right-[38%] h-[45%] w-[42%] rounded-r-full border-[3px] border-l-0 border-[#d9d9e5]" />
-              <span className="absolute inset-x-0 top-0 h-[16%] rounded-[50%] bg-[#6b4a32]" />
-            </span>
-            <Plant className="absolute right-[-4%] bottom-[10%] w-[18%]" />
-          </Reveal>
         </div>
 
-        <div className={`${tw.wrap} grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6`}>
+        <div className={`${tw.wrap} relative z-[1] grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6`}>
           {services.map((s, i) => (
             <Reveal key={s.to + i} delay={i * 70} className="min-w-0">
               <Link to={s.to} className="group flex h-full flex-col rounded-2xl border border-violet/10 bg-white px-5 py-6 shadow-[0_18px_40px_-26px_rgba(40,30,160,.45)] transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_26px_50px_-24px_rgba(60,40,220,.55)]">
@@ -451,29 +478,19 @@ function Home() {
       </section>
 
       {/* ============================== PROJETS =========================== */}
-      <section className="relative isolate py-14">
-        <div className={`${tw.wrap} grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1.35fr_1fr_1fr]`}>
+      <section id="projets" className="relative isolate pt-16 pb-14">
+        <div className={`${tw.wrap} grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1fr_1fr_1fr]`}>
           <Reveal className="min-w-0 self-center sm:col-span-2 lg:col-span-1">
-            <span className={`${tw.chipSm} mb-3`}>Projets récents</span>
-            <h2 className="mb-5 font-sora text-[clamp(20px,1.8vw,25px)] leading-[1.2] font-semibold tracking-[-0.02em] text-ink">Des solutions concrètes<br />pour des clients ambitieux.</h2>
-            <Link to="/projets" className={tw.btn}>Voir toutes nos réalisations <Arrow /></Link>
+            <span className={pill}>Nos réalisations</span>
+            <h2 className="mb-3 font-sora text-[clamp(22px,2vw,28px)] leading-[1.15] font-bold tracking-[-0.02em] text-[#141660]">Des solutions concrètes<br />pour des clients ambitieux.</h2>
+            <p className="mb-6 text-[12.5px] leading-[1.7] text-body">Chaque projet est pensé pour l’activité de nos clients.</p>
+            <Link to="/projets" className={`${tw.btn} px-7 py-3.5`}>Voir toutes nos réalisations <Arrow /></Link>
           </Reveal>
-          {projects.slice(0, 4).map((pr, i) => {
-            const main = i === 1
-            return (
-              <Reveal key={pr.name} className={`glass group relative min-w-0 rounded-[24px] px-3.5 pt-3 ${main ? 'pb-6 lg:-translate-y-5' : 'pb-5'}`} delay={i * 90}>
-                <div className={`relative -mx-1 mb-3.5 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_60%_40%,rgba(123,60,255,.35),rgba(47,91,255,.1)_70%)] px-3 ${main ? 'py-7' : 'py-3.5'}`}>
-                  <div className="grid h-full place-items-center transition duration-700 [transform:perspective(700px)_rotateY(-10deg)_rotate(-2deg)] group-hover:[transform:perspective(700px)_rotateY(-3deg)_translateY(-3px)]">
-                    <Laptop src={pr.image} alt={pr.name} className="w-full" />
-                  </div>
-                </div>
-                <h3 className="mb-0.5 font-sora text-[13.5px] font-semibold text-ink">{pr.name}</h3>
-                <span className="mb-2 block text-[10.5px] font-medium text-[#3a4bff]">{pr.category}</span>
-                <p className="line-clamp-2 pr-8 text-[10.5px] leading-[1.5] text-mute">{pr.description}</p>
-                <Link to="/projets" className={`${goBtn} absolute right-3.5 bottom-4 size-7`} aria-label={`Voir ${pr.name}`}><Arrow className="size-3.5" /></Link>
-              </Reveal>
-            )
-          })}
+          {projects.slice(0, projectCards.length).map((pr, i) => (
+            <Reveal key={pr.name} className={`min-w-0 ${projectCards[i].lift}`} delay={i * 90}>
+              <ProjectCard project={pr} index={i} />
+            </Reveal>
+          ))}
         </div>
       </section>
 
