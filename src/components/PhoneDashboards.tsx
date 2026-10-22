@@ -57,6 +57,85 @@ function BottomNav({ active }: { active: number }) {
   )
 }
 
+/** Messagerie Eray Digital (page Contact) : conversation, raccourcis de contact, saisie. */
+export function ContactScreen() {
+  const bubble = 'max-w-[86%] rounded-[.7em] px-[.6em] py-[.45em] text-[.52em] leading-[1.35]'
+  return (
+    <Shell>
+      {/* En-tête de conversation */}
+      <div className="mt-[.5em] flex items-center gap-[.45em]">
+        <span className="relative grid size-[1.7em] shrink-0 place-items-center rounded-full bg-white p-[.2em]">
+          <img src="/eray-logo.png" alt="" className="w-full rounded-full" />
+          <i className="absolute right-0 bottom-0 size-[.45em] rounded-full border border-[#0d1240] bg-[#4ade80]" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[.7em] font-bold">Eray Digital</p>
+          <p className="text-[.48em] text-[#4ade80]">● En ligne</p>
+        </div>
+        <span className="rounded-full bg-[#2f8bff]/25 px-[.5em] py-[.15em] text-[.42em] font-semibold text-[#8fc2ff]">Sous 24h</span>
+      </div>
+
+      {/* Accroche de la section */}
+      <div className="rounded-[.7em] bg-[linear-gradient(135deg,rgba(47,139,255,.35),rgba(123,60,255,.45))] p-[.55em]">
+        <p className="text-[.48em] text-[#8fc2ff]">Contact</p>
+        <p className="text-[.78em] leading-[1.15] font-bold">Une question ?<br />Une idée ?</p>
+        <p className="mt-[.2em] bg-[linear-gradient(90deg,#8fc2ff,#c9b5ff)] bg-clip-text text-[.55em] font-semibold text-transparent">Écrivons ensemble votre avenir digital.</p>
+      </div>
+
+      {/* Conversation */}
+      <div className="flex flex-col gap-[.35em]">
+        <p className={`${bubble} self-start rounded-bl-[.2em] bg-white/[.09]`}>Bonjour 👋 Comment pouvons-nous vous aider ?</p>
+        <p className={`${bubble} self-end rounded-br-[.2em] bg-[linear-gradient(135deg,#2f8bff,#7b3cff)]`}>J’ai un projet de site web.</p>
+        <p className={`${bubble} self-start rounded-bl-[.2em] bg-white/[.09]`}>Parfait ! Parlons de votre projet 🚀</p>
+        <span className="flex gap-[.2em] self-start rounded-[.6em] bg-white/[.09] px-[.5em] py-[.4em]">
+          {[0, 1, 2].map((i) => <i key={i} className="size-[.3em] rounded-full bg-white/60" />)}
+        </span>
+      </div>
+
+      {/* Raccourcis de contact */}
+      <div className="grid grid-cols-3 gap-[.35em]">
+        {[
+          { l: 'Email', d: 'M4 6h16v12H4zM4 7l8 6 8-6' },
+          { l: 'Appeler', d: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z' },
+          { l: 'Adresse', d: 'M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12zM12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z' },
+        ].map((c) => (
+          <Card key={c.l} className="grid justify-items-center gap-[.2em] !p-[.4em]">
+            <svg viewBox="0 0 24 24" className="size-[.95em] fill-none stroke-[#8fc2ff] stroke-2"><path d={c.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <p className="text-[.42em] text-white/70">{c.l}</p>
+          </Card>
+        ))}
+      </div>
+
+      {/* Engagements de la section Contact */}
+      <Card className="space-y-[.45em]">
+        {[
+          { t: 'Réponse rapide', s: 'Sous 24h', d: 'M13 2L4 14h7l-1 8 9-12h-7l1-8z' },
+          { t: 'Équipe à l’écoute', s: 'et disponible', d: 'M4 14v-2a8 8 0 0 1 16 0v2M3 14h4v6H3zM17 14h4v6h-4z' },
+          { t: 'Accompagnement', s: 'de A à Z', d: 'M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM9 14.5L8 22l4-2 4 2-1-7.5' },
+        ].map((f) => (
+          <div key={f.t} className="flex items-center gap-[.45em]">
+            <span className="grid size-[1.3em] shrink-0 place-items-center rounded-[.35em] bg-[linear-gradient(135deg,#2f8bff,#7b3cff)]">
+              <svg viewBox="0 0 24 24" className="size-[.7em] fill-none stroke-white stroke-2"><path d={f.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </span>
+            <div>
+              <p className="text-[.5em] font-semibold">{f.t}</p>
+              <p className="text-[.42em] text-white/55">{f.s}</p>
+            </div>
+          </div>
+        ))}
+      </Card>
+
+      {/* Saisie */}
+      <div className="mt-auto flex items-center gap-[.35em] rounded-full border border-white/10 bg-white/[.07] py-[.25em] pr-[.25em] pl-[.6em]">
+        <p className="flex-1 text-[.48em] text-white/45">Écrivez votre message…</p>
+        <span className="grid size-[1.3em] place-items-center rounded-full bg-[linear-gradient(135deg,#2f8bff,#7b3cff)]">
+          <svg viewBox="0 0 24 24" className="size-[.65em] fill-none stroke-white stroke-2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </span>
+      </div>
+    </Shell>
+  )
+}
+
 /** Tableau de bord analytique : KPI, courbe de chiffre d'affaires, barres hebdo, commandes récentes. */
 export function AnalyticsDashboard() {
   const id = useId()

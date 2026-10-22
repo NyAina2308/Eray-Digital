@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom'
 const CONTACT_EMAIL = 'contact@eraydigital.tech'
 import Reveal from '../components/Reveal'
 import { Phone } from '../components/Devices'
-import { ProjectsDashboard } from '../components/PhoneDashboards'
+import { ContactScreen } from '../components/PhoneDashboards'
 import { Shapes, decor, type Shape } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
 import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
 import roomPhoto from '../assets/photos/room-D2XCtDIa.png'
-import heroLaptop from '../assets/photos/hero-laptop.webp'
+import contactLaptop from '../assets/photos/contact-laptop.webp'
 
 const PROJECT_TYPES = [
   'Développement Web',
@@ -266,14 +266,14 @@ function HeroLaptop() {
       >
         <motion.div style={{ rotateY: rotY, rotateX: rotX, transformPerspective: 1200 }}>
           <div className="animate-float">
-            <img src={heroLaptop} alt="Site Eray Digital affiché sur un ordinateur portable" className="w-full drop-shadow-[0_30px_40px_rgba(40,30,160,.55)]" />
+            <img src={contactLaptop} alt="Formulaire de contact Eray Digital affiché sur un ordinateur portable" className="w-full drop-shadow-[0_30px_40px_rgba(40,30,160,.55)]" />
           </div>
         </motion.div>
       </motion.div>
 
       {/* iPhone au premier plan, à droite (parallaxe inverse) */}
       <motion.div className="group absolute top-[34%] left-[71%] z-[2] w-[14%] rotate-6" style={{ x: nearX, y: nearY }} {...pop(0.45)}>
-        <div className="animate-float [animation-delay:-3s]"><Phone><ProjectsDashboard /></Phone></div>
+        <div className="animate-float [animation-delay:-3s]"><Phone><ContactScreen /></Phone></div>
       </motion.div>
 
       {/* Tasse en céramique posée devant */}
