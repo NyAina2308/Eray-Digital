@@ -63,13 +63,32 @@ const values: { icon: ReactNode; title: string; text: string; kind: LiveKind }[]
   { icon: hi.trend, title: 'Performance', text: 'Nous créons de la valeur, pas seulement des projets. Notre objectif est que la technologie ait un impact concret sur votre activité : gain de temps, meilleure organisation, croissance.', kind: 'bob' },
 ]
 
+/** Toutes les technologies de la page Technologies, regroupées par famille. */
 const tools = [
   { name: 'React', src: logo('react') },
+  { name: 'TypeScript', src: logo('typescript') },
+  { name: 'JavaScript', src: logo('javascript') },
+  { name: 'HTML', src: logo('html5') },
+  { name: 'CSS', src: logo('css3') },
+  { name: 'Tailwind CSS', src: logo('tailwindcss') },
   { name: 'Node.js', src: logo('nodejs') },
+  { name: 'Express', src: logo('express') },
+  { name: 'PHP', src: logo('php') },
   { name: 'Laravel', src: logo('laravel') },
+  { name: 'Symfony', src: logo('symfony') },
+  { name: 'Python', src: logo('python') },
   { name: 'WordPress', src: logo('wordpress', 'plain') },
+  { name: 'MySQL', src: logo('mysql') },
+  { name: 'PostgreSQL', src: logo('postgresql') },
+  { name: 'MongoDB', src: logo('mongodb') },
+  { name: 'Firebase', src: logo('firebase', 'plain') },
   { name: 'Figma', src: logo('figma') },
-  { name: 'Photoshop', src: logo('photoshop', 'plain') },
+  { name: 'Adobe Illustrator', src: logo('illustrator', 'plain') },
+  { name: 'Adobe Photoshop', src: logo('photoshop', 'plain') },
+  { name: 'Git', src: logo('git') },
+  { name: 'GitHub', src: logo('github') },
+  { name: 'Docker', src: logo('docker') },
+  { name: 'Nginx', src: logo('nginx') },
 ]
 
 const promises = [
@@ -217,7 +236,7 @@ const goBtn = 'grid size-8 place-items-center rounded-full bg-[linear-gradient(1
 const darkBg = 'bg-[radial-gradient(600px_380px_at_8%_20%,rgba(60,90,255,.35),transparent_70%),radial-gradient(700px_420px_at_92%_70%,rgba(123,60,255,.45),transparent_70%),linear-gradient(120deg,#070a2e,#14136b_55%,#1d1580)]'
 
 function Home() {
-  const reduce = useReducedMotion()
+
 
   return (
     <div className={tw.page}>
@@ -474,13 +493,16 @@ function Home() {
             <span className={`${tw.chipSm} mb-3`}>Nos technologies</span>
             <h2 className="mb-3 font-sora text-[clamp(20px,1.8vw,26px)] leading-[1.2] font-semibold text-ink">Ils nous font confiance</h2>
             <p className="mb-6 text-[12.5px] leading-[1.7] text-body">Des outils éprouvés pour des collaborations durables avec des entreprises et organisations qui partagent notre vision.</p>
-            <ul className="mb-5 flex flex-wrap items-center gap-x-6 gap-y-3">
-              {tools.map((t) => (
-                <li key={t.name} className="flex items-center gap-2 text-[13px] font-semibold text-[#2a2b44]">
-                  <img src={t.src} alt="" loading="lazy" className="size-5 object-contain" />{t.name}
-                </li>
-              ))}
-            </ul>
+            {/* Défilement continu : la liste est doublée et décalée d'une moitié en boucle */}
+            <div className="marquee mb-5 overflow-hidden py-1">
+              <ul className="flex w-max items-center" style={{ animation: `marquee ${tools.length * 2.6}s linear infinite reverse` }}>
+                {[...tools, ...tools].map((t, i) => (
+                  <li key={i} aria-hidden={i >= tools.length || undefined} className="flex shrink-0 items-center gap-2 pr-7 text-[13px] font-semibold whitespace-nowrap text-[#2a2b44]">
+                    <img src={t.src} alt="" loading="lazy" className="size-5 object-contain" />{t.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
             <Link to="/technologies" className={`${tw.link} border-b border-[#2f3bb8]/30`}>Voir toutes nos technologies <Arrow className="size-3.5 transition group-hover:translate-x-1" /></Link>
           </Reveal>
           <Reveal className="glass relative min-w-0 rounded-[26px] px-7 py-7" delay={100}>

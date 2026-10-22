@@ -41,6 +41,7 @@ const groups: Group[] = [
       { name: 'PHP', src: logo('php') },
       { name: 'Symfony', src: logo('symfony') },
       { name: 'Python', src: logo('python') },
+      {name: 'Laravel', src: logo('laravel')},
     ],
   },
   {
