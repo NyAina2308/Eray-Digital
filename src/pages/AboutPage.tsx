@@ -1,4 +1,3 @@
-import { useRef, useState, type PointerEvent } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
 import { Shapes, Ribbon, decor, type Shape } from '../components/Decor'
@@ -32,7 +31,6 @@ const extra = {
   sun: <><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></>,
   play: <path d="M10 8.5v7l6-3.5-6-3.5z" />,
   codeBar: <path d="M8 7l-5 5 5 5M16 7l5 5-5 5M12 4v16" />,
-  pin: <><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></>,
 }
 
 
@@ -41,9 +39,9 @@ const extra = {
 ========================================================= */
 
 const missionPoints = [
-  { icon: ic.bulb, title: 'Innovation continue', text: 'Une veille constante pour vous proposer les technologies les plus adaptées.' },
-  { icon: ic.users, title: 'Accompagnement personnalisé', text: 'Un interlocuteur dédié, de la première idée au suivi.' },
-  { icon: ic.target, title: 'Résultats concrets', text: 'Des solutions mesurables qui servent vos objectifs.' },
+  { icon: ic.bulb, label: 'Innovation\ncontinue' },
+  { icon: ic.users, label: 'Accompagnement\npersonnalisé' },
+  { icon: ic.target, label: 'Résultats\nconcrets' },
 ]
 
 const values = [
@@ -85,44 +83,22 @@ const nodes: [number, number][] = [
 ]
 
 const rings = [
-  { rx: 188, ry: 60, angle: -20, width: 2.2, dur: 14 },
-  { rx: 172, ry: 46, angle: 26, width: 1.6, dur: 19 },
-  { rx: 150, ry: 34, angle: -6, width: 1.2, dur: 11 },
+  { rx: 188, ry: 60, angle: -20, width: 2.2 },
+  { rx: 172, ry: 46, angle: 26, width: 1.6 },
+  { rx: 150, ry: 34, angle: -6, width: 1.2 },
 ]
 
-/** Point de l'île où pulse le signal « Antananarivo ». */
-const tana: [number, number] = [204, 214]
-
-function usePrefersReducedMotion() {
-  const [reduced] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-  return reduced
-}
-
-type RingProps = { rx: number; ry: number; angle: number; width: number; dur: number; side: 'back' | 'front'; still: boolean }
-
-/**
- * Anneau d'orbite coupé en deux : moitié arrière (sous la sphère) ou avant.
- * Le satellite est dessiné dans les deux moitiés avec la même animation :
- * chaque découpe n'en laisse voir qu'une, il passe donc derrière puis devant.
- */
-function Ring({ rx, ry, angle, width, dur, side, still }: RingProps) {
-  const orbit = `M${200 - rx} 205 a${rx} ${ry} 0 1 0 ${rx * 2} 0 a${rx} ${ry} 0 1 0 ${-rx * 2} 0`
+/** Anneau d'orbite coupé en deux : moitié arrière (sous la sphère) ou avant. */
+function Ring({ rx, ry, angle, width, side }: { rx: number; ry: number; angle: number; width: number; side: 'back' | 'front' }) {
   return (
     <g transform={`rotate(${angle} 200 205)`} opacity={side === 'back' ? 0.55 : 1}>
-      <g clipPath={`url(#gl-${side})`}>
-        <ellipse cx="200" cy="205" rx={rx} ry={ry} stroke="url(#gl-ring)" strokeWidth={width} />
-        {!still && (
-          <circle r={width + 1.6} fill="#fff" filter="url(#gl-glow)">
-            <animateMotion dur={`${dur}s`} repeatCount="indefinite" path={orbit} />
-          </circle>
-        )}
-      </g>
+      <ellipse cx="200" cy="205" rx={rx} ry={ry} stroke="url(#gl-ring)" strokeWidth={width} clipPath={`url(#gl-${side})`} />
     </g>
   )
 }
 
 /** Globe terrestre en verre : sphère, Madagascar néon, orbites et bulle. */
-function Globe({ still }: { still: boolean }) {
+function Globe() {
   return (
     <svg className="absolute inset-0 size-full overflow-visible" viewBox="0 0 400 400" fill="none" aria-hidden="true">
       <defs>
@@ -175,7 +151,7 @@ function Globe({ still }: { still: boolean }) {
       <path d="M78 130 A 158 158 0 0 1 200 42" stroke="#fff" strokeOpacity=".9" strokeWidth="3" strokeLinecap="round" />
 
       {/* Orbites — moitié arrière */}
-      {rings.map((r, i) => <Ring key={i} {...r} side="back" still={still} />)}
+      {rings.map((r, i) => <Ring key={i} {...r} side="back" />)}
 
       {/* Vague de verre */}
       <path d="M30 300 C 60 380, 220 400, 330 330 C 380 296, 396 240, 380 200 C 372 250, 330 300, 250 320 C 160 342, 70 330, 30 300 Z" fill="url(#gl-wave)" />
@@ -201,14 +177,6 @@ function Globe({ still }: { still: boolean }) {
           <line key={i} x1={nodes[i][0]} y1={nodes[i][1]} x2={x} y2={y} stroke="#f0e6ff" strokeOpacity=".7" strokeWidth=".8" />
         ))}
         {nodes.map(([x, y], i) => <circle key={i} cx={x} cy={y} r={i % 3 ? 1.6 : 2.4} fill="#fff" filter="url(#gl-glow)" />)}
-        {/* Signal « Antananarivo » */}
-        {!still && [0, 1.2].map((begin) => (
-          <circle key={begin} cx={tana[0]} cy={tana[1]} r="3" stroke="#fff" strokeWidth="1.2">
-            <animate attributeName="r" values="3;18" dur="2.4s" begin={`${begin}s`} repeatCount="indefinite" />
-            <animate attributeName="opacity" values=".9;0" dur="2.4s" begin={`${begin}s`} repeatCount="indefinite" />
-          </circle>
-        ))}
-        <circle cx={tana[0]} cy={tana[1]} r="3.4" fill="#fff" stroke="#9b6bff" strokeWidth="1.5" filter="url(#gl-glow)" />
       </g>
 
       {/* Reflets de verre */}
@@ -217,7 +185,7 @@ function Globe({ still }: { still: boolean }) {
       <circle cx="200" cy="205" r="100" stroke="#fff" strokeOpacity=".35" strokeWidth="1.2" />
 
       {/* Orbites — moitié avant (passe devant la sphère) */}
-      {rings.map((r, i) => <Ring key={i} {...r} side="front" still={still} />)}
+      {rings.map((r, i) => <Ring key={i} {...r} side="front" />)}
       <circle cx="372" cy="150" r="3" fill="#fff" filter="url(#gl-glow)" />
       <circle cx="40" cy="262" r="2.4" fill="#fff" filter="url(#gl-glow)" />
     </svg>
@@ -228,61 +196,6 @@ const heroShapes: Shape[] = [
   { kind: 'spark', pos: { left: '44%', top: '30%' }, size: 12, tone: 'blue' },
   { kind: 'orb', pos: { left: '3%', bottom: '8%' }, size: 14, tone: 'violet' },
 ]
-
-
-/** Globe + tuiles, avec un léger effet de profondeur qui suit la souris. */
-function MissionGlobe() {
-  const still = usePrefersReducedMotion()
-  const ref = useRef<HTMLDivElement>(null)
-
-  const move = (e: PointerEvent<HTMLDivElement>) => {
-    if (still || e.pointerType !== 'mouse' || !ref.current) return
-    const r = ref.current.getBoundingClientRect()
-    ref.current.style.setProperty('--mx', ((e.clientX - r.left) / r.width - 0.5).toFixed(3))
-    ref.current.style.setProperty('--my', ((e.clientY - r.top) / r.height - 0.5).toFixed(3))
-  }
-  const reset = () => {
-    ref.current?.style.setProperty('--mx', '0')
-    ref.current?.style.setProperty('--my', '0')
-  }
-
-  return (
-    <Reveal className="mx-auto w-full max-w-[420px] min-w-0">
-      <div ref={ref} onPointerMove={move} onPointerLeave={reset} className="relative aspect-square [--mx:0] [--my:0]">
-        <div className="absolute inset-0 transition-transform duration-500 ease-out [transform:translate(calc(var(--mx)*14px),calc(var(--my)*14px))]">
-          <Globe still={still} />
-        </div>
-
-        <div className="absolute inset-0 transition-transform duration-500 ease-out [transform:translate(calc(var(--mx)*-22px),calc(var(--my)*-22px))]">
-          {orbitIcons.map((o, i) => (
-            <span
-              key={i}
-              className={`absolute z-[3] grid size-[52px] animate-float place-items-center overflow-hidden rounded-[15px] border border-white/40 bg-[linear-gradient(150deg,#5a8bff,#3a4bff_45%,#3a1fc9)] shadow-[0_5px_0_#2a1f9e,0_18px_30px_-8px_rgba(50,50,230,.75),inset_0_1px_0_rgba(255,255,255,.55)] before:absolute before:inset-x-1 before:top-0.5 before:h-1/2 before:rounded-[12px] before:bg-[linear-gradient(rgba(255,255,255,.35),transparent)] motion-reduce:animate-none ${o.pos}`}
-              style={{ animationDelay: `${-i * 1.4}s` }}
-            >
-              <Icon className="relative size-[22px]" stroke="#fff">{o.icon}</Icon>
-            </span>
-          ))}
-
-          {/* Étiquette de localisation */}
-          <div className="glass absolute top-[1%] right-0 z-[4] flex items-center gap-2.5 rounded-2xl py-2 pr-3.5 pl-2.5">
-            <span className={`${icoWhite} size-8`}><Icon className="size-4">{extra.pin}</Icon></span>
-            <span className="leading-[1.25]">
-              <small className="flex items-center gap-1.5 text-[9px] font-semibold tracking-[0.14em] text-mute uppercase">
-                <span className="relative flex size-1.5">
-                  <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 motion-reduce:animate-none" />
-                  <span className="relative size-1.5 rounded-full bg-emerald-500" />
-                </span>
-                Basés à
-              </small>
-              <b className="text-[11.5px] font-semibold text-ink-2">Antananarivo</b>
-            </span>
-          </div>
-        </div>
-      </div>
-    </Reveal>
-  )
-}
 
 
 /* =========================================================
@@ -397,7 +310,7 @@ function AboutPage() {
         className="isolate relative overflow-hidden bg-[linear-gradient(180deg,#fbfbff,#f1eeff_70%,#fbfbff)] py-[70px]"
       >
         {/* Ruban de verre sur le bord droit */}
-        <svg className="pointer-events-none absolute right-0 bottom-[8%] hidden h-[62%] w-[9%] lg:block" viewBox="0 0 160 300" preserveAspectRatio="none" fill="none" aria-hidden="true">
+        <svg className="pointer-events-none absolute right-0 bottom-[8%] hidden h-[62%] w-[14%] lg:block" viewBox="0 0 160 300" preserveAspectRatio="none" fill="none" aria-hidden="true">
           <defs>
             <linearGradient id="ab-rib" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stopColor="#3ac8ff" />
@@ -409,14 +322,21 @@ function AboutPage() {
           <path d="M160 0 C 60 30, 10 120, 60 200" stroke="#fff" strokeOpacity=".8" strokeWidth="2.5" />
         </svg>
 
-        {/* Trame de points discrète */}
-        <span
-          className="pointer-events-none absolute inset-0 -z-[1] bg-[radial-gradient(rgba(106,60,255,.16)_1px,transparent_1.5px)] [background-size:22px_22px] [mask-image:radial-gradient(60%_70%_at_30%_50%,#000,transparent)]"
-          aria-hidden="true"
-        />
-
         <div className={`${tw.wrap} grid items-center gap-12 lg:grid-cols-[0.85fr_1.15fr]`}>
-          <MissionGlobe />
+          {/* Globe */}
+          <Reveal className="relative mx-auto aspect-square w-full max-w-[420px] min-w-0">
+            <Globe />
+
+            {orbitIcons.map((o, i) => (
+              <span
+                key={i}
+                className={`absolute z-[3] grid size-[52px] animate-float place-items-center overflow-hidden rounded-[15px] border border-white/40 bg-[linear-gradient(150deg,#5a8bff,#3a4bff_45%,#3a1fc9)] shadow-[0_5px_0_#2a1f9e,0_18px_30px_-8px_rgba(50,50,230,.75),inset_0_1px_0_rgba(255,255,255,.55)] before:absolute before:inset-x-1 before:top-0.5 before:h-1/2 before:rounded-[12px] before:bg-[linear-gradient(rgba(255,255,255,.35),transparent)] ${o.pos}`}
+                style={{ animationDelay: `${-i * 1.4}s` }}
+              >
+                <Icon className="relative size-[22px]" stroke="#fff">{o.icon}</Icon>
+              </span>
+            ))}
+          </Reveal>
 
           <Reveal className="min-w-0" delay={120}>
             <span className={kicker}>Notre mission</span>
@@ -426,10 +346,10 @@ function AboutPage() {
               <br />
               en solutions numériques
               <br />
-              <span className={tw.gradText}>performantes</span>
+              performantes
             </h2>
 
-            <p className="mb-7 max-w-[540px] text-[13.5px] leading-[1.75] text-body">
+            <p className="mb-8 max-w-[520px] text-[13.5px] leading-[1.75] text-body">
               Nous croyons que chaque entreprise a un potentiel unique. Notre
               mission est de vous accompagner dans cette transformation en vous
               apportant des solutions technologiques adaptées, qui simplifient
@@ -437,34 +357,16 @@ function AboutPage() {
               croissance.
             </p>
 
-            <ul className="mb-7 grid gap-3.5 sm:grid-cols-3">
-              {missionPoints.map((p, i) => (
-                <Reveal
-                  as="li"
-                  key={p.title}
-                  delay={200 + i * 90}
-                  className="glass group relative overflow-hidden rounded-[20px] px-4 pt-4 pb-5 hover:-translate-y-1.5 hover:shadow-[0_30px_50px_-24px_rgba(70,50,220,.6)]"
-                >
-                  <span className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-[linear-gradient(90deg,#2f8bff,#7b3cff)] transition-transform duration-500 group-hover:scale-x-100" aria-hidden="true" />
-                  <span className={`${icoWhite} mb-3 size-10 transition duration-500 group-hover:-rotate-8 group-hover:scale-110`}>
+            <ul className="flex flex-wrap gap-x-10 gap-y-5">
+              {missionPoints.map((p) => (
+                <li key={p.label} className="flex items-center gap-3">
+                  <span className={`${icoWhite} size-11`}>
                     <Icon className="size-5">{p.icon}</Icon>
                   </span>
-                  <h3 className="mb-1 font-sora text-[12.5px] leading-[1.3] font-semibold text-ink-2">{p.title}</h3>
-                  <p className="text-[11px] leading-[1.55] text-mute">{p.text}</p>
-                </Reveal>
+                  <span className="text-[11.5px] leading-[1.45] whitespace-pre-line text-body">{p.label}</span>
+                </li>
               ))}
             </ul>
-
-            {/* Citation */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-r-[18px] border-l-[3px] border-violet bg-[linear-gradient(90deg,rgba(123,60,255,.08),transparent)] py-3 pr-4 pl-5">
-              <p className={`${tw.script} min-w-[220px] flex-1 text-[19px] leading-[1.3] text-ink-2`}>
-                « Du local au global : des solutions pensées à Madagascar, prêtes pour le monde. »
-              </p>
-              <Link to="/services" className={tw.link}>
-                Découvrir nos services
-                <Arrow className="size-3.5 transition group-hover:translate-x-1" />
-              </Link>
-            </div>
           </Reveal>
         </div>
       </section>

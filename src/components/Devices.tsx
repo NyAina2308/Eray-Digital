@@ -42,7 +42,7 @@ export function Laptop({ src, alt = '', scroll = true, className = '', children,
   return (
     <div className={`relative ${className}`}>
       {/* Couvercle : cadre aluminium + bordure noire + encoche caméra */}
-      <div className={`relative ${keyboard ? '' : 'mx-[6%]'} rounded-t-[4.5%_7%] bg-[linear-gradient(#d9dbe4,#a9acbb)] p-[0.35%] shadow-[0_30px_60px_-24px_rgba(20,15,90,.55)]`}>
+      <div className="relative mx-[6%] rounded-t-[4.5%_7%] bg-[linear-gradient(#d9dbe4,#a9acbb)] p-[0.35%] shadow-[0_30px_60px_-24px_rgba(20,15,90,.55)]">
         <div className="relative rounded-t-[4%_6.5%] bg-[#07070c] p-[2.6%_2.2%_3.2%]">
           <span className="absolute top-0 left-1/2 z-[2] h-[3.2%] w-[11%] -translate-x-1/2 rounded-b-[6px] bg-[#07070c]">
             <span className="absolute top-1/2 left-1/2 size-[4px] -translate-1/2 rounded-full bg-[radial-gradient(#3b4a7a,#0c0f1c)]" />

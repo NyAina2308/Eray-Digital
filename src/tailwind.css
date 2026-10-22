@@ -53,6 +53,50 @@
   }
 }
 
+/* Hors de @theme : Tailwind n'émet les keyframes du thème que si une classe animate-* les
+   utilise, or celles-ci sont appelées en style inline. */
+
+/* Défilement continu : la piste contient la liste en double, on la décale d'une moitié. */
+@keyframes marquee {
+  from { translate: 0 0; }
+  to { translate: -50% 0; }
+}
+
+/* Dérive lente du motif de circuit en fond de section. */
+@keyframes circuit-drift {
+  from { background-position: 0 0; }
+  to { background-position: 240px 240px; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: .45; scale: 1; }
+  50% { opacity: .85; scale: 1.12; }
+}
+
+/* Carrousel de logos : pause au survol, fondu sur les bords. */
+@utility marquee {
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  &:hover > * { animation-play-state: paused; }
+}
+
+/* Bordure lumineuse qui pulse autour des logos. */
+@keyframes icon-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 1px rgba(106, 60, 255, 0.18), 0 0 6px rgba(106, 60, 255, 0.12), 0 10px 20px -12px rgba(70, 50, 200, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 1.5px rgba(123, 92, 255, 0.75), 0 0 16px rgba(47, 139, 255, 0.55), 0 10px 22px -10px rgba(70, 50, 200, 0.55);
+  }
+}
+
+@utility icon-glow {
+  animation: icon-glow 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee > *, .motion-bg, .icon-glow { animation: none !important; }
+}
+
 /* Verre irisé des maquettes : fond laiteux + fin liseré bleu → violet → blanc. */
 @utility glass {
   border: 1.5px solid transparent;
