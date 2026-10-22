@@ -1,11 +1,15 @@
-import { useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent, type ReactNode } from 'react'
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
 const CONTACT_EMAIL = 'contact@eraydigital.tech'
 import Reveal from '../components/Reveal'
+import { Phone } from '../components/Devices'
+import { ProjectsDashboard } from '../components/PhoneDashboards'
 import { Shapes, decor, type Shape } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
 import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
 import roomPhoto from '../assets/photos/room-D2XCtDIa.png'
+import heroLaptop from '../assets/photos/hero-laptop.webp'
 
 const PROJECT_TYPES = [
   'Développement Web',
@@ -40,8 +44,8 @@ const FAQS = [
 
 const SOCIALS = [
   { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=100069619770031', d: 'M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z' },
-  { label: 'LinkedIn', href: 'https://linkedin.com', d: 'M5 9h3.5v11H5zM6.8 3.5a2 2 0 110 4 2 2 0 010-4zM10.5 9H14v1.6c.5-.9 1.7-1.9 3.6-1.9 3.6 0 4.4 2.3 4.4 5.4V20h-3.5v-5.2c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V20h-3.5z' },
-  { label: 'Instagram', href: 'https://instagram.com', d: 'M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zm5 5a4 4 0 100 8 4 4 0 000-8zm0 2a2 2 0 110 4 2 2 0 010-4zm5.2-3.4a1.1 1.1 0 100 2.2 1.1 1.1 0 000-2.2z' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/eray-digital/home/', d: 'M5 9h3.5v11H5zM6.8 3.5a2 2 0 110 4 2 2 0 010-4zM10.5 9H14v1.6c.5-.9 1.7-1.9 3.6-1.9 3.6 0 4.4 2.3 4.4 5.4V20h-3.5v-5.2c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V20h-3.5z' },
+  { label: 'Instagram', href: 'https://www.instagram.com/eray_digital/', d: 'M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zm5 5a4 4 0 100 8 4 4 0 000-8zm0 2a2 2 0 110 4 2 2 0 010-4zm5.2-3.4a1.1 1.1 0 100 2.2 1.1 1.1 0 000-2.2z' },
 ]
 
 const p = {
@@ -89,6 +93,95 @@ function Field({ icon, label, required, children }: { icon: ReactNode; label: st
   )
 }
 
+/** Liste « Type de projet » aux couleurs de la page (remplace le <select> natif). */
+function ServiceSelect() {
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState('')
+  const [active, setActive] = useState(0)
+  const ref = useRef<HTMLDivElement>(null)
+
+  // Fermeture au clic en dehors
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('pointerdown', onDown)
+    return () => document.removeEventListener('pointerdown', onDown)
+  }, [open])
+
+  function choose(t: string) {
+    setValue(t)
+    setOpen(false)
+  }
+
+  function onKey(e: ReactKeyboardEvent<HTMLButtonElement>) {
+    if (e.key === 'Escape') return setOpen(false)
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (!open) return setOpen(true)
+      const step = e.key === 'ArrowDown' ? 1 : -1
+      setActive((a) => (a + step + PROJECT_TYPES.length) % PROJECT_TYPES.length)
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && open) {
+      e.preventDefault()
+      choose(PROJECT_TYPES[active])
+    }
+  }
+
+  return (
+    <div ref={ref} className={`${box} relative ${open ? 'border-violet/40 bg-white shadow-[0_0_0_4px_rgba(106,60,255,.08)]' : ''}`}>
+      <Icon className="mt-0.5 size-4 shrink-0" stroke="#3a4bff">{p.shield}</Icon>
+      <span className="min-w-0 flex-1">
+        <span id="service-label" className={boxLabel}>Type de projet</span>
+        <button
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-labelledby="service-label service-value"
+          onClick={() => setOpen((o) => !o)}
+          onKeyDown={onKey}
+          className={`${field} flex cursor-pointer items-center justify-between gap-2 text-left`}
+        >
+          <span id="service-value" className={value ? '' : 'text-[#a3a5c2]'}>{value || 'Sélectionnez'}</span>
+          <svg viewBox="0 0 24 24" className={`size-4 shrink-0 text-[#3a4bff] transition-transform duration-300 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+      </span>
+      <input type="hidden" name="service" value={value} />
+
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            role="listbox"
+            aria-labelledby="service-label"
+            className="absolute inset-x-0 top-[calc(100%+8px)] z-20 grid gap-0.5 rounded-2xl border border-violet/15 bg-white/95 p-1.5 shadow-[0_24px_50px_-20px_rgba(70,50,220,.45)] backdrop-blur-md"
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ duration: 0.18 }}
+          >
+            {PROJECT_TYPES.map((t, i) => (
+              <li
+                key={t}
+                role="option"
+                aria-selected={value === t}
+                onPointerEnter={() => setActive(i)}
+                onClick={() => choose(t)}
+                className={`flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 font-sora text-[13px] transition-colors ${i === active ? 'bg-violet/8 text-violet' : 'text-ink'} ${value === t ? 'font-semibold' : ''}`}
+              >
+                {t}
+                {value === t && <Icon className="size-4" stroke="#6a3cff">{ic.check}</Icon>}
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 /** Note manuscrite + petite flèche dessinée. */
 function Note({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
@@ -99,6 +192,95 @@ function Note({ children, className = '' }: { children: ReactNode; className?: s
         <path d="M15 23 L7 28 L15 31" stroke="#2f2bb8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </span>
+  )
+}
+
+/** Tasse en céramique blanche avec café, ombrée comme la photo du bureau. */
+function Mug() {
+  return (
+    <svg viewBox="0 0 120 120" className="w-full overflow-visible drop-shadow-[0_18px_18px_rgba(40,30,140,.35)]" aria-hidden="true">
+      <defs>
+        <linearGradient id="mug-body" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#d9dbe8" />
+          <stop offset=".3" stopColor="#ffffff" />
+          <stop offset=".65" stopColor="#f1f1f8" />
+          <stop offset="1" stopColor="#b9bccf" />
+        </linearGradient>
+        <radialGradient id="mug-coffee" cx=".45" cy=".4" r=".6">
+          <stop offset="0" stopColor="#6b4630" />
+          <stop offset=".7" stopColor="#3b2416" />
+          <stop offset="1" stopColor="#24150c" />
+        </radialGradient>
+        <radialGradient id="mug-glow" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stopColor="#7b5cff" stopOpacity=".45" />
+          <stop offset="1" stopColor="#7b5cff" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {/* Reflet violet sur la table */}
+      <ellipse cx="54" cy="112" rx="50" ry="9" fill="url(#mug-glow)" />
+      {/* Anse */}
+      <path d="M86 42 C112 40 114 82 84 84" fill="none" stroke="url(#mug-body)" strokeWidth="10" strokeLinecap="round" />
+      <path d="M86 42 C112 40 114 82 84 84" fill="none" stroke="#a9acc2" strokeOpacity=".5" strokeWidth="1.5" />
+      {/* Corps */}
+      <path d="M14 30 H94 L90 98 C89 106 82 110 74 110 H34 C26 110 19 106 18 98 Z" fill="url(#mug-body)" />
+      {/* Bord et café */}
+      <ellipse cx="54" cy="30" rx="40" ry="9" fill="#f7f7fc" />
+      <ellipse cx="54" cy="31" rx="35" ry="6.5" fill="url(#mug-coffee)" />
+      <ellipse cx="46" cy="29.5" rx="10" ry="1.6" fill="#fff" opacity=".25" />
+      {/* Logo */}
+      <image href="/eray-logo.png" x="40" y="56" width="28" height="28" opacity=".9" />
+    </svg>
+  )
+}
+
+/** Ordinateur, iPhone et tasse de l'accueil : parallaxe 3D selon la souris, flottement. */
+function HeroLaptop() {
+  const reduce = useReducedMotion()
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const sx = useSpring(mx, { stiffness: 80, damping: 18 })
+  const sy = useSpring(my, { stiffness: 80, damping: 18 })
+  const rotY = useTransform(sx, [-0.5, 0.5], [-16, -6])
+  const rotX = useTransform(sy, [-0.5, 0.5], [8, 2])
+  const farX = useTransform(sx, [-0.5, 0.5], [10, -10])
+  const nearX = useTransform(sx, [-0.5, 0.5], [-18, 18])
+  const nearY = useTransform(sy, [-0.5, 0.5], [-12, 12])
+  const pop = (delay: number) => ({
+    initial: { opacity: 0, y: 40, scale: 0.9 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
+  })
+  function onMove(e: MouseEvent<HTMLDivElement>) {
+    if (reduce) return
+    const r = e.currentTarget.getBoundingClientRect()
+    mx.set((e.clientX - r.left) / r.width - 0.5)
+    my.set((e.clientY - r.top) / r.height - 0.5)
+  }
+
+  return (
+    <div className="absolute inset-0" onMouseMove={onMove} onMouseLeave={() => { mx.set(0); my.set(0) }}>
+      <motion.div
+        className="absolute top-[20%] left-[12%] w-[64%]"
+        style={{ x: farX }}
+        {...pop(0.15)}
+      >
+        <motion.div style={{ rotateY: rotY, rotateX: rotX, transformPerspective: 1200 }}>
+          <div className="animate-float">
+            <img src={heroLaptop} alt="Site Eray Digital affiché sur un ordinateur portable" className="w-full drop-shadow-[0_30px_40px_rgba(40,30,160,.55)]" />
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* iPhone au premier plan, à droite (parallaxe inverse) */}
+      <motion.div className="group absolute top-[34%] left-[71%] z-[2] w-[14%] rotate-6" style={{ x: nearX, y: nearY }} {...pop(0.45)}>
+        <div className="animate-float [animation-delay:-3s]"><Phone><ProjectsDashboard /></Phone></div>
+      </motion.div>
+
+      {/* Tasse en céramique posée devant */}
+      <motion.div className="absolute right-[2%] bottom-[10%] z-[2] w-[13%]" style={{ x: nearX }} {...pop(0.6)}>
+        <Mug />
+      </motion.div>
+    </div>
   )
 }
 
@@ -188,28 +370,8 @@ function Contact() {
               <span className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.55),rgba(170,150,255,.35)_50%,rgba(47,139,255,.35))]" />
             </div>
             <span className="absolute top-[26%] -left-[2%] h-[46%] w-[26%] rotate-12 rounded-[50%] bg-[linear-gradient(160deg,#3aa0ff,#6a3cff)] opacity-80 blur-[1px]" />
-            {/* Ordinateur */}
-            <div className="absolute top-[24%] left-[14%] w-[62%] animate-float [transform:perspective(1300px)_rotateY(-14deg)_rotateX(6deg)_rotate(-3deg)]">
-              <div className="grid aspect-[16/10.5] place-content-center justify-items-center gap-3 rounded-[14px_14px_4px_4px] border-8 border-[#0d0e24] bg-[radial-gradient(circle_at_40%_40%,#1d1f5a,#0a0b2e_75%)] shadow-[0_30px_60px_-20px_rgba(40,30,160,.6)]">
-                <div className="flex items-center gap-2.5">
-                  <img src="/eray-logo.png" alt="" className="w-[clamp(36px,4vw,54px)] rounded-lg bg-white p-[3px]" />
-                  <span className="font-sora text-[clamp(14px,1.8vw,24px)] leading-none font-bold text-white">ERAY<br /><span className="text-[0.7em] font-medium tracking-[0.2em]">DIGITAL</span></span>
-                </div>
-                <span className={`${tw.script} text-[clamp(11px,1.1vw,15px)] text-white/80`}>Vos idées. Notre expertise.</span>
-              </div>
-              <div className="mx-[-8%] h-3.5 rounded-b-[18px] bg-[linear-gradient(#e6e7f2,#b9bbd0)] shadow-[0_20px_30px_-10px_rgba(40,30,120,.4)]" />
-            </div>
-            {/* Téléphone */}
-            <div className="absolute top-[40%] right-[16%] grid aspect-[9/18] w-[11%] animate-float-slow place-items-center rounded-[18px] border-[4px] border-[#0d0e24] bg-[radial-gradient(circle,#2a2690,#0a0b2e_75%)] shadow-[0_24px_40px_-14px_rgba(40,30,160,.6)]">
-              <img src="/eray-logo.png" alt="" className="w-[60%] rounded-md bg-white p-0.5" />
-            </div>
-            {/* Tasse */}
-            <div className="absolute right-[4%] bottom-[18%] h-[18%] w-[12%]">
-              <span className="absolute inset-0 grid place-items-center rounded-b-[14px] rounded-t-[6px] bg-[linear-gradient(90deg,#0d0e24,#1d1f5a)] shadow-[0_18px_30px_-12px_rgba(40,30,160,.6)]">
-                <img src="/eray-logo.png" alt="" className="w-[42%] rounded bg-white p-px" />
-              </span>
-              <span className="absolute top-[18%] -right-[30%] h-[52%] w-[40%] rounded-r-full border-[5px] border-l-0 border-[#1d1f5a]" />
-            </div>
+            {/* Ordinateur (même rendu que l'accueil) */}
+            <HeroLaptop />
           </Reveal>
         </div>
       </section>
@@ -238,12 +400,7 @@ function Contact() {
                     <Field icon={p.user} label="Votre nom" required><input type="text" name="name" required placeholder="Jean Dupont" className={field} /></Field>
                     <Field icon={p.mail} label="Votre email" required><input type="email" name="email" required placeholder="votre@email.com" className={field} /></Field>
                     <Field icon={p.phone} label="Téléphone"><input type="tel" name="phone" placeholder="+261 ..." className={field} /></Field>
-                    <Field icon={p.shield} label="Type de projet">
-                      <select name="service" defaultValue="" className={`${field} cursor-pointer`}>
-                        <option value="" disabled>Sélectionnez</option>
-                        {PROJECT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-                      </select>
-                    </Field>
+                    <ServiceSelect />
                   </div>
                   <Field icon={p.chat} label="Votre message" required>
                     <textarea name="message" required rows={3} placeholder="Décrivez brièvement votre projet..." className={`${field} resize-y`} />
@@ -273,7 +430,7 @@ function Contact() {
               </p>
               <ul className="glass grid gap-1 rounded-[22px] p-2">
                 {[
-                  { icon: p.phone, title: 'Téléphone', value: <a href="tel:+261000000000" className="hover:text-violet">+261 00 000 00 00</a> },
+                  { icon: p.phone, title: 'Téléphone', value: <a href="tel:+261388218033" className="hover:text-violet">+261 38 82 180 33</a> },
                   { icon: p.mail, title: 'Email', value: <a href="mailto:contact@eraydigital.tech" className="hover:text-violet">contact@eraydigital.tech</a>, sub: 'On répond sous 24h' },
                   { icon: p.pin, title: 'Adresse', value: 'Antananarivo, Madagascar' },
                 ].map((c) => (
@@ -349,22 +506,42 @@ function Contact() {
               </button>
             </Reveal>
             <Reveal className="min-w-0" delay={100}>
-              <ul className="divide-y divide-violet/10 rounded-[22px] bg-white px-6 py-2 text-ink shadow-[0_30px_60px_-24px_rgba(0,0,0,.45)]">
+              <ul className="grid gap-3">
                 {faqs.map((f, i) => {
                   const open = openFaq === i
                   return (
-                    <li key={f.question}>
+                    <li
+                      key={f.question}
+                      className={`rounded-[20px] border backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-400 ${
+                        open
+                          ? 'border-[#8fa8ff]/55 bg-[linear-gradient(135deg,rgba(47,139,255,.2),rgba(123,60,255,.32))] text-white shadow-[0_24px_50px_-20px_rgba(90,60,255,.7)]'
+                          : 'border-[#8fa8ff]/25 bg-white/[.07] text-white hover:border-[#8fa8ff]/50 hover:bg-white/[.11]'
+                      }`}
+                    >
                       <button
                         type="button"
                         aria-expanded={open}
+                        aria-controls={`faq-${i}`}
                         onClick={() => setOpenFaq(open ? null : i)}
-                        className="flex w-full cursor-pointer items-center justify-between gap-4 border-0 bg-transparent py-4 text-left font-sora text-[13px] font-medium text-ink-2"
+                        className="flex w-full cursor-pointer items-center gap-4 border-0 bg-transparent px-5 py-4 text-left font-sora"
                       >
-                        {f.question}
-                        <span className={`text-xl leading-none text-[#3a4bff] transition-transform duration-300 ${open ? 'rotate-45' : ''}`}>+</span>
+                        <span className={`text-[11px] font-semibold tracking-[0.12em] transition-colors ${open ? 'text-[#c9b5ff]' : 'text-[#8fb4ff]'}`}>{String(i + 1).padStart(2, '0')}</span>
+                        <span className={`flex-1 text-[13.5px] font-semibold transition-colors text-white`}>{f.question}</span>
+                        <span
+                          className={`grid size-8 shrink-0 place-items-center rounded-full text-white transition duration-300 ${
+                            open
+                              ? 'rotate-45 bg-[linear-gradient(135deg,#2f8bff,#7b3cff)] shadow-[0_8px_18px_-6px_rgba(90,60,255,.8)]'
+                              : 'border border-white/25 bg-white/10'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+                        </span>
                       </button>
-                      <div className={`grid transition-[grid-template-rows] duration-400 ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-                        <p className="overflow-hidden text-[12.5px] leading-[1.7] text-body"><span className="block pb-4">{f.answer}</span></p>
+                      <div id={`faq-${i}`} className={`grid transition-[grid-template-rows,opacity] duration-400 ${open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                        <div className="overflow-hidden">
+                          <p className="mx-5 mb-4 border-l-2 border-[#b9a4ff]/60 pl-4 text-[12.5px] leading-[1.7] text-white/80 sm:ml-[52px]">{f.answer}</p>
+                        </div>
                       </div>
                     </li>
                   )

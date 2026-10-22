@@ -64,8 +64,8 @@
 
 /* Dérive lente du motif de circuit en fond de section. */
 @keyframes circuit-drift {
-  from { background-position: 0 0; }
-  to { background-position: 240px 240px; }
+  from { translate: 0 0; }
+  to { translate: 240px 240px; }
 }
 
 @keyframes glow-pulse {
@@ -79,22 +79,30 @@
   &:hover > * { animation-play-state: paused; }
 }
 
-/* Bordure lumineuse qui pulse autour des logos. */
+/* Bordure lumineuse qui pulse autour des logos : l'ombre forte est posée une fois sur un
+   pseudo-élément dont seule l'opacité varie (pas de box-shadow redessiné à chaque image). */
 @keyframes icon-glow {
-  0%, 100% {
-    box-shadow: 0 0 0 1px rgba(106, 60, 255, 0.18), 0 0 6px rgba(106, 60, 255, 0.12), 0 10px 20px -12px rgba(70, 50, 200, 0.45);
-  }
-  50% {
-    box-shadow: 0 0 0 1.5px rgba(123, 92, 255, 0.75), 0 0 16px rgba(47, 139, 255, 0.55), 0 10px 22px -10px rgba(70, 50, 200, 0.55);
-  }
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
 }
 
 @utility icon-glow {
-  animation: icon-glow 2.4s ease-in-out infinite;
+  box-shadow: 0 0 0 1px rgba(106, 60, 255, 0.18), 0 0 6px rgba(106, 60, 255, 0.12), 0 10px 20px -12px rgba(70, 50, 200, 0.45);
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 0 1.5px rgba(123, 92, 255, 0.75), 0 0 16px rgba(47, 139, 255, 0.55), 0 10px 22px -10px rgba(70, 50, 200, 0.55);
+    opacity: 0;
+    will-change: opacity;
+    animation: icon-glow 2.4s ease-in-out var(--glow-delay, 0s) infinite;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee > *, .motion-bg, .icon-glow { animation: none !important; }
+  .marquee > *, .motion-bg, .icon-glow::after { animation: none !important; }
 }
 
 /* Verre irisé des maquettes : fond laiteux + fin liseré bleu → violet → blanc. */
