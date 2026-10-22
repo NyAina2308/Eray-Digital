@@ -11,6 +11,7 @@ import { projects } from '../data/projects'
 import portrait from '../assets/photos/woman-Dt2ftJah.png'
 import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
 import deskPhoto from '../assets/photos/services-desk.webp'
+import plantPhoto from '../assets/photos/plant.webp'
 import heroLaptop from '../assets/photos/hero-laptop.webp'
 
 /* ------------------------------------------------------------------ */
@@ -94,29 +95,9 @@ const trustShapes: Shape[] = [
 /** Pastille de section claire (« À propos », « Nos services »). */
 const pill = 'mb-3 inline-block rounded-full border border-[#2f8bff]/30 bg-[#e8f1ff] px-3 py-1 text-[11px] font-semibold text-[#2f5bff]'
 
-/** Plante en pot (SVG). */
+/** Plante en pot (photo détourée). */
 function Plant({ className = '' }: { className?: string }) {
-  const leaves = [
-    { d: 'M60 120 C 30 100, 14 70, 20 40 C 44 58, 58 86, 60 120', c: '#2f7d4f' },
-    { d: 'M60 120 C 90 100, 108 72, 102 38 C 78 58, 62 86, 60 120', c: '#3a9460' },
-    { d: 'M60 120 C 46 90, 44 50, 60 12 C 76 50, 74 90, 60 120', c: '#2a6e46' },
-    { d: 'M60 122 C 30 116, 6 100, 0 78 C 28 80, 50 98, 60 122', c: '#3f9c66' },
-    { d: 'M60 122 C 90 116, 114 100, 120 78 C 92 80, 70 98, 60 122', c: '#2f7d4f' },
-  ]
-  return (
-    <svg className={className} viewBox="0 0 120 190" fill="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="pl-pot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#1d2a5c" /><stop offset=".5" stopColor="#34478f" /><stop offset="1" stopColor="#18224d" /></linearGradient>
-      </defs>
-      {leaves.map((l, i) => (
-        <g key={i}>
-          <path d={l.d} fill={l.c} />
-        </g>
-      ))}
-      <path d="M32 124 H88 L82 182 C 81 186, 78 188, 74 188 H46 C 42 188, 39 186, 38 182 Z" fill="url(#pl-pot)" />
-      <rect x="28" y="118" width="64" height="10" rx="4" fill="#26357a" />
-    </svg>
-  )
+  return <img src={plantPhoto} alt="" aria-hidden="true" loading="lazy" className={`drop-shadow-[0_16px_18px_rgba(40,30,120,.25)] ${className}`} />
 }
 
 /** Ordinateur + deux téléphones entourés des pastilles de services, avec parallaxe. */
@@ -283,15 +264,15 @@ function Home() {
       </section>
 
       {/* ============================ À PROPOS ============================ */}
-      <section className="relative isolate pt-14 pb-10">
+      <section className="relative isolate overflow-x-clip pt-14 pb-10">
         <Shapes items={aboutShapes} />
         <Plant className="absolute top-[22%] left-[-10px] hidden w-[70px] -rotate-6 xl:block" />
         <Plant className="absolute top-[8%] right-[-6px] hidden w-[110px] xl:block" />
         <span className="absolute top-[48%] right-[7%] hidden h-24 w-10 rotate-[20deg] rounded-[50%_50%_50%_50%/70%_70%_30%_30%] bg-[linear-gradient(180deg,#b07bff,#6a3cff)] opacity-70 xl:block" aria-hidden="true" />
-        <div className={`${tw.wrap} grid items-center gap-10 lg:grid-cols-[0.95fr_1.15fr_0.7fr]`}>
+        <div className={`${tw.wrap} grid items-center gap-10 lg:grid-cols-[1.3fr_1.05fr_0.6fr]`}>
           {/* Photo d'équipe dans une forme organique */}
-          <Reveal className="relative aspect-[1020/690] min-w-0">
-            <svg className="absolute inset-0 size-full overflow-visible" viewBox="0 0 1020 690" aria-hidden="true">
+          <Reveal className="relative aspect-[930/660] min-w-0 lg:-ml-24 lg:w-[calc(100%+96px)]">
+            <svg className="absolute inset-0 size-full overflow-visible" viewBox="20 30 930 660" aria-hidden="true">
               <defs>
                 <linearGradient id="ab-blue" x1="0" y1="0" x2=".35" y2="1">
                   <stop offset="0" stopColor="#c4e2ff" />
@@ -327,7 +308,7 @@ function Home() {
             <span className="sr-only">L'équipe Eray Digital au travail</span>
             <Link
               to="/a-propos"
-              className="group absolute top-[63.8%] left-[33.3%] flex h-[25.4%] w-[42.6%] items-center justify-between rounded-[22px] border border-white border-r-[#8a6dff]/70 bg-white/85 px-[5%] shadow-[0_24px_40px_-18px_rgba(40,30,160,.45)] backdrop-blur-md transition hover:-translate-y-1"
+              className="group absolute top-[62.1%] left-[34.4%] flex h-[26.5%] w-[46.8%] items-center justify-between rounded-[22px] border border-white border-r-[#8a6dff]/70 bg-white/85 px-[5%] shadow-[0_24px_40px_-18px_rgba(40,30,160,.45)] backdrop-blur-md transition hover:-translate-y-1"
             >
               <span className="font-sora text-[clamp(12px,1.2vw,16px)] leading-[1.3] font-semibold text-[#3b32c8]">Des idées<br />aux solutions</span>
               <span className="grid size-[clamp(28px,2.6vw,38px)] shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#7a5cff,#4a2fe0)] text-white shadow-[0_8px_18px_-6px_rgba(80,50,255,.7)]">
