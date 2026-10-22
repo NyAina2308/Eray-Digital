@@ -1,27 +1,5 @@
 import type { ReactNode } from 'react'
-
-/** Classes Tailwind partagées par les pages publiques. */
-export const tw = {
-  wrap: 'relative z-[1] mx-auto w-full max-w-[1240px] px-6',
-  page: 'relative overflow-hidden bg-[#fbfbff] font-sora text-ink',
-  chip: 'inline-block rounded-full border border-violet/35 bg-white/70 px-3 py-1 text-[10px] font-semibold tracking-[0.18em] text-[#3a2bd8] uppercase',
-  chipSm: 'inline-block rounded-full border border-violet/35 bg-white/70 px-2.5 py-[3px] text-[9px] font-semibold tracking-[0.18em] text-[#3a2bd8] uppercase',
-  chipDark: 'inline-block rounded-full border border-[#c8beff]/40 bg-white/5 px-3 py-1 text-[9px] font-semibold tracking-[0.18em] text-[#d8d2ff] uppercase',
-  kicker: 'mb-3.5 inline-block text-[11px] font-semibold tracking-[0.22em] text-violet uppercase',
-  h1: 'mb-6 font-sora text-[clamp(32px,3.3vw,46px)] leading-[1.12] font-semibold tracking-[-0.035em] text-ink',
-  h2: 'mb-4 font-sora text-[clamp(26px,2.3vw,32px)] leading-[1.15] font-semibold tracking-[-0.03em] text-ink',
-  lead: 'mb-6 text-[14.5px] leading-[1.75] text-body',
-  btn: 'btn-blue group inline-flex items-center gap-2.5 rounded-full px-6 py-3 font-sora text-[13px] font-semibold transition hover:-translate-y-0.5',
-  btnLg: 'btn-blue group inline-flex items-center gap-2.5 rounded-full px-7 py-4 font-sora text-[14px] font-semibold transition hover:-translate-y-0.5',
-  btnGhost: 'glass group inline-flex items-center gap-2.5 rounded-full px-6 py-3 font-sora text-[13px] font-semibold text-[#2f3bb8] transition hover:-translate-y-0.5',
-  btnWhite: 'group inline-flex items-center gap-3 rounded-full bg-white px-7 py-4 font-sora text-[13px] font-semibold text-[#3a2bd8] shadow-[0_20px_40px_-14px_rgba(0,0,0,.4)] transition hover:-translate-y-0.5',
-  link: 'group inline-flex items-center gap-2 text-[12px] font-semibold text-[#2f3bb8]',
-  card: 'glass rounded-[22px] transition duration-500 hover:-translate-y-1.5',
-  icoRound: 'grid size-14 shrink-0 place-items-center rounded-full bg-[linear-gradient(145deg,#fff,#eeeaff)] shadow-[0_10px_24px_-10px_rgba(90,60,255,.45),inset_0_0_0_1px_rgba(106,60,255,.1)]',
-  icoBlue: 'grid shrink-0 place-items-center rounded-full bg-[linear-gradient(145deg,#3aa0ff,#5a3cff)] shadow-[0_14px_30px_-10px_rgba(60,60,255,.65)]',
-  gradText: 'bg-[linear-gradient(100deg,#2f8bff,#7b3cff)] bg-clip-text text-transparent',
-  script: 'font-script italic',
-}
+export { tw, ic } from './uiData'
 
 export function Arrow({ className = 'size-4 transition group-hover:translate-x-1' }: { className?: string }) {
   return (
@@ -53,31 +31,3 @@ export function GradDefs() {
   )
 }
 
-/** Icônes (tracés SVG) communes. */
-export const ic = {
-  globe: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9S14.5 18.3 12 21c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" /></>,
-  code: <path d="M8 6l-6 6 6 6M16 6l6 6-6 6M14 4l-4 16" />,
-  brush: <path d="M14.5 4.5l5 5L10 19H5v-5l9.5-9.5zM12.5 6.5l5 5" />,
-  cloud: <path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 8a4.5 4.5 0 0 1-.5 10H7z" />,
-  box: <path d="M12 2l9 5v10l-9 5-9-5V7l9-5zM3 7l9 5 9-5M12 12v10" />,
-  star: <path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1 6.2L12 17.4 6.5 20.3l1-6.2L3 9.7l6.2-.9L12 3z" />,
-  rocket: <path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2M9 11a13 13 0 0 1 11-8 13 13 0 0 1-8 11l-3 1-2-2 1-3zM15 9h.01" />,
-  eye: <><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></>,
-  target: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></>,
-  bulb: <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z" />,
-  atom: <><circle cx="12" cy="12" r="1.5" /><ellipse cx="12" cy="12" rx="10" ry="4" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" /></>,
-  chart: <path d="M4 20V14M10 20V10M16 20V6M3 20h18M4 10l6-5 4 3 6-5" />,
-  bars: <path d="M4 20V14M9 20V8M14 20V11M19 20V5M3 20h18" />,
-  loop: <path d="M20 12a8 8 0 0 1-14 5.3M4 12a8 8 0 0 1 14-5.3M18 3v4h-4M6 21v-4h4" />,
-  users: <><circle cx="9" cy="8" r="3.5" /><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2.5.5 4 2.8 4 6" /></>,
-  cap: <path d="M2 9l10-5 10 5-10 5L2 9zM6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6" />,
-  search: <><circle cx="11" cy="11" r="7" /><path d="M21 21l-5-5" /></>,
-  ear: <path d="M6 9a6 6 0 1 1 12 0c0 3-2 4-3 6s-1 4-4 4a3 3 0 0 1-3-3M9 9a3 3 0 0 1 6 0" />,
-  hand: <path d="M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V12M16 9a1.5 1.5 0 0 1 3 0v5a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-3l-2.5-4a1.5 1.5 0 0 1 2.5-1.7L7 14" />,
-  clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
-  mouse: <><rect x="7" y="3" width="10" height="18" rx="5" /><path d="M12 7v3" /></>,
-  tag: <path d="M3 12V4h8l10 10-8 8L3 12zM7.5 7.5h.01" />,
-  cal: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></>,
-  send: <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />,
-  check: <path d="M5 12l5 5 9-10" />,
-}

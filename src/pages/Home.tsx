@@ -2,6 +2,7 @@ import type { MouseEvent, ReactNode } from 'react'
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Laptop, Phone } from '../components/Devices'
+import { AnalyticsDashboard, ProjectsDashboard } from '../components/PhoneDashboards'
 import LiveIcon, { type LiveKind } from '../components/LiveIcon'
 import Reveal from '../components/Reveal'
 import { Shapes, type Shape } from '../components/Decor'
@@ -10,6 +11,7 @@ import { projects } from '../data/projects'
 import portrait from '../assets/photos/woman-Dt2ftJah.png'
 import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
 import deskPhoto from '../assets/photos/services-desk.webp'
+import heroLaptop from '../assets/photos/hero-laptop.webp'
 
 /* ------------------------------------------------------------------ */
 /* Données                                                            */
@@ -151,29 +153,18 @@ function HeroVisual() {
       <motion.div className="group absolute top-[12%] left-[12%] z-[2] w-[62%]" style={{ x: farX }} {...pop(0.15)}>
         <motion.div style={{ rotateY: rotY, rotateX: rotX, transformPerspective: 1200 }}>
           <div className="animate-float">
-            <Laptop keyboard src={projects[5]?.image ?? projects[0].image}>
-              <span className="absolute inset-0 bg-[linear-gradient(110deg,rgba(10,11,46,.88),rgba(30,20,120,.45)_55%,transparent)]" />
-              <motion.span
-                className="absolute top-[32%] left-[8%] z-[1] text-[clamp(13px,1.4vw,19px)] leading-[1.25] font-semibold text-white"
-                initial={{ opacity: 0, x: -14 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1, duration: 0.7 }}
-              >
-                Des solutions<br />qui font la différence
-                <motion.span className="mt-1.5 block h-[3px] rounded-full bg-[linear-gradient(90deg,#2f8bff,#7b3cff)]" initial={{ width: 0 }} animate={{ width: '70%' }} transition={{ delay: 1.5, duration: 0.8 }} />
-              </motion.span>
-            </Laptop>
+            <img src={heroLaptop} alt="Site Eray Digital affiché sur un ordinateur portable" className="w-full drop-shadow-[0_30px_40px_rgba(40,30,160,.55)]" />
           </div>
         </motion.div>
       </motion.div>
 
       {/* iPhones au premier plan, à droite (parallaxe inverse) */}
       {[
-        { img: projects[1].image, cls: 'left-[70%] top-[24%] w-[14%] rotate-8', d: 0.45, float: '' },
-        { img: projects[4]?.image ?? projects[0].image, cls: 'left-[59%] top-[42%] w-[15%] rotate-4', d: 0.6, float: '[animation-delay:-3s]' },
+        { screen: <ProjectsDashboard />, cls: 'left-[70%] top-[24%] w-[14%] rotate-8', d: 0.45, float: '' },
+        { screen: <AnalyticsDashboard />, cls: 'left-[59%] top-[42%] w-[15%] rotate-4', d: 0.6, float: '[animation-delay:-3s]' },
       ].map((ph, i) => (
         <motion.div key={i} className={`group absolute z-[3] ${ph.cls}`} style={{ x: nearX, y: nearY }} {...pop(ph.d)}>
-          <div className={`animate-float ${ph.float}`}><Phone src={ph.img} /></div>
+          <div className={`animate-float ${ph.float}`}><Phone>{ph.screen}</Phone></div>
         </motion.div>
       ))}
 
