@@ -9,6 +9,7 @@ import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
 import { projects } from '../data/projects'
 import portrait from '../assets/photos/woman-Dt2ftJah.png'
 import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
+import plantPhoto from '../assets/photos/plant.webp'
 
 /* ------------------------------------------------------------------ */
 /* Données                                                            */
@@ -162,29 +163,9 @@ function AppScreen({ variant = 0 }: { variant?: number }) {
   )
 }
 
-/** Plante en pot (SVG). */
+/** Plante en pot (photo détourée). */
 function Plant({ className = '' }: { className?: string }) {
-  const leaves = [
-    { d: 'M60 120 C 30 100, 14 70, 20 40 C 44 58, 58 86, 60 120', c: '#2f7d4f' },
-    { d: 'M60 120 C 90 100, 108 72, 102 38 C 78 58, 62 86, 60 120', c: '#3a9460' },
-    { d: 'M60 120 C 46 90, 44 50, 60 12 C 76 50, 74 90, 60 120', c: '#2a6e46' },
-    { d: 'M60 122 C 30 116, 6 100, 0 78 C 28 80, 50 98, 60 122', c: '#3f9c66' },
-    { d: 'M60 122 C 90 116, 114 100, 120 78 C 92 80, 70 98, 60 122', c: '#2f7d4f' },
-  ]
-  return (
-    <svg className={className} viewBox="0 0 120 190" fill="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="pl-pot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#1d2a5c" /><stop offset=".5" stopColor="#34478f" /><stop offset="1" stopColor="#18224d" /></linearGradient>
-      </defs>
-      {leaves.map((l, i) => (
-        <g key={i}>
-          <path d={l.d} fill={l.c} />
-        </g>
-      ))}
-      <path d="M32 124 H88 L82 182 C 81 186, 78 188, 74 188 H46 C 42 188, 39 186, 38 182 Z" fill="url(#pl-pot)" />
-      <rect x="28" y="118" width="64" height="10" rx="4" fill="#26357a" />
-    </svg>
-  )
+  return <img src={plantPhoto} alt="" aria-hidden="true" loading="lazy" className={`drop-shadow-[0_16px_18px_rgba(40,30,120,.25)] ${className}`} />
 }
 
 /** Ordinateur + deux téléphones entourés des pastilles de services, avec parallaxe. */
@@ -272,8 +253,6 @@ const goBtn = 'grid size-8 place-items-center rounded-full bg-[linear-gradient(1
 const darkBg = 'bg-[radial-gradient(600px_380px_at_8%_20%,rgba(60,90,255,.35),transparent_70%),radial-gradient(700px_420px_at_92%_70%,rgba(123,60,255,.45),transparent_70%),linear-gradient(120deg,#070a2e,#14136b_55%,#1d1580)]'
 
 function Home() {
-  const reduce = useReducedMotion()
-
   return (
     <div className={tw.page}>
       <GradDefs />
@@ -319,26 +298,56 @@ function Home() {
       </section>
 
       {/* ============================ À PROPOS ============================ */}
-      <section className="relative isolate pt-14 pb-10">
+      <section className="relative isolate overflow-x-clip pt-14 pb-10">
         <Shapes items={aboutShapes} />
         <Plant className="absolute top-[22%] left-[-10px] hidden w-[70px] -rotate-6 xl:block" />
         <Plant className="absolute top-[8%] right-[-6px] hidden w-[110px] xl:block" />
         <span className="absolute top-[48%] right-[7%] hidden h-24 w-10 rotate-[20deg] rounded-[50%_50%_50%_50%/70%_70%_30%_30%] bg-[linear-gradient(180deg,#b07bff,#6a3cff)] opacity-70 xl:block" aria-hidden="true" />
-        <div className={`${tw.wrap} grid items-center gap-10 lg:grid-cols-[0.95fr_1.15fr_0.7fr]`}>
+        <div className={`${tw.wrap} grid items-center gap-10 lg:grid-cols-[1.3fr_1.05fr_0.6fr]`}>
           {/* Photo d'équipe dans une forme organique */}
-          <Reveal className="relative min-w-0 px-4 pt-4 pb-10">
-            <motion.span
-              className="absolute inset-[0_6%_8%_0] -z-[1] bg-[linear-gradient(150deg,#8fc2ff,#5a6bff_55%,#8b5cff)] opacity-80"
-              style={{ borderRadius: '42% 58% 46% 54% / 50% 40% 60% 50%' }}
-              animate={reduce ? undefined : { borderRadius: ['42% 58% 46% 54% / 50% 40% 60% 50%', '55% 45% 52% 48% / 42% 56% 44% 58%', '42% 58% 46% 54% / 50% 40% 60% 50%'] }}
-              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <div className="overflow-hidden rounded-[30px] border-4 border-white shadow-[0_30px_60px_-24px_rgba(40,30,160,.55)]">
-              <img src={teamPhoto} alt="L'équipe Eray Digital au travail" loading="lazy" className="aspect-[4/3] w-full object-cover" />
-            </div>
-            <Link to="/a-propos" className="group absolute bottom-2 left-10 flex items-center gap-6 rounded-2xl bg-white px-5 py-3.5 shadow-[0_20px_40px_-16px_rgba(40,30,160,.5)] transition hover:-translate-y-1">
-              <span className="font-sora text-[14px] leading-[1.25] font-semibold text-[#1a1a6e]">Des idées<br />aux solutions</span>
-              <span className={goBtn}><Arrow className="size-3.5 transition group-hover:translate-x-0.5" /></span>
+          <Reveal className="relative aspect-[930/660] min-w-0 lg:-ml-24 lg:w-[calc(100%+96px)]">
+            <svg className="absolute inset-0 size-full overflow-visible" viewBox="20 30 930 660" aria-hidden="true">
+              <defs>
+                <linearGradient id="ab-blue" x1="0" y1="0" x2=".35" y2="1">
+                  <stop offset="0" stopColor="#c4e2ff" />
+                  <stop offset=".45" stopColor="#6aa6ff" />
+                  <stop offset="1" stopColor="#3f63ff" />
+                </linearGradient>
+                <linearGradient id="ab-violet" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#a58cff" />
+                  <stop offset=".5" stopColor="#6c4bff" />
+                  <stop offset="1" stopColor="#8a6dff" stopOpacity=".6" />
+                </linearGradient>
+                <linearGradient id="ab-drop" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#a9d0ff" />
+                  <stop offset="1" stopColor="#4a7bff" stopOpacity=".75" />
+                </linearGradient>
+                <clipPath id="ab-photo">
+                  <path d="M260 104 L836 66 Q886 63 870 112 L740 470 Q728 500 690 500 L690 585 L262 590 Q222 590 222 550 L222 144 Q222 107 260 104 Z" />
+                </clipPath>
+              </defs>
+              {/* Point décoratif */}
+              <circle cx="30" cy="172" r="7" fill="#c9cfff" />
+              {/* Forme bleue organique, liserée de blanc */}
+              <path d="M250 75 C330 30 470 38 530 78 L560 640 C470 670 330 690 230 650 C120 610 50 520 60 400 C70 300 150 140 250 75 Z" fill="url(#ab-blue)" />
+              <path d="M252 92 C330 50 460 56 515 92 L540 625 C460 652 330 670 238 634 C135 596 72 512 80 400 C88 305 160 155 252 92 Z" fill="none" stroke="#fff" strokeOpacity=".75" strokeWidth="3" />
+              {/* Ruban violet le long du bord droit */}
+              <path d="M860 60 C905 52 940 85 922 132 L792 432 C782 452 760 458 748 442 L872 120 C880 96 874 74 860 60 Z" fill="url(#ab-violet)" />
+              {/* Photo découpée en biais, bord blanc */}
+              <image href={teamPhoto} x="222" y="60" width="660" height="540" preserveAspectRatio="xMidYMid slice" clipPath="url(#ab-photo)" />
+              <path d="M260 104 L836 66 Q886 63 870 112 L740 470 Q728 500 690 500 L690 585 L262 590 Q222 590 222 550 L222 144 Q222 107 260 104 Z" fill="none" stroke="#fff" strokeWidth="5" />
+              {/* Goutte bleue */}
+              <path d="M862 345 C898 338 918 378 900 412 L810 495 C830 440 822 382 862 345 Z" fill="url(#ab-drop)" />
+            </svg>
+            <span className="sr-only">L'équipe Eray Digital au travail</span>
+            <Link
+              to="/a-propos"
+              className="group absolute top-[62.1%] left-[34.4%] flex h-[26.5%] w-[46.8%] items-center justify-between rounded-[22px] border border-white border-r-[#8a6dff]/70 bg-white/85 px-[5%] shadow-[0_24px_40px_-18px_rgba(40,30,160,.45)] backdrop-blur-md transition hover:-translate-y-1"
+            >
+              <span className="font-sora text-[clamp(12px,1.2vw,16px)] leading-[1.3] font-semibold text-[#3b32c8]">Des idées<br />aux solutions</span>
+              <span className="grid size-[clamp(28px,2.6vw,38px)] shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#7a5cff,#4a2fe0)] text-white shadow-[0_8px_18px_-6px_rgba(80,50,255,.7)]">
+                <Arrow className="size-3.5 transition group-hover:translate-x-0.5" />
+              </span>
             </Link>
           </Reveal>
 
