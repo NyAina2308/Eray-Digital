@@ -252,41 +252,100 @@ function AboutPage() {
           </Reveal>
 
 
-          <Reveal className="relative h-[340px] min-w-0 sm:h-[460px]" delay={120}>
-            {/* Vague de verre derrière la photo */}
-            <svg className="pointer-events-none absolute -inset-x-[8%] inset-y-0 z-0 h-full w-[116%]" viewBox="0 0 700 460" fill="none" aria-hidden="true">
+          <Reveal className="relative aspect-[1268/800] min-w-0" delay={120}>
+            {/* Photo au bord gauche arrondi, enveloppée d'un ruban de verre en « C » */}
+            <svg className="absolute inset-0 size-full overflow-visible" viewBox="0 0 1268 800" fill="none" aria-hidden="true">
               <defs>
-                <linearGradient id="ab-wave" x1="0" y1="1" x2="1" y2="0">
-                  <stop offset="0" stopColor="#5a3cff" stopOpacity=".85" />
-                  <stop offset=".45" stopColor="#8fa8ff" stopOpacity=".55" />
-                  <stop offset="1" stopColor="#d9ccff" stopOpacity=".65" />
+                <clipPath id="ah-photo">
+                  <path d="M760 24 L1130 38 Q1182 38 1182 90 L1182 646 Q1182 690 1138 690 L920 692 C780 696 600 694 430 680 C336 668 272 636 247 590 C227 550 222 505 224 462 L224 440 C207 400 192 360 195 310 C198 250 222 186 294 144 C374 94 540 44 760 24 Z" />
+                </clipPath>
+                <linearGradient id="ah-shard" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#8fe8ff" />
+                  <stop offset="1" stopColor="#3f8cff" stopOpacity=".8" />
                 </linearGradient>
-                <linearGradient id="ab-edge" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stopColor="#fff" stopOpacity=".95" />
-                  <stop offset="1" stopColor="#c9b5ff" stopOpacity=".6" />
+                <filter id="ah-shadow" x="-10%" y="-10%" width="120%" height="130%">
+                  <feDropShadow dx="0" dy="30" stdDeviation="30" floodColor="#4632dc" floodOpacity=".35" />
+                </filter>
+                <linearGradient id="ah-back" x1="0" y1="0" x2="1" y2=".4">
+                  <stop offset="0" stopColor="#7fb2ff" stopOpacity=".95" />
+                  <stop offset=".35" stopColor="#a9b4ff" stopOpacity=".85" />
+                  <stop offset=".7" stopColor="#d4ccff" stopOpacity=".7" />
+                  <stop offset="1" stopColor="#ffffff" stopOpacity=".5" />
                 </linearGradient>
+                <linearGradient id="ah-fold" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#ffffff" stopOpacity=".85" />
+                  <stop offset=".6" stopColor="#d9d2ff" stopOpacity=".6" />
+                  <stop offset="1" stopColor="#a99bff" stopOpacity=".45" />
+                </linearGradient>
+                <linearGradient id="ah-wave" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stopColor="#8a4dff" />
+                  <stop offset=".3" stopColor="#6a5cff" />
+                  <stop offset=".65" stopColor="#3f8cff" />
+                  <stop offset=".85" stopColor="#37c8ff" stopOpacity=".8" />
+                  <stop offset="1" stopColor="#7fe0ff" stopOpacity=".2" />
+                </linearGradient>
+                <linearGradient id="ah-gloss" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#ffffff" stopOpacity=".45" />
+                  <stop offset=".4" stopColor="#ffffff" stopOpacity="0" />
+                  <stop offset=".85" stopColor="#1d1590" stopOpacity="0" />
+                  <stop offset="1" stopColor="#1d1590" stopOpacity=".3" />
+                </linearGradient>
+                <filter id="ah-soft"><feGaussianBlur stdDeviation="3" /></filter>
+                <filter id="ah-blur" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="14" /></filter>
               </defs>
-              <path d="M40 330 C 20 230, 90 120, 210 70 C 330 20, 470 10, 600 40 C 660 55, 690 110, 670 170 L 650 180 C 660 120, 620 80, 560 72 C 440 56, 300 80, 210 150 C 130 210, 110 290, 150 360 C 120 400, 60 390, 40 330 Z" fill="url(#ab-wave)" />
-              <path d="M40 330 C 20 230, 90 120, 210 70 C 330 20, 470 10, 600 40 C 660 55, 690 110, 670 170" stroke="url(#ab-edge)" strokeWidth="3" strokeLinecap="round" />
-              <path d="M60 420 C 160 440, 300 430, 420 400 C 520 375, 600 380, 680 410 L 680 440 C 600 410, 520 410, 420 432 C 300 458, 160 466, 60 440 Z" fill="url(#ab-wave)" opacity=".7" />
-            </svg>
 
-            {/* Photo de l'équipe */}
-            <div className="absolute inset-[9%_2%_12%_16%] z-[1] overflow-hidden rounded-[40px_120px_40px_90px] border-[3px] border-white/80 shadow-[0_40px_80px_-30px_rgba(70,50,220,.6)]">
-              <img src={teamPhoto} alt="L'équipe Eray Digital au travail" className="size-full object-cover" />
-              <span className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,.05),rgba(90,60,255,.18))]" />
-            </div>
+              {/* Photo de l'équipe */}
+              <g filter="url(#ah-shadow)">
+                <image href={teamPhoto} x="200" y="30" width="990" height="680" preserveAspectRatio="xMidYMid slice" clipPath="url(#ah-photo)" />
+              </g>
+              <path d="M760 26 L1130 38 Q1182 38 1182 90 L1182 646" stroke="#fff" strokeOpacity=".8" strokeWidth="3" />
+
+              {/* Ombre portée sous la vague */}
+              <path d="M60 640 C200 700 420 720 880 705 L880 722 C420 740 180 720 60 670 Z" fill="#5a3cff" opacity=".28" filter="url(#ah-blur)" />
+
+              {/* Bandeau arrière : passe sur le haut de la photo et descend le long du bord gauche */}
+              <path
+                d="M760 30 C560 22 330 60 230 123 C150 175 120 260 135 340 C145 395 175 430 205 455 L232 440 C215 400 200 360 203 310 C206 250 230 190 300 150 C380 100 540 52 760 30 Z"
+                fill="url(#ah-back)"
+              />
+              <path d="M760 30 C560 22 330 60 230 123 C150 175 120 260 135 340 C145 395 175 430 205 455" stroke="#fff" strokeOpacity=".95" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M740 32 C540 52 380 100 300 150 C230 190 206 250 203 310 C200 360 215 400 232 440" stroke="#fff" strokeOpacity=".7" strokeWidth="1.5" strokeLinecap="round" />
+              {/* Reflet qui court au milieu du bandeau */}
+              <path d="M600 40 C470 50 320 85 250 140 C180 195 160 270 172 350" stroke="#fff" strokeOpacity=".55" strokeWidth="7" strokeLinecap="round" filter="url(#ah-soft)" />
+
+              {/* Pli intérieur : la face claire du ruban qui se tord */}
+              <path d="M135 340 C145 395 175 430 205 455 C238 482 258 532 256 588 C238 550 220 512 194 486 C162 455 140 404 135 340 Z" fill="url(#ah-fold)" />
+              <path d="M205 455 C238 482 258 532 256 588" stroke="#fff" strokeOpacity=".85" strokeWidth="1.8" strokeLinecap="round" />
+
+              {/* Vague avant : violet → bleu → cyan, épaisse à gauche et effilée vers la droite */}
+              <path
+                d="M232 462 C170 470 90 520 45 575 C25 600 45 635 110 652 C200 678 320 694 460 698 C600 702 780 698 920 688 C780 690 600 686 430 672 C340 660 280 630 255 585 C235 548 230 505 232 462 Z"
+                fill="url(#ah-wave)"
+              />
+              {/* Volume : lumière en haut à gauche, ombre en bas */}
+              <path
+                d="M232 462 C170 470 90 520 45 575 C25 600 45 635 110 652 C200 678 320 694 460 698 C600 702 780 698 920 688 C780 690 600 686 430 672 C340 660 280 630 255 585 C235 548 230 505 232 462 Z"
+                fill="url(#ah-gloss)"
+              />
+              <path d="M232 462 C170 470 90 520 45 575" stroke="#fff" strokeOpacity=".9" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M225 490 C175 500 115 538 80 575" stroke="#fff" strokeOpacity=".5" strokeWidth="8" strokeLinecap="round" filter="url(#ah-soft)" />
+              <path d="M45 575 C25 600 45 635 110 652 C200 678 320 694 460 698 C600 702 780 698 920 688" stroke="#2a1fb0" strokeOpacity=".35" strokeWidth="2" strokeLinecap="round" />
+
+              {/* Éclat cyan à droite */}
+              <path d="M1098 285 L1202 322 L1088 388 Z" fill="url(#ah-shard)" opacity=".9" />
+            </svg>
+            <span className="sr-only">L'équipe Eray Digital au travail</span>
 
             {/* Logo sur le mur */}
-            <div className="absolute top-[14%] right-[6%] z-[2] flex items-center gap-2 rounded-2xl bg-white/80 px-3 py-2 shadow-[0_14px_30px_-12px_rgba(70,50,220,.5)] backdrop-blur">
+            <div className="absolute top-[14%] right-[10%] z-[2] flex items-center gap-2 rounded-2xl bg-white/80 px-3 py-2 shadow-[0_14px_30px_-12px_rgba(70,50,220,.5)] backdrop-blur">
               <img src="/eray-logo.png" alt="" className="h-8 w-auto" />
             </div>
 
             {/* Sphère violette */}
-            <span className="absolute top-[3%] left-[48%] z-[2] size-11 animate-float rounded-full bg-[radial-gradient(circle_at_32%_28%,#fff_0_8%,#b69cff_32%,#5a2bd8_80%)] shadow-[0_14px_28px_-8px_rgba(90,60,255,.65)]" />
+            <span className="absolute top-[10%] left-[31%] z-[2] size-[clamp(30px,4vw,48px)] animate-float rounded-full bg-[radial-gradient(circle_at_32%_28%,#fff_0_8%,#b69cff_32%,#5a2bd8_80%)] shadow-[0_14px_28px_-8px_rgba(90,60,255,.65)]" />
 
             {/* Carte Innover / Créer / Transformer */}
-            <div className="absolute right-0 bottom-[2%] z-[3] w-[30%] min-w-[150px] animate-float-slow rounded-[24px] border border-white/70 bg-[linear-gradient(150deg,rgba(255,255,255,.75),rgba(205,190,255,.55))] p-5 shadow-[0_30px_50px_-20px_rgba(70,50,220,.6)] backdrop-blur-md">
+            <div className="absolute right-[5%] bottom-[2%] z-[3] w-[27%] min-w-[150px] animate-float-slow rounded-[24px] border border-white/70 bg-[linear-gradient(150deg,rgba(255,255,255,.75),rgba(205,190,255,.55))] p-5 shadow-[0_30px_50px_-20px_rgba(70,50,220,.6)] backdrop-blur-md">
               <span className="mb-2 block h-1 w-5 rounded-full bg-[linear-gradient(90deg,#2f8bff,#7b3cff)]" />
               <p className="text-[clamp(12px,1.15vw,15px)] leading-[1.4] font-medium text-ink-2">
                 Innover
