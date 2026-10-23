@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
 import { Shapes, Ribbon, decor } from '../components/Decor'
 import { tw, Arrow, Icon, ic } from '../components/ui'
-import ordiSticker from '../assets/stickers/ordi.webp'
+import ordiSticker from '../assets/stickers/ordi.png'
+import circuitBg from '../assets/backgrounds/circuit.svg'
 
 const DEVICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons'
 const logo = (name: string, variant = 'original') => `${DEVICON}/${name}/${name}-${variant}.svg`
@@ -40,6 +41,7 @@ const groups: Group[] = [
       { name: 'PHP', src: logo('php') },
       { name: 'Symfony', src: logo('symfony') },
       { name: 'Python', src: logo('python') },
+      {name: 'Laravel', src: logo('laravel')},
     ],
   },
   {
@@ -89,6 +91,80 @@ const groups: Group[] = [
     ],
   },
 ]
+
+/* Liste de logos qui défile en boucle. On répète les technos pour remplir la largeur,
+   puis on double la piste : l'animation la décale de -50 % pour un raccord invisible. */
+function TechMarquee({ techs }: { techs: Tech[] }) {
+  const lap = Array.from({ length: Math.ceil(6 / techs.length) }, () => techs).flat()
+  const box = useRef<HTMLDivElement>(null)
+
+  /* À chaque image, --focus vaut 1 pour le logo au centre du bloc et 0 sur les bords :
+     il sert à agrandir et illuminer le logo qui passe au milieu. La boucle ne tourne
+     que lorsque le bloc est visible. */
+  useEffect(() => {
+    const el = box.current
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const items = [...el.querySelectorAll<HTMLElement>('li')]
+    const last = new Map<HTMLElement, string>()
+    let frame = 0
+    const tick = () => {
+      const r = el.getBoundingClientRect()
+      const mid = r.left + r.width / 2
+      for (const li of items) {
+        const b = li.getBoundingClientRect()
+        // Zone d'effet ≈ un logo de part et d'autre du centre : seul celui du milieu grossit.
+        const t = Math.max(0, 1 - Math.abs(b.left + b.width / 2 - mid) / (b.width * 1.1))
+        const v = (t * t * (3 - 2 * t)).toFixed(3)
+        if (last.get(li) !== v) {
+          li.style.setProperty('--focus', v)
+          last.set(li, v)
+        }
+      }
+      frame = requestAnimationFrame(tick)
+    }
+    const io = new IntersectionObserver(([entry]) => {
+      cancelAnimationFrame(frame)
+      if (entry.isIntersecting) frame = requestAnimationFrame(tick)
+    })
+    io.observe(el)
+    return () => {
+      io.disconnect()
+      cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  return (
+    <div ref={box} className="marquee -mx-6 -mt-2 overflow-hidden pt-4 pb-3">
+      <ul
+        className="flex w-max list-none items-end p-0 will-change-transform"
+        style={{ animation: `marquee ${lap.length * 3.2}s linear infinite reverse` }}
+      >
+        {/* Le logo est rendu à sa taille maximale puis réduit par `scale` : il reste net,
+            et la taille des <li> ne change jamais (aucun recalcul de mise en page, la ligne
+            garde une hauteur fixe et la page en dessous ne bouge pas). */}
+        {[...lap, ...lap].map((t, i) => (
+          <li
+            key={i}
+            aria-hidden={i >= lap.length || undefined}
+            className="group grid min-w-[92px] shrink-0 justify-items-center gap-1 px-3 text-center font-medium text-ink"
+          >
+            <span className="transition-[translate] duration-300 group-hover:-translate-y-1">
+              <span
+                className="icon-glow relative grid size-[68px] origin-bottom place-items-center rounded-[18px] bg-[linear-gradient(145deg,#fff,#f1efff)] [scale:calc(.706+var(--focus,0)*.294)]"
+                style={{ '--glow-delay': `${(i % lap.length) * -0.45}s` } as CSSProperties}
+              >
+                {/* Halo renforcé pour le logo au centre */}
+                <span aria-hidden="true" className="absolute -inset-2 -z-10 rounded-[22px] bg-[radial-gradient(circle,rgba(123,92,255,.45),rgba(47,139,255,.2)_55%,transparent_75%)] opacity-[var(--focus,0)] blur-md" />
+                <img src={t.src} alt="" loading="lazy" className="size-10 object-contain" />
+              </span>
+            </span>
+            <span className="origin-top text-[13px] whitespace-nowrap [scale:calc(.846+var(--focus,0)*.154)]">{t.name}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 function TechnologiesPage() {
   return (
@@ -519,12 +595,24 @@ function TechnologiesPage() {
       </section>
 
       {/* ============================= GROUPES ============================ */}
-      <section className="isolate relative bg-white pt-[50px] pb-[60px]">
+      <section className="isolate relative overflow-hidden bg-[linear-gradient(180deg,#fff,#f6f4ff_40%,#f1f4ff)] pt-[50px] pb-[60px]">
+        {/* Fond : motif de circuit imprimé qui dérive lentement, estompé sur les bords */}
+        {/* Le calque, plus grand d'un motif, glisse par `translate` (géré par la carte
+            graphique) au lieu d'animer background-position, qui redessinait toute la section. */}
+        <span aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden [mask-image:radial-gradient(ellipse_75%_70%_at_50%_50%,#000_30%,transparent)]">
+          <span
+            className="motion-bg absolute top-[-240px] right-0 bottom-0 left-[-240px] will-change-transform"
+            style={{ backgroundImage: `url(${circuitBg})`, backgroundSize: '240px', animation: 'circuit-drift 40s linear infinite' }}
+          />
+        </span>
+        {/* Halos lumineux qui respirent */}
+        <span aria-hidden="true" className="motion-bg absolute top-[8%] left-[-8%] -z-10 size-[420px] rounded-full bg-[#8b7bff]/25 blur-[90px] will-change-transform" style={{ animation: 'glow-pulse 9s ease-in-out infinite' }} />
+        <span aria-hidden="true" className="motion-bg absolute right-[-6%] bottom-[5%] -z-10 size-[460px] rounded-full bg-[#2f8bff]/20 blur-[100px] will-change-transform" style={{ animation: 'glow-pulse 11s ease-in-out -4s infinite' }} />
         <Shapes items={decor.right} />
         <Ribbon />
         <div className={`${tw.wrap} grid gap-7 md:grid-cols-2 lg:grid-cols-[1fr_1.05fr_0.95fr]`}>
           {groups.map((g, i) => (
-            <Reveal key={g.title} className="min-w-0 rounded-[20px] border border-violet/12 bg-white px-6 pt-[22px] pb-6 shadow-[0_20px_50px_-34px_rgba(70,50,200,.45)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(70,50,200,.5)]" delay={(i % 3) * 90}>
+            <Reveal key={g.title} className="min-w-0 rounded-[20px] border border-violet/12 bg-white/85 px-6 pt-[22px] pb-5 shadow-[0_20px_50px_-34px_rgba(70,50,200,.45)] backdrop-blur-md transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(70,50,200,.5)]" delay={(i % 3) * 90}>
               <div className="mb-[22px] flex gap-[26px]">
                 <span className={`grid size-[52px] shrink-0 place-items-center rounded-[14px] shadow-[0_12px_24px_-10px_rgba(80,60,255,.5)] ${g.color}`}>{g.icon}</span>
                 <div>
@@ -532,14 +620,7 @@ function TechnologiesPage() {
                   <p className="text-[12.5px] leading-[1.55] text-body">{g.text}</p>
                 </div>
               </div>
-              <ul className="flex list-none flex-wrap justify-start gap-4 p-0 sm:flex-nowrap sm:justify-around sm:gap-2.5">
-                {g.techs.map((t) => (
-                  <li key={t.name} className="group grid justify-items-center gap-2.5 text-center text-[11.5px] font-medium text-ink">
-                    <img src={t.src} alt="" loading="lazy" className="size-10 object-contain transition duration-300 group-hover:-translate-y-1 group-hover:scale-110" />
-                    <span>{t.name}</span>
-                  </li>
-                ))}
-              </ul>
+              <TechMarquee techs={g.techs} />
             </Reveal>
           ))}
         </div>
