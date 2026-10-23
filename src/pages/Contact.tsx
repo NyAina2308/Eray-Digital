@@ -558,54 +558,7 @@ ${message}` : message,
             {/* Casque + bulle */}
             <Reveal className="relative hidden h-[220px] lg:block" delay={200}>
               <span className={`${tw.script} absolute -top-6 right-0 z-[2] rounded-[20px_20px_20px_4px] bg-white px-4 py-2 text-[17px] leading-[1.15] text-ink-2 shadow-[0_14px_30px_-12px_rgba(0,0,0,.4)]`}>Une question ?<br />On est là !</span>
-              {/* Casque-micro réaliste : arceau rembourré, glissières métal, coussinets cuir, perche micro */}
-              <svg className="absolute bottom-0 left-0 w-[170px] animate-float drop-shadow-[0_24px_30px_rgba(40,20,140,.7)]" viewBox="0 0 160 150" fill="none" aria-hidden="true">
-                <defs>
-                  <linearGradient id="hs-band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#5b5f73" /><stop offset=".45" stopColor="#2a2c38" /><stop offset="1" stopColor="#15161e" /></linearGradient>
-                  <linearGradient id="hs-pad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3b3e4e" /><stop offset="1" stopColor="#1a1b24" /></linearGradient>
-                  <linearGradient id="hs-metal" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#8d91a3" /><stop offset=".5" stopColor="#eef0f6" /><stop offset="1" stopColor="#7c8093" /></linearGradient>
-                  <radialGradient id="hs-cup" cx=".35" cy=".3" r=".8"><stop offset="0" stopColor="#4a4e62" /><stop offset=".55" stopColor="#23252f" /><stop offset="1" stopColor="#0e0f15" /></radialGradient>
-                  <radialGradient id="hs-cushion" cx=".5" cy=".4" r=".7"><stop offset="0" stopColor="#2b2d38" /><stop offset=".8" stopColor="#15161d" /><stop offset="1" stopColor="#0a0a0f" /></radialGradient>
-                  <linearGradient id="hs-accent" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#6fa8ff" /><stop offset="1" stopColor="#8b5cff" /></linearGradient>
-                </defs>
-
-                {/* Arceau principal */}
-                <path d="M26 82 C 22 30, 138 30, 134 82" stroke="url(#hs-band)" strokeWidth="9" strokeLinecap="round" />
-                <path d="M28 70 C 30 34, 130 34, 132 70" stroke="#fff" strokeOpacity=".18" strokeWidth="1.5" strokeLinecap="round" />
-                {/* Coussin de tête (rembourrage cousu) */}
-                <path d="M48 42 C 66 28, 94 28, 112 42" stroke="url(#hs-pad)" strokeWidth="11" strokeLinecap="round" />
-                <path d="M50 42 C 67 30, 93 30, 110 42" stroke="#000" strokeOpacity=".35" strokeWidth=".8" strokeDasharray="2 2" />
-
-                {/* Glissières métalliques */}
-                <rect x="21" y="72" width="7" height="18" rx="2" fill="url(#hs-metal)" />
-                <rect x="132" y="72" width="7" height="18" rx="2" fill="url(#hs-metal)" />
-                {[76, 80, 84].map((y) => <path key={y} d={`M22 ${y}h5M133 ${y}h5`} stroke="#6a6e80" strokeWidth=".6" />)}
-
-                {/* Oreillette gauche (vue 3/4) */}
-                <g>
-                  <ellipse cx="30" cy="110" rx="20" ry="26" fill="url(#hs-cushion)" />
-                  <ellipse cx="25" cy="110" rx="18" ry="24" fill="url(#hs-cup)" />
-                  <ellipse cx="25" cy="110" rx="11" ry="15" stroke="url(#hs-accent)" strokeWidth="2" />
-                  <ellipse cx="21" cy="101" rx="4" ry="6" fill="#fff" opacity=".12" />
-                  <circle cx="25" cy="110" r="2.2" fill="url(#hs-accent)" />
-                </g>
-                {/* Oreillette droite */}
-                <g>
-                  <ellipse cx="130" cy="110" rx="20" ry="26" fill="url(#hs-cushion)" />
-                  <ellipse cx="135" cy="110" rx="18" ry="24" fill="url(#hs-cup)" />
-                  <ellipse cx="135" cy="110" rx="11" ry="15" stroke="url(#hs-accent)" strokeWidth="2" />
-                  <ellipse cx="131" cy="101" rx="4" ry="6" fill="#fff" opacity=".12" />
-                  <circle cx="135" cy="110" r="2.2" fill="url(#hs-accent)" />
-                </g>
-
-                {/* Perche micro */}
-                <path d="M22 124 C 26 142, 52 146, 70 138" stroke="#1c1d26" strokeWidth="4" strokeLinecap="round" />
-                <path d="M23 125 C 27 140, 51 144, 69 137" stroke="#fff" strokeOpacity=".15" strokeWidth="1" strokeLinecap="round" />
-                <rect x="66" y="131" width="14" height="10" rx="5" fill="#15161d" transform="rotate(-18 73 136)" />
-                <rect x="68" y="133" width="9" height="5" rx="2.5" fill="url(#hs-accent)" opacity=".8" transform="rotate(-18 73 136)" />
-                {/* Voyant allumé */}
-                <circle cx="44" cy="120" r="1.6" fill="#5dffb0" className="animate-twinkle" />
-              </svg>
+              <img src="/11668569.png" alt="" loading="lazy" decoding="async" className="absolute bottom-0 left-0 w-[170px] animate-float drop-shadow-[0_24px_30px_rgba(40,20,140,.7)]" />
             </Reveal>
           </div>
         </div>
