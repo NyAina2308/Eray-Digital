@@ -6,8 +6,8 @@ import LiveIcon from '../components/LiveIcon'
 import Reveal from '../components/Reveal'
 import { Shapes, Ribbon, decor } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
-import { projects } from '../data/projects'
-import roomPhoto from '../assets/photos/room-D2XCtDIa.png'
+import { useProjects } from '../hooks/useSiteData'
+import roomPhoto from '../assets/photos/room.webp'
 
 /** Largeur (sur 6 colonnes) de chaque carte : 2 grandes, puis des rangées de 3. */
 function spans(count: number) {
@@ -33,10 +33,11 @@ const spanClass: Record<number, string> = {
 }
 
 function ProjectsPage() {
+  const projects = useProjects()
   const [filter, setFilter] = useState('Tous')
   const [query, setQuery] = useState('')
 
-  const categories = useMemo(() => ['Tous', ...new Set(projects.map((p) => p.category))], [])
+  const categories = useMemo(() => ['Tous', ...new Set(projects.map((p) => p.category))], [projects])
 
   const shown = projects.filter((p) => {
     const q = query.trim().toLowerCase()
@@ -93,14 +94,15 @@ function ProjectsPage() {
               Découvrez une sélection de nos réalisations : sites web, applications, logiciels et identités visuelles
               conçus pour nos clients. Chaque projet est une histoire unique, un défi relevé, une réussite partagée.
             </p>
-            <div className="glass flex w-fit max-w-full flex-wrap items-center gap-y-3.5 rounded-[22px] px-[22px] py-4 md:flex-nowrap">
+            <div className="glass flex w-fit max-w-full flex-wrap items-center gap-y-3.5 rounded-[22px] px-[22px] py-4">
               {stats.map((s, i) => (
-                <div key={s.label} className={`flex items-center gap-3 pr-4 md:border-r md:border-violet/15 ${i ? 'md:pl-4' : ''}`}>
+                <div key={s.label} className={`flex items-center gap-3 pr-4 md:border-violet/15 ${i < stats.length - 1 ? 'md:border-r' : ''} ${i ? 'md:pl-4' : ''}`}>
                   <LiveIcon kind={s.kind} delay={i * 0.4}><Icon className="size-5">{s.icon}</Icon></LiveIcon>
                   <div><strong className="block text-lg font-bold text-ink">{s.value}</strong><small className="block text-[10.5px] whitespace-nowrap text-mute">{s.label}</small></div>
                 </div>
               ))}
-              <p className="text-[11px] leading-[1.5] text-body md:ml-4 md:whitespace-nowrap">Des solutions digitales<br />qui font la différence.</p>
+              {/* Sous les chiffres : sur une même ligne, la phrase sortait de l'encadré */}
+              <p className="basis-full border-t border-violet/15 pt-3 text-[11px] leading-[1.5] text-body">Des solutions digitales qui font la différence.</p>
             </div>
           </Reveal>
 
@@ -135,7 +137,7 @@ function ProjectsPage() {
 
               {/* iPhones au premier plan (parallaxe inverse) */}
               {[
-                { img: projects[1].image, cls: 'left-[3%] top-[34%] -rotate-8', d: 0.45, float: '' },
+                { img: projects[1]?.image ?? projects[0].image, cls: 'left-[3%] top-[34%] -rotate-8', d: 0.45, float: '' },
                 { img: projects[4]?.image ?? projects[0].image, cls: 'right-[2%] top-[28%] rotate-8', d: 0.6, float: '[animation-delay:-3s]' },
               ].map((ph, i) => (
                 <motion.div key={i} className={`group absolute z-[2] w-[17%] ${ph.cls}`} style={{ x: nearX, y: nearY }} {...pop(ph.d)}>
@@ -222,8 +224,9 @@ function ProjectsPage() {
                   <span className="mb-2.5 inline-block rounded-full border border-royal/35 bg-white px-2.5 py-[3px] text-[9.5px] font-semibold text-[#2f3bb8]">{p.category}</span>
                   <h2 className={`mb-2 font-sora font-bold tracking-[-0.02em] text-ink ${big ? 'text-[22px]' : 'text-lg'}`}>{p.name}</h2>
                   <p className="mb-[18px] text-xs leading-[1.6] text-body">{p.description}</p>
-                  <a href={p.image} target="_blank" rel="noreferrer" className="btn-blue group/btn inline-flex items-center gap-3.5 rounded-full px-[18px] py-[9px] text-[11.5px] font-semibold transition hover:-translate-y-0.5">
-                    Voir le projet <Arrow className="size-4 transition group-hover/btn:translate-x-1" />
+                  {/* Site en ligne si un lien a été saisi dans le back-office, sinon la capture en grand */}
+                  <a href={p.url || p.image} target="_blank" rel="noreferrer" className="btn-blue group/btn inline-flex items-center gap-3.5 rounded-full px-[18px] py-[9px] text-[11.5px] font-semibold transition hover:-translate-y-0.5">
+                    {p.url ? 'Voir le site' : 'Voir le projet'} <Arrow className="size-4 transition group-hover/btn:translate-x-1" />
                   </a>
                 </div>
                 <div className={`relative bg-[radial-gradient(circle_at_70%_60%,rgba(123,60,255,.3),transparent_65%)] px-5 pt-5 ${big ? 'lg:grid lg:h-full lg:place-items-center lg:py-[26px] lg:pr-[22px] lg:pl-0' : ''}`}>
@@ -257,7 +260,7 @@ function ProjectsPage() {
       {/* ================================ CTA ============================= */}
       <section className="isolate relative overflow-hidden rounded-t-[60px] bg-[linear-gradient(100deg,#0a0b2e,#1f1a8a_50%,#3a2bd8)] py-[70px] text-white">
         <Shapes items={decor.dark} />
-        <img src={roomPhoto} alt="" className="absolute top-0 right-0 h-full w-[45%] object-cover opacity-35 [mask-image:linear-gradient(90deg,transparent,#000_50%)]" />
+        <img src={roomPhoto} loading="lazy" decoding="async" alt="" className="absolute top-0 right-0 h-full w-[45%] object-cover opacity-35 [mask-image:linear-gradient(90deg,transparent,#000_50%)]" />
         <div className={`${tw.wrap} grid items-center gap-10 lg:grid-cols-[1.3fr_0.7fr]`}>
           <div>
             <span className={`${tw.chipDark} mb-3`}>Vous avez un projet ?</span>

@@ -1,0 +1,81 @@
+{
+  "projects": [
+    {
+      "id": "875d6a38-830c-40a0-8147-f205c5b6a4ee",
+      "name": "CGA AVEMA",
+      "category": "Site institutionnel",
+      "description": "Site du Centre de Gestion Agréé AVEMA à Antsirabe : présentation de l'accompagnement comptable, fiscal, juridique et social, adhésion en ligne et blog.",
+      "imageUrl": "/uploads/projects/c8b7e557-b6c6-4f82-92ec-9e381c0a84c3.jpg",
+      "url": "https://cga-avema.mg/",
+      "createdAt": "2026-10-21T08:06:17.519Z"
+    },
+    {
+      "id": "26515c50-9373-4cff-8022-6980926d36c8",
+      "name": "ASFIFO",
+      "category": "Formation professionnelle",
+      "description": "Site de l'organisme de formation ASFIFO, agréé par l'État depuis 2016 : alternance, recrutement, formation et intégration en entreprise, incubation et parcours dirigeants.",
+      "imageUrl": "/uploads/projects/58c67069-46b2-4025-a44a-abad26816311.jpg",
+      "url": "https://asfifo.mg/",
+      "createdAt": "2026-10-21T08:13:47.323Z"
+    },
+    {
+      "id": "d032b8de-eff0-40a4-8ed6-9d66820ebb5d",
+      "name": "CAMOI 3.0",
+      "category": "Expertise comptable",
+      "description": "Site du cabinet CAMOI 3.0 : expertise comptable, audit, conseil en stratégie d'entreprise et centre de formation professionnelle à Madagascar.",
+      "imageUrl": "/uploads/projects/5ccde07c-a479-4471-a0ed-60592f3b2bf9.jpg",
+      "url": "https://camoi.mg/",
+      "createdAt": "2026-10-21T08:13:47.617Z"
+    },
+    {
+      "id": "af9d5be1-5a1d-4058-b452-675adaaff5ef",
+      "name": "REKANY AGRI",
+      "category": "Agriculture & E-commerce",
+      "description": "Site de REKANY AGRI, qui produit et commercialise avec les paysans malgaches des produits de qualité issus d'une agriculture respectueuse : catalogue et panier en ligne.",
+      "imageUrl": "/uploads/projects/19287130-05b1-4c82-8d63-100b505f23c9.jpg",
+      "url": "https://rekany.mg/",
+      "createdAt": "2026-10-21T08:13:47.630Z"
+    },
+    {
+      "id": "01bcf082-9515-40b9-a2ff-f199f0bf95f6",
+      "name": "Holiday Beach Hotel",
+      "category": "Hôtellerie & Tourisme",
+      "description": "Site de l'hôtel 3 étoiles Holiday Beach à Nosy Be : présentation des chambres, du restaurant et des activités, galerie photo, site bilingue et réservation en ligne.",
+      "imageUrl": "/uploads/projects/d8dbdd2c-bc2e-4f87-890f-dc6a20fe80bf.jpg",
+      "url": "https://holidaybeachhotel-nosybe.com/",
+      "createdAt": "2026-10-21T08:18:03.406Z"
+    },
+    {
+      "id": "5c3f1d8e-9e51-44d3-8f44-986ef096b3c2",
+      "name": "Mateza Tôle",
+      "category": "Matériaux de construction",
+      "description": "Site de Mateza Tôle, magasin de matériaux de construction à Antananarivo : catalogue de tôles et accessoires, actualités, demande de devis en ligne et espace client.",
+      "imageUrl": "/uploads/projects/0f267026-354e-4ffb-b8bd-3c2ae9d79acc.jpg",
+      "url": "https://matezatole.com/",
+      "createdAt": "2026-10-21T08:23:54.184Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "a29e61ea-75e5-4a86-96e4-7d234ee5eb0b",
+      "name": "Jean Paul",
+      "email": "efemero733@gmail.com",
+      "service": "Branding & Identité",
+      "delay": "",
+      "message": "Téléphone : 0354845612\n\nmerci de me recevoir s'IL VOUS plait",
+      "createdAt": "2026-10-21T08:19:37.523Z",
+      "read": false
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "7c1f0b2a-1d3e-4c55-9a10-000000000001",
+      "name": "Miora R.",
+      "role": "Cliente",
+      "text": "L’équipe d’Eray Digital a su transformer notre idée en une solution digitale performante. Professionnalisme, réactivité et créativité au top !",
+      "rating": 5,
+      "published": true,
+      "createdAt": "2026-03-01T09:00:00.000Z"
+    }
+  ]
+}

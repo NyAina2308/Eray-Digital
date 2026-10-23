@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
 import { Shapes, type Shape } from '../components/Decor'
 import { projects } from '../data/projects'
-import portrait from '../assets/photos/woman-Dt2ftJah.png'
-import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
-import roomPhoto from '../assets/photos/room-D2XCtDIa.png'
+import portrait from '../assets/photos/woman.webp'
+import teamPhoto from '../assets/photos/team.webp'
+import roomPhoto from '../assets/photos/room.webp'
 
 /* ------------------------------------------------------------------ */
 /* Petits composants                                                  */
@@ -314,7 +314,7 @@ function ServicesPage() {
         {/* ===================== 02 · DESIGN UI/UX ====================== */}
         <Reveal as="section" id="design" className={`${panel} grid scroll-mt-28 items-center gap-6 p-4 lg:grid-cols-[1.05fr_1fr_0.5fr]`}>
           <div className="relative h-[260px] min-w-0 overflow-hidden rounded-[24px] sm:h-[300px]">
-            <img src={teamPhoto} alt="" className="size-full object-cover" />
+            <img src={teamPhoto} loading="lazy" decoding="async" alt="" className="size-full object-cover" />
             <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent_40%,rgba(150,120,255,.35))]" />
             <div className={`${device} top-[16%] right-[6%] aspect-[16/11] w-[40%] rotate-[4deg] rounded-[8px] border-[3px]`}><MiniDash /></div>
             <div className={`${device} right-[38%] bottom-[10%] aspect-[9/18] w-[13%] -rotate-[6deg] rounded-[12px] border-[3px]`}><PhoneScreen /></div>
@@ -454,7 +454,7 @@ function ServicesPage() {
             <Discover to="/contact" />
           </div>
           <div className="relative h-[220px] min-w-0 overflow-hidden rounded-[24px]">
-            <img src={roomPhoto} alt="" className="size-full object-cover" />
+            <img src={roomPhoto} loading="lazy" decoding="async" alt="" className="size-full object-cover" />
             <span className="absolute inset-0 bg-[linear-gradient(90deg,rgba(60,40,200,.25),transparent_50%,rgba(60,40,200,.3))]" />
             <div className="absolute top-[10%] left-[5%] rounded-xl border border-white/30 bg-[rgba(40,30,160,.75)] px-3 py-2 text-[10.5px] leading-[1.3] font-semibold text-white backdrop-blur">Votre réussite<br />est notre objectif</div>
             <div className="absolute right-[5%] bottom-[12%] rounded-xl border border-white/30 bg-[rgba(40,30,160,.75)] px-3 py-2 text-[10.5px] leading-[1.3] font-semibold text-white backdrop-blur">Votre réussite<br /><span className="font-normal text-white/80">notre priorité</span></div>

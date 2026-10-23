@@ -73,13 +73,13 @@ const orbitIcons = [
   { icon: ic.cloud, pos: 'top-[32%] right-[5%] rotate-[8deg]' },
 ]
 
-/** Contour de Madagascar (repère 400 × 400, centré sur le globe). */
+/** Contour de Madagascar, tracé d'après une carte réelle (repère 400 × 400, centré sur le globe). */
 const madagascar =
-  'M233 132 L238 140 L237 150 L241 160 L240 172 L237 186 L234 200 L230 214 L225 229 L220 243 L214 257 L207 270 L200 280 L191 287 L182 287 L175 281 L172 271 L173 259 L170 248 L172 236 L169 224 L171 213 L177 204 L185 197 L189 188 L196 179 L203 172 L207 163 L214 157 L219 149 L224 143 L228 136 Z'
+  'M176 223.6 L177.7 221.6 L176.6 219.6 L177.7 215.3 L175.1 211.6 L175.4 207.9 L172.8 203.3 L172.8 195.8 L171.7 194.1 L171.7 191.5 L177.4 182.6 L177.4 176.8 L182.3 176.8 L186.6 173.7 L190.4 174 L191.5 171.9 L198.1 171.1 L202.4 167.1 L206.7 165.1 L211.3 159 L212.2 159 L213 161 L214.5 158.7 L213.9 155.9 L215.1 153.9 L216.5 153.6 L216.2 147 L217.1 145.8 L219.1 145.8 L221.1 148.7 L221.1 146.1 L222.2 145.8 L219.6 145.2 L219.4 142.9 L220.5 142.1 L221.9 142.4 L222.5 145.8 L222.8 144.1 L224.5 144.9 L226.3 144.1 L228 138.3 L225.7 133.2 L228 133.5 L230.3 130.9 L229.7 129.4 L231.1 128 L233.1 128.6 L234 131.7 L236 133.7 L236 135.8 L240 140.4 L242.3 149 L243.2 160.2 L246.4 165.9 L245.5 170.8 L242.9 175.1 L240.3 174 L238.3 168.8 L236.9 169.4 L237.7 173.4 L237.2 175.7 L238.9 177.4 L239.2 180.9 L237.7 183.7 L238.9 184.3 L239.8 182.6 L240.9 182.6 L240.9 183.7 L238.6 188 L237.7 188 L238 185.7 L236.6 185.4 L234.3 189.8 L235.4 194.9 L233.4 203.5 L229.7 212.2 L220.5 243.8 L217.6 249.8 L213 269.6 L208.4 281.7 L206.7 283.4 L203.6 284.8 L198.7 284.8 L190.6 289.7 L185.5 290 L181.4 286.6 L176.3 286 L172.5 282.2 L171.7 278.2 L168.5 273.6 L168.2 265.6 L169.4 263.3 L168.2 262.4 L167.9 259.3 L165.4 256.7 L163.6 248.4 L165.1 242.3 L166.8 240.9 L166.8 237.1 L170.5 235.7 L171.4 231.7 Z'
 
 /** Points du réseau lumineux posés sur l'île. */
 const nodes: [number, number][] = [
-  [226, 150], [212, 176], [224, 196], [196, 206], [214, 226], [188, 240], [204, 256], [186, 272],
+  [225, 150], [228, 172], [192, 194], [212, 212], [189, 230], [202, 246], [183, 262], [198, 276],
 ]
 
 const rings = [
@@ -170,7 +170,7 @@ function Globe() {
       </g>
 
       {/* Madagascar */}
-      <g transform="translate(205 210) scale(1.18 1.08) rotate(6) translate(-205 -210)">
+      <g transform="translate(205 209) scale(1.05) translate(-205 -209)">
         <path d={madagascar} stroke="#c9a8ff" strokeWidth="7" strokeOpacity=".4" strokeLinejoin="round" filter="url(#gl-glow)" />
         <path d={madagascar} fill="url(#gl-island)" stroke="#f3ecff" strokeWidth="1.8" strokeLinejoin="round" filter="url(#gl-glow)" />
         {nodes.slice(1).map(([x, y], i) => (
@@ -252,41 +252,100 @@ function AboutPage() {
           </Reveal>
 
 
-          <Reveal className="relative h-[340px] min-w-0 sm:h-[460px]" delay={120}>
-            {/* Vague de verre derrière la photo */}
-            <svg className="pointer-events-none absolute -inset-x-[8%] inset-y-0 z-0 h-full w-[116%]" viewBox="0 0 700 460" fill="none" aria-hidden="true">
+          <Reveal className="relative aspect-[1268/800] min-w-0" delay={120}>
+            {/* Photo au bord gauche arrondi, enveloppée d'un ruban de verre en « C » */}
+            <svg className="absolute inset-0 size-full overflow-visible" viewBox="0 0 1268 800" fill="none" aria-hidden="true">
               <defs>
-                <linearGradient id="ab-wave" x1="0" y1="1" x2="1" y2="0">
-                  <stop offset="0" stopColor="#5a3cff" stopOpacity=".85" />
-                  <stop offset=".45" stopColor="#8fa8ff" stopOpacity=".55" />
-                  <stop offset="1" stopColor="#d9ccff" stopOpacity=".65" />
+                <clipPath id="ah-photo">
+                  <path d="M760 24 L1130 38 Q1182 38 1182 90 L1182 646 Q1182 690 1138 690 L920 692 C780 696 600 694 430 680 C336 668 272 636 247 590 C227 550 222 505 224 462 L224 440 C207 400 192 360 195 310 C198 250 222 186 294 144 C374 94 540 44 760 24 Z" />
+                </clipPath>
+                <linearGradient id="ah-shard" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#8fe8ff" />
+                  <stop offset="1" stopColor="#3f8cff" stopOpacity=".8" />
                 </linearGradient>
-                <linearGradient id="ab-edge" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stopColor="#fff" stopOpacity=".95" />
-                  <stop offset="1" stopColor="#c9b5ff" stopOpacity=".6" />
+                <filter id="ah-shadow" x="-10%" y="-10%" width="120%" height="130%">
+                  <feDropShadow dx="0" dy="30" stdDeviation="30" floodColor="#4632dc" floodOpacity=".35" />
+                </filter>
+                <linearGradient id="ah-back" x1="0" y1="0" x2="1" y2=".4">
+                  <stop offset="0" stopColor="#7fb2ff" stopOpacity=".95" />
+                  <stop offset=".35" stopColor="#a9b4ff" stopOpacity=".85" />
+                  <stop offset=".7" stopColor="#d4ccff" stopOpacity=".7" />
+                  <stop offset="1" stopColor="#ffffff" stopOpacity=".5" />
                 </linearGradient>
+                <linearGradient id="ah-fold" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#ffffff" stopOpacity=".85" />
+                  <stop offset=".6" stopColor="#d9d2ff" stopOpacity=".6" />
+                  <stop offset="1" stopColor="#a99bff" stopOpacity=".45" />
+                </linearGradient>
+                <linearGradient id="ah-wave" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stopColor="#8a4dff" />
+                  <stop offset=".3" stopColor="#6a5cff" />
+                  <stop offset=".65" stopColor="#3f8cff" />
+                  <stop offset=".85" stopColor="#37c8ff" stopOpacity=".8" />
+                  <stop offset="1" stopColor="#7fe0ff" stopOpacity=".2" />
+                </linearGradient>
+                <linearGradient id="ah-gloss" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#ffffff" stopOpacity=".45" />
+                  <stop offset=".4" stopColor="#ffffff" stopOpacity="0" />
+                  <stop offset=".85" stopColor="#1d1590" stopOpacity="0" />
+                  <stop offset="1" stopColor="#1d1590" stopOpacity=".3" />
+                </linearGradient>
+                <filter id="ah-soft"><feGaussianBlur stdDeviation="3" /></filter>
+                <filter id="ah-blur" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="14" /></filter>
               </defs>
-              <path d="M40 330 C 20 230, 90 120, 210 70 C 330 20, 470 10, 600 40 C 660 55, 690 110, 670 170 L 650 180 C 660 120, 620 80, 560 72 C 440 56, 300 80, 210 150 C 130 210, 110 290, 150 360 C 120 400, 60 390, 40 330 Z" fill="url(#ab-wave)" />
-              <path d="M40 330 C 20 230, 90 120, 210 70 C 330 20, 470 10, 600 40 C 660 55, 690 110, 670 170" stroke="url(#ab-edge)" strokeWidth="3" strokeLinecap="round" />
-              <path d="M60 420 C 160 440, 300 430, 420 400 C 520 375, 600 380, 680 410 L 680 440 C 600 410, 520 410, 420 432 C 300 458, 160 466, 60 440 Z" fill="url(#ab-wave)" opacity=".7" />
-            </svg>
 
-            {/* Photo de l'équipe */}
-            <div className="absolute inset-[9%_2%_12%_16%] z-[1] overflow-hidden rounded-[40px_120px_40px_90px] border-[3px] border-white/80 shadow-[0_40px_80px_-30px_rgba(70,50,220,.6)]">
-              <img src={teamPhoto} alt="L'équipe Eray Digital au travail" className="size-full object-cover" />
-              <span className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,.05),rgba(90,60,255,.18))]" />
-            </div>
+              {/* Photo de l'équipe */}
+              <g filter="url(#ah-shadow)">
+                <image href={teamPhoto} x="200" y="30" width="990" height="680" preserveAspectRatio="xMidYMid slice" clipPath="url(#ah-photo)" />
+              </g>
+              <path d="M760 26 L1130 38 Q1182 38 1182 90 L1182 646" stroke="#fff" strokeOpacity=".8" strokeWidth="3" />
+
+              {/* Ombre portée sous la vague */}
+              <path d="M60 640 C200 700 420 720 880 705 L880 722 C420 740 180 720 60 670 Z" fill="#5a3cff" opacity=".28" filter="url(#ah-blur)" />
+
+              {/* Bandeau arrière : passe sur le haut de la photo et descend le long du bord gauche */}
+              <path
+                d="M760 30 C560 22 330 60 230 123 C150 175 120 260 135 340 C145 395 175 430 205 455 L232 440 C215 400 200 360 203 310 C206 250 230 190 300 150 C380 100 540 52 760 30 Z"
+                fill="url(#ah-back)"
+              />
+              <path d="M760 30 C560 22 330 60 230 123 C150 175 120 260 135 340 C145 395 175 430 205 455" stroke="#fff" strokeOpacity=".95" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M740 32 C540 52 380 100 300 150 C230 190 206 250 203 310 C200 360 215 400 232 440" stroke="#fff" strokeOpacity=".7" strokeWidth="1.5" strokeLinecap="round" />
+              {/* Reflet qui court au milieu du bandeau */}
+              <path d="M600 40 C470 50 320 85 250 140 C180 195 160 270 172 350" stroke="#fff" strokeOpacity=".55" strokeWidth="7" strokeLinecap="round" filter="url(#ah-soft)" />
+
+              {/* Pli intérieur : la face claire du ruban qui se tord */}
+              <path d="M135 340 C145 395 175 430 205 455 C238 482 258 532 256 588 C238 550 220 512 194 486 C162 455 140 404 135 340 Z" fill="url(#ah-fold)" />
+              <path d="M205 455 C238 482 258 532 256 588" stroke="#fff" strokeOpacity=".85" strokeWidth="1.8" strokeLinecap="round" />
+
+              {/* Vague avant : violet → bleu → cyan, épaisse à gauche et effilée vers la droite */}
+              <path
+                d="M232 462 C170 470 90 520 45 575 C25 600 45 635 110 652 C200 678 320 694 460 698 C600 702 780 698 920 688 C780 690 600 686 430 672 C340 660 280 630 255 585 C235 548 230 505 232 462 Z"
+                fill="url(#ah-wave)"
+              />
+              {/* Volume : lumière en haut à gauche, ombre en bas */}
+              <path
+                d="M232 462 C170 470 90 520 45 575 C25 600 45 635 110 652 C200 678 320 694 460 698 C600 702 780 698 920 688 C780 690 600 686 430 672 C340 660 280 630 255 585 C235 548 230 505 232 462 Z"
+                fill="url(#ah-gloss)"
+              />
+              <path d="M232 462 C170 470 90 520 45 575" stroke="#fff" strokeOpacity=".9" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M225 490 C175 500 115 538 80 575" stroke="#fff" strokeOpacity=".5" strokeWidth="8" strokeLinecap="round" filter="url(#ah-soft)" />
+              <path d="M45 575 C25 600 45 635 110 652 C200 678 320 694 460 698 C600 702 780 698 920 688" stroke="#2a1fb0" strokeOpacity=".35" strokeWidth="2" strokeLinecap="round" />
+
+              {/* Éclat cyan à droite */}
+              <path d="M1098 285 L1202 322 L1088 388 Z" fill="url(#ah-shard)" opacity=".9" />
+            </svg>
+            <span className="sr-only">L'équipe Eray Digital au travail</span>
 
             {/* Logo sur le mur */}
-            <div className="absolute top-[14%] right-[6%] z-[2] flex items-center gap-2 rounded-2xl bg-white/80 px-3 py-2 shadow-[0_14px_30px_-12px_rgba(70,50,220,.5)] backdrop-blur">
+            <div className="absolute top-[14%] right-[10%] z-[2] flex items-center gap-2 rounded-2xl bg-white/80 px-3 py-2 shadow-[0_14px_30px_-12px_rgba(70,50,220,.5)] backdrop-blur">
               <img src="/eray-logo.png" alt="" className="h-8 w-auto" />
             </div>
 
             {/* Sphère violette */}
-            <span className="absolute top-[3%] left-[48%] z-[2] size-11 animate-float rounded-full bg-[radial-gradient(circle_at_32%_28%,#fff_0_8%,#b69cff_32%,#5a2bd8_80%)] shadow-[0_14px_28px_-8px_rgba(90,60,255,.65)]" />
+            <span className="absolute top-[10%] left-[31%] z-[2] size-[clamp(30px,4vw,48px)] animate-float rounded-full bg-[radial-gradient(circle_at_32%_28%,#fff_0_8%,#b69cff_32%,#5a2bd8_80%)] shadow-[0_14px_28px_-8px_rgba(90,60,255,.65)]" />
 
             {/* Carte Innover / Créer / Transformer */}
-            <div className="absolute right-0 bottom-[2%] z-[3] w-[30%] min-w-[150px] animate-float-slow rounded-[24px] border border-white/70 bg-[linear-gradient(150deg,rgba(255,255,255,.75),rgba(205,190,255,.55))] p-5 shadow-[0_30px_50px_-20px_rgba(70,50,220,.6)] backdrop-blur-md">
+            <div className="absolute right-[5%] bottom-[2%] z-[3] w-[27%] min-w-[150px] animate-float-slow rounded-[24px] border border-white/70 bg-[linear-gradient(150deg,rgba(255,255,255,.75),rgba(205,190,255,.55))] p-5 shadow-[0_30px_50px_-20px_rgba(70,50,220,.6)] backdrop-blur-md">
               <span className="mb-2 block h-1 w-5 rounded-full bg-[linear-gradient(90deg,#2f8bff,#7b3cff)]" />
               <p className="text-[clamp(12px,1.15vw,15px)] leading-[1.4] font-medium text-ink-2">
                 Innover

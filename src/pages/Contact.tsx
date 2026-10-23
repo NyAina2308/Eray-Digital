@@ -1,7 +1,7 @@
-import { useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-const CONTACT_EMAIL = 'contact@eraydigital.tech'
+import { API_URL } from '../lib/api'
 import Reveal from '../components/Reveal'
 import { Shapes, decor, type Shape } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
@@ -42,8 +42,8 @@ const FAQS = [
 
 const SOCIALS = [
   { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=100069619770031', d: 'M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z' },
-  { label: 'LinkedIn', href: 'https://linkedin.com', d: 'M5 9h3.5v11H5zM6.8 3.5a2 2 0 110 4 2 2 0 010-4zM10.5 9H14v1.6c.5-.9 1.7-1.9 3.6-1.9 3.6 0 4.4 2.3 4.4 5.4V20h-3.5v-5.2c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V20h-3.5z' },
-  { label: 'Instagram', href: 'https://instagram.com', d: 'M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zm5 5a4 4 0 100 8 4 4 0 000-8zm0 2a2 2 0 110 4 2 2 0 010-4zm5.2-3.4a1.1 1.1 0 100 2.2 1.1 1.1 0 000-2.2z' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/eray-digital/home/', d: 'M5 9h3.5v11H5zM6.8 3.5a2 2 0 110 4 2 2 0 010-4zM10.5 9H14v1.6c.5-.9 1.7-1.9 3.6-1.9 3.6 0 4.4 2.3 4.4 5.4V20h-3.5v-5.2c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V20h-3.5z' },
+  { label: 'Instagram', href: 'https://www.instagram.com/eray_digital/', d: 'M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zm5 5a4 4 0 100 8 4 4 0 000-8zm0 2a2 2 0 110 4 2 2 0 010-4zm5.2-3.4a1.1 1.1 0 100 2.2 1.1 1.1 0 000-2.2z' },
 ]
 
 const p = {
@@ -88,6 +88,95 @@ function Field({ icon, label, required, children }: { icon: ReactNode; label: st
         {children}
       </span>
     </label>
+  )
+}
+
+/** Liste « Type de projet » aux couleurs de la page (remplace le <select> natif). */
+function ServiceSelect() {
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState('')
+  const [active, setActive] = useState(0)
+  const ref = useRef<HTMLDivElement>(null)
+
+  // Fermeture au clic en dehors
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('pointerdown', onDown)
+    return () => document.removeEventListener('pointerdown', onDown)
+  }, [open])
+
+  function choose(t: string) {
+    setValue(t)
+    setOpen(false)
+  }
+
+  function onKey(e: ReactKeyboardEvent<HTMLButtonElement>) {
+    if (e.key === 'Escape') return setOpen(false)
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (!open) return setOpen(true)
+      const step = e.key === 'ArrowDown' ? 1 : -1
+      setActive((a) => (a + step + PROJECT_TYPES.length) % PROJECT_TYPES.length)
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && open) {
+      e.preventDefault()
+      choose(PROJECT_TYPES[active])
+    }
+  }
+
+  return (
+    <div ref={ref} className={`${box} relative ${open ? 'border-violet/40 bg-white shadow-[0_0_0_4px_rgba(106,60,255,.08)]' : ''}`}>
+      <Icon className="mt-0.5 size-4 shrink-0" stroke="#3a4bff">{p.shield}</Icon>
+      <span className="min-w-0 flex-1">
+        <span id="service-label" className={boxLabel}>Type de projet</span>
+        <button
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-labelledby="service-label service-value"
+          onClick={() => setOpen((o) => !o)}
+          onKeyDown={onKey}
+          className={`${field} flex cursor-pointer items-center justify-between gap-2 text-left`}
+        >
+          <span id="service-value" className={value ? '' : 'text-[#a3a5c2]'}>{value || 'Sélectionnez'}</span>
+          <svg viewBox="0 0 24 24" className={`size-4 shrink-0 text-[#3a4bff] transition-transform duration-300 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+      </span>
+      <input type="hidden" name="service" value={value} />
+
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            role="listbox"
+            aria-labelledby="service-label"
+            className="absolute inset-x-0 top-[calc(100%+8px)] z-20 grid gap-0.5 rounded-2xl border border-violet/15 bg-white/95 p-1.5 shadow-[0_24px_50px_-20px_rgba(70,50,220,.45)] backdrop-blur-md"
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ duration: 0.18 }}
+          >
+            {PROJECT_TYPES.map((t, i) => (
+              <li
+                key={t}
+                role="option"
+                aria-selected={value === t}
+                onPointerEnter={() => setActive(i)}
+                onClick={() => choose(t)}
+                className={`flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 font-sora text-[13px] transition-colors ${i === active ? 'bg-violet/8 text-violet' : 'text-ink'} ${value === t ? 'font-semibold' : ''}`}
+              >
+                {t}
+                {value === t && <Icon className="size-4" stroke="#6a3cff">{ic.check}</Icon>}
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
@@ -323,7 +412,6 @@ function InteractiveHeroVisual() {
   )
 }
 
-
 function Contact() {
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -340,21 +428,28 @@ function Contact() {
     const form = new FormData(event.currentTarget)
     const phone = String(form.get('phone') ?? '').trim()
     const message = String(form.get('message') ?? '')
-    const name = String(form.get('name') ?? '')
-    const service = String(form.get('service') ?? '')
-    const body = [
-      `Nom : ${name}`,
-      `Email : ${form.get('email') ?? ''}`,
-      ...(phone ? [`Téléphone : ${phone}`] : []),
-      ...(service ? [`Service : ${service}`] : []),
-      '',
-      message,
-    ].join('\n')
+    const payload = {
+      name: form.get('name'),
+      email: form.get('email'),
+      service: form.get('service'),
+      delay: '',
+      // Le serveur ne stocke pas de champ téléphone : on l'ajoute en tête du message.
+      message: phone ? `Téléphone : ${phone}
+
+${message}` : message,
+    }
 
     try {
-      // Pas de backend : on ouvre le client mail du visiteur, pré-rempli.
-      const subject = `Demande de contact – ${name}`
-      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+      // Le message est enregistré et visible dans le back-office (Messages).
+      const res = await fetch(`${API_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || 'Une erreur est survenue, réessayez.')
+      }
       setSubmitted(true)
     } catch (err) {
       setError(
@@ -432,12 +527,7 @@ function Contact() {
                     <Field icon={p.user} label="Votre nom" required><input type="text" name="name" required placeholder="Jean Dupont" className={field} /></Field>
                     <Field icon={p.mail} label="Votre email" required><input type="email" name="email" required placeholder="votre@email.com" className={field} /></Field>
                     <Field icon={p.phone} label="Téléphone"><input type="tel" name="phone" placeholder="+261 ..." className={field} /></Field>
-                    <Field icon={p.shield} label="Type de projet">
-                      <select name="service" defaultValue="" className={`${field} cursor-pointer`}>
-                        <option value="" disabled>Sélectionnez</option>
-                        {PROJECT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-                      </select>
-                    </Field>
+                    <ServiceSelect />
                   </div>
                   <Field icon={p.chat} label="Votre message" required>
                     <textarea name="message" required rows={3} placeholder="Décrivez brièvement votre projet..." className={`${field} resize-y`} />
@@ -467,7 +557,7 @@ function Contact() {
               </p>
               <ul className="glass grid gap-1 rounded-[22px] p-2">
                 {[
-                  { icon: p.phone, title: 'Téléphone', value: <a href="tel:+261000000000" className="hover:text-violet">+261 00 000 00 00</a> },
+                  { icon: p.phone, title: 'Téléphone', value: <a href="tel:+261388218033" className="hover:text-violet">+261 38 82 180 33</a> },
                   { icon: p.mail, title: 'Email', value: <a href="mailto:contact@eraydigital.tech" className="hover:text-violet">contact@eraydigital.tech</a>, sub: 'On répond sous 24h' },
                   { icon: p.pin, title: 'Adresse', value: 'Antananarivo, Madagascar' },
                 ].map((c) => (
@@ -543,22 +633,42 @@ function Contact() {
               </button>
             </Reveal>
             <Reveal className="min-w-0" delay={100}>
-              <ul className="divide-y divide-violet/10 rounded-[22px] bg-white px-6 py-2 text-ink shadow-[0_30px_60px_-24px_rgba(0,0,0,.45)]">
+              <ul className="grid gap-3">
                 {faqs.map((f, i) => {
                   const open = openFaq === i
                   return (
-                    <li key={f.question}>
+                    <li
+                      key={f.question}
+                      className={`rounded-[20px] border backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-400 ${
+                        open
+                          ? 'border-[#8fa8ff]/55 bg-[linear-gradient(135deg,rgba(47,139,255,.2),rgba(123,60,255,.32))] text-white shadow-[0_24px_50px_-20px_rgba(90,60,255,.7)]'
+                          : 'border-[#8fa8ff]/25 bg-white/[.07] text-white hover:border-[#8fa8ff]/50 hover:bg-white/[.11]'
+                      }`}
+                    >
                       <button
                         type="button"
                         aria-expanded={open}
+                        aria-controls={`faq-${i}`}
                         onClick={() => setOpenFaq(open ? null : i)}
-                        className="flex w-full cursor-pointer items-center justify-between gap-4 border-0 bg-transparent py-4 text-left font-sora text-[13px] font-medium text-ink-2"
+                        className="flex w-full cursor-pointer items-center gap-4 border-0 bg-transparent px-5 py-4 text-left font-sora"
                       >
-                        {f.question}
-                        <span className={`text-xl leading-none text-[#3a4bff] transition-transform duration-300 ${open ? 'rotate-45' : ''}`}>+</span>
+                        <span className={`text-[11px] font-semibold tracking-[0.12em] transition-colors ${open ? 'text-[#c9b5ff]' : 'text-[#8fb4ff]'}`}>{String(i + 1).padStart(2, '0')}</span>
+                        <span className={`flex-1 text-[13.5px] font-semibold transition-colors text-white`}>{f.question}</span>
+                        <span
+                          className={`grid size-8 shrink-0 place-items-center rounded-full text-white transition duration-300 ${
+                            open
+                              ? 'rotate-45 bg-[linear-gradient(135deg,#2f8bff,#7b3cff)] shadow-[0_8px_18px_-6px_rgba(90,60,255,.8)]'
+                              : 'border border-white/25 bg-white/10'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+                        </span>
                       </button>
-                      <div className={`grid transition-[grid-template-rows] duration-400 ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-                        <p className="overflow-hidden text-[12.5px] leading-[1.7] text-body"><span className="block pb-4">{f.answer}</span></p>
+                      <div id={`faq-${i}`} className={`grid transition-[grid-template-rows,opacity] duration-400 ${open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                        <div className="overflow-hidden">
+                          <p className="mx-5 mb-4 border-l-2 border-[#b9a4ff]/60 pl-4 text-[12.5px] leading-[1.7] text-white/80 sm:ml-[52px]">{f.answer}</p>
+                        </div>
                       </div>
                     </li>
                   )
@@ -568,54 +678,7 @@ function Contact() {
             {/* Casque + bulle */}
             <Reveal className="relative hidden h-[220px] lg:block" delay={200}>
               <span className={`${tw.script} absolute -top-6 right-0 z-[2] rounded-[20px_20px_20px_4px] bg-white px-4 py-2 text-[17px] leading-[1.15] text-ink-2 shadow-[0_14px_30px_-12px_rgba(0,0,0,.4)]`}>Une question ?<br />On est là !</span>
-              {/* Casque-micro réaliste : arceau rembourré, glissières métal, coussinets cuir, perche micro */}
-              <svg className="absolute bottom-0 left-0 w-[170px] animate-float drop-shadow-[0_24px_30px_rgba(40,20,140,.7)]" viewBox="0 0 160 150" fill="none" aria-hidden="true">
-                <defs>
-                  <linearGradient id="hs-band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#5b5f73" /><stop offset=".45" stopColor="#2a2c38" /><stop offset="1" stopColor="#15161e" /></linearGradient>
-                  <linearGradient id="hs-pad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3b3e4e" /><stop offset="1" stopColor="#1a1b24" /></linearGradient>
-                  <linearGradient id="hs-metal" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#8d91a3" /><stop offset=".5" stopColor="#eef0f6" /><stop offset="1" stopColor="#7c8093" /></linearGradient>
-                  <radialGradient id="hs-cup" cx=".35" cy=".3" r=".8"><stop offset="0" stopColor="#4a4e62" /><stop offset=".55" stopColor="#23252f" /><stop offset="1" stopColor="#0e0f15" /></radialGradient>
-                  <radialGradient id="hs-cushion" cx=".5" cy=".4" r=".7"><stop offset="0" stopColor="#2b2d38" /><stop offset=".8" stopColor="#15161d" /><stop offset="1" stopColor="#0a0a0f" /></radialGradient>
-                  <linearGradient id="hs-accent" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#6fa8ff" /><stop offset="1" stopColor="#8b5cff" /></linearGradient>
-                </defs>
-
-                {/* Arceau principal */}
-                <path d="M26 82 C 22 30, 138 30, 134 82" stroke="url(#hs-band)" strokeWidth="9" strokeLinecap="round" />
-                <path d="M28 70 C 30 34, 130 34, 132 70" stroke="#fff" strokeOpacity=".18" strokeWidth="1.5" strokeLinecap="round" />
-                {/* Coussin de tête (rembourrage cousu) */}
-                <path d="M48 42 C 66 28, 94 28, 112 42" stroke="url(#hs-pad)" strokeWidth="11" strokeLinecap="round" />
-                <path d="M50 42 C 67 30, 93 30, 110 42" stroke="#000" strokeOpacity=".35" strokeWidth=".8" strokeDasharray="2 2" />
-
-                {/* Glissières métalliques */}
-                <rect x="21" y="72" width="7" height="18" rx="2" fill="url(#hs-metal)" />
-                <rect x="132" y="72" width="7" height="18" rx="2" fill="url(#hs-metal)" />
-                {[76, 80, 84].map((y) => <path key={y} d={`M22 ${y}h5M133 ${y}h5`} stroke="#6a6e80" strokeWidth=".6" />)}
-
-                {/* Oreillette gauche (vue 3/4) */}
-                <g>
-                  <ellipse cx="30" cy="110" rx="20" ry="26" fill="url(#hs-cushion)" />
-                  <ellipse cx="25" cy="110" rx="18" ry="24" fill="url(#hs-cup)" />
-                  <ellipse cx="25" cy="110" rx="11" ry="15" stroke="url(#hs-accent)" strokeWidth="2" />
-                  <ellipse cx="21" cy="101" rx="4" ry="6" fill="#fff" opacity=".12" />
-                  <circle cx="25" cy="110" r="2.2" fill="url(#hs-accent)" />
-                </g>
-                {/* Oreillette droite */}
-                <g>
-                  <ellipse cx="130" cy="110" rx="20" ry="26" fill="url(#hs-cushion)" />
-                  <ellipse cx="135" cy="110" rx="18" ry="24" fill="url(#hs-cup)" />
-                  <ellipse cx="135" cy="110" rx="11" ry="15" stroke="url(#hs-accent)" strokeWidth="2" />
-                  <ellipse cx="131" cy="101" rx="4" ry="6" fill="#fff" opacity=".12" />
-                  <circle cx="135" cy="110" r="2.2" fill="url(#hs-accent)" />
-                </g>
-
-                {/* Perche micro */}
-                <path d="M22 124 C 26 142, 52 146, 70 138" stroke="#1c1d26" strokeWidth="4" strokeLinecap="round" />
-                <path d="M23 125 C 27 140, 51 144, 69 137" stroke="#fff" strokeOpacity=".15" strokeWidth="1" strokeLinecap="round" />
-                <rect x="66" y="131" width="14" height="10" rx="5" fill="#15161d" transform="rotate(-18 73 136)" />
-                <rect x="68" y="133" width="9" height="5" rx="2.5" fill="url(#hs-accent)" opacity=".8" transform="rotate(-18 73 136)" />
-                {/* Voyant allumé */}
-                <circle cx="44" cy="120" r="1.6" fill="#5dffb0" className="animate-twinkle" />
-              </svg>
+              <img src="/11668569.png" alt="" loading="lazy" decoding="async" className="absolute bottom-0 left-0 w-[170px] animate-float drop-shadow-[0_24px_30px_rgba(40,20,140,.7)]" />
             </Reveal>
           </div>
         </div>
