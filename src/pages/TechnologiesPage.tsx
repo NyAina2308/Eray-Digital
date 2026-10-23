@@ -105,7 +105,7 @@ function TechMarquee({ techs }: { techs: Tech[] }) {
     let frame = 0
     const tick = () => {
       const r = el.getBoundingClientRect()
-      if (r.bottom > 0 && r.top < innerHeight) {
+      if (r.bottom > 0 && r.top < window.innerHeight) {
         const mid = r.left + r.width / 2
         for (const li of el.querySelectorAll<HTMLElement>('li')) {
           const b = li.getBoundingClientRect()

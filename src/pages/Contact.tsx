@@ -1,11 +1,13 @@
 import { useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 const CONTACT_EMAIL = 'contact@eraydigital.tech'
 import Reveal from '../components/Reveal'
 import { Shapes, decor, type Shape } from '../components/Decor'
 import { tw, Arrow, Icon, GradDefs, ic } from '../components/ui'
 import teamPhoto from '../assets/photos/team-fQBheQQ9.avif'
 import roomPhoto from '../assets/photos/room-D2XCtDIa.png'
+import laptopPhoto from '../assets/photos/hero-laptop.webp'
 
 const PROJECT_TYPES = [
   'Développement Web',
@@ -102,6 +104,226 @@ function Note({ children, className = '' }: { children: ReactNode; className?: s
   )
 }
 
+/* ---- Constantes d'animation (hors composant : références stables, pas de ré-init au re-render) ---- */
+const SPARKLE_ANIMATE = { scale: [0.4, 1.2, 0.4], rotate: [0, 45, 0], opacity: [0.3, 1, 0.3] }
+const LAPTOP_FLOAT = { y: [0, -10, 0], rotate: [0, 1, 0] }
+const PHONE_FLOAT = { y: [0, -8, 0], rotate: [0, 2.5, 0] }
+const CUP_FLOAT = { y: [0, -6, 0] }
+const BUBBLE_FLOAT = { scale: [1, 1.08, 1], rotate: [12, 16, 12], opacity: [0.85, 1, 0.85] }
+
+/** Éclats lumineux projetés en couronne au moment où l'ordinateur « atterrit ». */
+const BURST_COLORS = ['#7b3cff', '#3aa0ff', '#b07bff', '#ffffff']
+const BURST = Array.from({ length: 16 }, (_, i) => {
+  const a = (i / 16) * Math.PI * 2
+  const d = 120 + (i % 3) * 50
+  return { x: Math.cos(a) * d, y: Math.sin(a) * d * 0.75, size: 6 + (i % 4) * 2, color: BURST_COLORS[i % 4], delay: 1.05 + (i % 5) * 0.025 }
+})
+const SPRING_SOFT = { type: 'spring' as const, stiffness: 70, damping: 13 }
+const SPRING_BOUNCE = { type: 'spring' as const, stiffness: 140, damping: 9 }
+
+/** Visuel Hero : entrée chorégraphiée (blob → ordinateur 3D qui s'ouvre → onde de choc + étincelles → téléphone, tasse, note), puis flottaison continue. */
+function InteractiveHeroVisual() {
+  return (
+    <div className="relative isolate h-[320px] min-w-0 sm:h-[440px] select-none [perspective:1400px]">
+      <style>{`
+        @keyframes screen-sheen {
+          0% { transform: translateX(-160%) skewX(-20deg); opacity: 0; }
+          15% { opacity: 0.45; }
+          50% { opacity: 0.45; }
+          100% { transform: translateX(260%) skewX(-20deg); opacity: 0; }
+        }
+        @keyframes steam-rise {
+          0% { transform: translateY(0) scaleX(1); opacity: 0; }
+          30% { opacity: 0.75; }
+          70% { transform: translateY(-18px) scaleX(1.5) translateX(3px); opacity: 0.4; }
+          100% { transform: translateY(-30px) scaleX(2) translateX(-4px); opacity: 0; }
+        }
+        .anim-steam-1 { animation: steam-rise 2.5s ease-out 2.2s infinite; }
+        .anim-steam-2 { animation: steam-rise 2.5s ease-out 2.9s infinite; }
+        .anim-steam-3 { animation: steam-rise 2.5s ease-out 3.6s infinite; }
+        .anim-screen-sheen { animation: screen-sheen 4.2s cubic-bezier(0.4, 0, 0.2, 1) 2.2s infinite; }
+      `}</style>
+
+      {/* 1. Blob de verre : il grandit en tournant */}
+      <motion.div
+        className="absolute inset-[2%_4%_4%_6%] z-[1] overflow-hidden rounded-[46%_54%_42%_58%/48%_40%_60%_52%] shadow-[0_40px_80px_-30px_rgba(80,50,255,.5),0_0_0_6px_rgba(123,60,255,.14)]"
+        initial={{ opacity: 0, scale: 0, rotate: -80 }}
+        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+        transition={{ scale: { type: 'spring', stiffness: 45, damping: 12 }, rotate: { type: 'spring', stiffness: 45, damping: 14 }, opacity: { duration: 0.5 } }}
+      >
+        <img src={teamPhoto} alt="" className="size-full scale-110 object-cover opacity-80 blur-[2px]" />
+        <span className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.55),rgba(170,150,255,.35)_50%,rgba(47,139,255,.35))]" />
+        <span className="absolute -top-1/2 -left-1/2 size-full bg-[radial-gradient(circle,rgba(255,255,255,.4),transparent_60%)]" />
+      </motion.div>
+
+      {/* 2. Bulle néon : elle « pop » avec rebond */}
+      <motion.div
+        className="absolute top-[26%] -left-[2%] z-[2] h-[46%] w-[26%]"
+        initial={{ opacity: 0, scale: 0, rotate: -40 }}
+        animate={{ opacity: 0.9, scale: 1, rotate: 12 }}
+        transition={{ ...SPRING_BOUNCE, delay: 0.45 }}
+      >
+        <motion.span
+          className="block size-full rounded-[50%] bg-[linear-gradient(160deg,#3aa0ff,#6a3cff)] shadow-[0_15px_35px_-8px_rgba(70,60,255,.55)]"
+          animate={BUBBLE_FLOAT}
+          transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut', delay: 1.6 }}
+        />
+      </motion.div>
+
+      {/* Halo lumineux qui s'allume */}
+      <motion.div
+        className="pointer-events-none absolute left-[18%] top-[26%] z-[3] h-[48%] w-[58%] rounded-full bg-[radial-gradient(ellipse,rgba(110,80,255,0.4),rgba(58,160,255,0.18)_50%,transparent_72%)]"
+        initial={{ opacity: 0, scale: 0.4 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, delay: 0.7, ease: 'easeOut' }}
+      />
+
+      {/* 3. ORDINATEUR : arrive en 3D, se redresse comme un écran qui s'ouvre */}
+      <motion.div
+        className="absolute top-[14%] left-[6%] z-[6] w-[76%]"
+        style={{ transformPerspective: 1200, transformOrigin: '50% 100%' }}
+        initial={{ opacity: 0, y: 150, scale: 0.55, rotateX: 70 }}
+        animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+        transition={{
+          y: { ...SPRING_SOFT, delay: 0.55 },
+          scale: { ...SPRING_SOFT, delay: 0.55 },
+          rotateX: { type: 'spring', stiffness: 55, damping: 12, delay: 0.6 },
+          opacity: { duration: 0.6, delay: 0.55 },
+        }}
+      >
+        <motion.div
+          className="relative transform-gpu will-change-transform"
+          animate={LAPTOP_FLOAT}
+          transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut', delay: 1.9 }}
+        >
+          <span className="pointer-events-none absolute inset-x-[8%] -bottom-4 h-8 rounded-full bg-[#140f50]/40 blur-xl" aria-hidden="true" />
+          <img
+            src={laptopPhoto}
+            alt="Ordinateur ERAY DIGITAL"
+            loading="eager"
+            decoding="sync"
+            draggable={false}
+            className="relative h-auto w-full select-none object-contain"
+          />
+          {/* Flash « écran qui s'allume » */}
+          <motion.span
+            className="pointer-events-none absolute top-[6%] left-[12%] h-[58%] w-[76%] rounded-lg bg-[radial-gradient(ellipse,rgba(255,255,255,.95),rgba(170,150,255,.5)_55%,transparent_80%)]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0, 0.9, 0] }}
+            transition={{ duration: 1.4, delay: 0.6, times: [0, 0.45, 0.6, 1], ease: 'easeOut' }}
+            aria-hidden="true"
+          />
+          <div className="anim-screen-sheen pointer-events-none absolute top-[6%] left-[12%] w-[38%] h-[58%] rounded-lg bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent)]" />
+        </motion.div>
+      </motion.div>
+
+      {/* 4. Onde de choc quand l'ordinateur se pose */}
+      {[1.05, 1.3].map((d) => (
+        <motion.span
+          key={d}
+          className="pointer-events-none absolute left-[44%] top-[40%] z-[5] -ml-[100px] -mt-[100px] size-[200px] rounded-full border-2 border-[#7b3cff]/50"
+          initial={{ opacity: 0, scale: 0.2 }}
+          animate={{ opacity: [0, 0.8, 0], scale: [0.2, 2.6] }}
+          transition={{ duration: 1.4, delay: d, ease: 'easeOut' }}
+          aria-hidden="true"
+        />
+      ))}
+
+      {/* 5. Couronne d'étincelles projetée en étoile */}
+      <div className="pointer-events-none absolute left-[44%] top-[40%] z-[9] size-0" aria-hidden="true">
+        {BURST.map((b, i) => (
+          <motion.span
+            key={i}
+            className="absolute rounded-full"
+            style={{ width: b.size, height: b.size, marginLeft: -b.size / 2, marginTop: -b.size / 2, background: b.color, boxShadow: `0 0 14px ${b.color}` }}
+            initial={{ x: 0, y: 0, scale: 0, opacity: 0 }}
+            animate={{ x: b.x, y: b.y, scale: [0, 1.5, 0], opacity: [0, 1, 0] }}
+            transition={{ duration: 1.4, delay: b.delay, ease: 'easeOut' }}
+          />
+        ))}
+      </div>
+
+      {/* 6. Smartphone : tombe du ciel avec rebond */}
+      <motion.div
+        className="absolute top-[40%] right-[16%] z-[7] grid aspect-[9/18] w-[11%]"
+        initial={{ opacity: 0, y: -260, rotate: -45, scale: 0.6 }}
+        animate={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
+        transition={{ ...SPRING_BOUNCE, delay: 1.1, opacity: { duration: 0.3, delay: 1.1 } }}
+      >
+        <motion.div
+          className="relative grid size-full transform-gpu place-items-center rounded-[18px] border-[4px] border-[#0d0e24] bg-[radial-gradient(circle,#2a2690,#0a0b2e_75%)] shadow-[0_26px_45px_-12px_rgba(40,30,160,.65)]"
+          animate={PHONE_FLOAT}
+          transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut', delay: 2.2 }}
+        >
+          <span className="absolute top-1 h-[2px] w-3 rounded-full bg-white/20" />
+          <img src="/eray-logo.png" alt="" className="w-[60%] rounded-md bg-white p-0.5 shadow-md" />
+          <span className="pointer-events-none absolute inset-0 rounded-[14px] bg-[linear-gradient(135deg,rgba(255,255,255,.25)_0%,transparent_50%)]" />
+        </motion.div>
+      </motion.div>
+
+      {/* 7. Tasse de café : monte avec rebond */}
+      <motion.div
+        className="absolute right-[4%] bottom-[18%] z-[7] h-[18%] w-[12%]"
+        initial={{ opacity: 0, y: 140, rotate: 25, scale: 0.4 }}
+        animate={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
+        transition={{ ...SPRING_BOUNCE, delay: 1.35, opacity: { duration: 0.3, delay: 1.35 } }}
+      >
+        <motion.div
+          className="relative size-full transform-gpu"
+          animate={CUP_FLOAT}
+          transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut', delay: 2.4 }}
+        >
+          <div className="pointer-events-none absolute -top-5 left-1/2 flex -translate-x-1/2 gap-1">
+            <span className="anim-steam-1 block h-5 w-[2px] rounded-full bg-[linear-gradient(to_top,#9b9ebc,#fff)] opacity-60" />
+            <span className="anim-steam-2 block h-6 w-[2.5px] rounded-full bg-[linear-gradient(to_top,#9b9ebc,#fff)] opacity-60" />
+            <span className="anim-steam-3 block h-5 w-[2px] rounded-full bg-[linear-gradient(to_top,#9b9ebc,#fff)] opacity-60" />
+          </div>
+          <span className="absolute inset-0 grid place-items-center rounded-b-[14px] rounded-t-[6px] bg-[linear-gradient(90deg,#0d0e24,#1d1f5a)] shadow-[0_18px_30px_-12px_rgba(40,30,160,.6)]">
+            <img src="/eray-logo.png" alt="" className="w-[42%] rounded bg-white p-px shadow" />
+          </span>
+          <span className="absolute top-[18%] -right-[30%] h-[52%] w-[40%] rounded-r-full border-[5px] border-l-0 border-[#1d1f5a]" />
+        </motion.div>
+      </motion.div>
+
+      {/* 8. Étincelles décoratives (après l'explosion) */}
+      <motion.span
+        className="pointer-events-none absolute top-[12%] left-[22%] z-[15] text-[#7b3cff]"
+        animate={SPARKLE_ANIMATE}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 1.8 }}
+      >
+        <svg viewBox="0 0 24 24" className="size-4" fill="currentColor"><path d="M12 0L14 9L23 12L14 15L12 24L10 15L12 24L10 15L1 12L10 9Z" /></svg>
+      </motion.span>
+      <motion.span
+        className="pointer-events-none absolute bottom-[18%] left-[8%] z-[15] text-[#3aa0ff]"
+        animate={SPARKLE_ANIMATE}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 2.4 }}
+      >
+        <svg viewBox="0 0 24 24" className="size-3.5" fill="currentColor"><path d="M12 0L14 9L23 12L14 15L12 24L10 15L1 12L10 9Z" /></svg>
+      </motion.span>
+      <motion.span
+        className="pointer-events-none absolute top-[28%] right-[8%] z-[15] text-[#b07bff]"
+        animate={SPARKLE_ANIMATE}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+      >
+        <svg viewBox="0 0 24 24" className="size-3" fill="currentColor"><path d="M12 0L14 9L23 12L14 15L12 24L10 15L12 24L10 15L1 12L10 9Z" /></svg>
+      </motion.span>
+
+      {/* 9. Note manuscrite : dernier élément à apparaître */}
+      <motion.div
+        className="absolute -top-2 right-0 z-[12]"
+        initial={{ opacity: 0, scale: 0.3, rotate: -35 }}
+        animate={{ opacity: 1, scale: 1, rotate: -12 }}
+        transition={{ ...SPRING_BOUNCE, delay: 1.9 }}
+      >
+        <Note className="relative block">
+          Votre projet<br />commence ici !
+        </Note>
+      </motion.div>
+    </div>
+  )
+}
+
+
 function Contact() {
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -180,37 +402,9 @@ function Contact() {
             </ul>
           </Reveal>
 
-          <Reveal className="relative h-[320px] min-w-0 sm:h-[440px]" delay={120}>
-            <Note className="-top-2 right-0">Votre projet<br />commence ici !</Note>
-            {/* Blob de verre avec photo de bureau en fond */}
-            <div className="absolute inset-[2%_4%_4%_6%] overflow-hidden rounded-[46%_54%_42%_58%/48%_40%_60%_52%] shadow-[0_40px_80px_-30px_rgba(80,50,255,.5),0_0_0_6px_rgba(123,60,255,.12)]">
-              <img src={teamPhoto} alt="" className="size-full scale-110 object-cover opacity-80 blur-[2px]" />
-              <span className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.55),rgba(170,150,255,.35)_50%,rgba(47,139,255,.35))]" />
-            </div>
-            <span className="absolute top-[26%] -left-[2%] h-[46%] w-[26%] rotate-12 rounded-[50%] bg-[linear-gradient(160deg,#3aa0ff,#6a3cff)] opacity-80 blur-[1px]" />
-            {/* Ordinateur */}
-            <div className="absolute top-[24%] left-[14%] w-[62%] animate-float [transform:perspective(1300px)_rotateY(-14deg)_rotateX(6deg)_rotate(-3deg)]">
-              <div className="grid aspect-[16/10.5] place-content-center justify-items-center gap-3 rounded-[14px_14px_4px_4px] border-8 border-[#0d0e24] bg-[radial-gradient(circle_at_40%_40%,#1d1f5a,#0a0b2e_75%)] shadow-[0_30px_60px_-20px_rgba(40,30,160,.6)]">
-                <div className="flex items-center gap-2.5">
-                  <img src="/eray-logo.png" alt="" className="w-[clamp(36px,4vw,54px)] rounded-lg bg-white p-[3px]" />
-                  <span className="font-sora text-[clamp(14px,1.8vw,24px)] leading-none font-bold text-white">ERAY<br /><span className="text-[0.7em] font-medium tracking-[0.2em]">DIGITAL</span></span>
-                </div>
-                <span className={`${tw.script} text-[clamp(11px,1.1vw,15px)] text-white/80`}>Vos idées. Notre expertise.</span>
-              </div>
-              <div className="mx-[-8%] h-3.5 rounded-b-[18px] bg-[linear-gradient(#e6e7f2,#b9bbd0)] shadow-[0_20px_30px_-10px_rgba(40,30,120,.4)]" />
-            </div>
-            {/* Téléphone */}
-            <div className="absolute top-[40%] right-[16%] grid aspect-[9/18] w-[11%] animate-float-slow place-items-center rounded-[18px] border-[4px] border-[#0d0e24] bg-[radial-gradient(circle,#2a2690,#0a0b2e_75%)] shadow-[0_24px_40px_-14px_rgba(40,30,160,.6)]">
-              <img src="/eray-logo.png" alt="" className="w-[60%] rounded-md bg-white p-0.5" />
-            </div>
-            {/* Tasse */}
-            <div className="absolute right-[4%] bottom-[18%] h-[18%] w-[12%]">
-              <span className="absolute inset-0 grid place-items-center rounded-b-[14px] rounded-t-[6px] bg-[linear-gradient(90deg,#0d0e24,#1d1f5a)] shadow-[0_18px_30px_-12px_rgba(40,30,160,.6)]">
-                <img src="/eray-logo.png" alt="" className="w-[42%] rounded bg-white p-px" />
-              </span>
-              <span className="absolute top-[18%] -right-[30%] h-[52%] w-[40%] rounded-r-full border-[5px] border-l-0 border-[#1d1f5a]" />
-            </div>
-          </Reveal>
+          <div className="min-w-0">
+            <InteractiveHeroVisual />
+          </div>
         </div>
       </section>
 
